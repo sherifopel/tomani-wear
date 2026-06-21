@@ -6,4 +6,7 @@ export default defineCliConfig({
     dataset: 'production',
   },
   studioHost: 'tomanni-wear',
+  deployment: {
+    appId: 'pvgi7jud4oipe4uxj8yuw4tr',
+  },
 })
