@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import ProductCarousel from '@/components/ProductCarousel'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY } from '@/sanity/queries'
@@ -41,14 +40,6 @@ export default async function FeaturedProducts() {
 
         <div className="mb-3 md:mb-8 relative flex items-center justify-center shrink-0">
           <h2 className="text-[28px] font-light tracking-widest uppercase">New Arrivals</h2>
-          <Link
-            href="/products"
-            data-testid="home-featured-view-all-link"
-            className="hidden md:block absolute right-0 nav-link-underline text-xs uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
-            style={{ '--link-underline-color': 'var(--brand-red)' } as React.CSSProperties}
-          >
-            View All
-          </Link>
         </div>
 
         {/* flex-1 passes its full remaining height down to ProductCarousel on mobile */}
