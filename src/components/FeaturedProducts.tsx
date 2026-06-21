@@ -39,12 +39,12 @@ export default async function FeaturedProducts() {
     >
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col md:block">
 
-        <div className="mb-3 md:mb-8 flex items-center justify-center md:justify-between shrink-0">
+        <div className="mb-3 md:mb-8 relative flex items-center justify-center shrink-0">
           <h2 className="text-[28px] font-light tracking-widest uppercase">New Arrivals</h2>
           <Link
             href="/products"
             data-testid="home-featured-view-all-link"
-            className="hidden md:block nav-link-underline text-xs uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
+            className="hidden md:block absolute right-0 nav-link-underline text-xs uppercase tracking-widest text-gray-400 hover:text-black transition-colors"
             style={{ '--link-underline-color': 'var(--brand-red)' } as React.CSSProperties}
           >
             View All
