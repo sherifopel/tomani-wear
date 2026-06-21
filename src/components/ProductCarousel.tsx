@@ -74,25 +74,30 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
               key={product.id}
               href={product.href}
               data-testid={`home-product-card-${product.id}`}
-              // On mobile: h-full + flex-col so the image grows, title/price pin to bottom.
-              // On desktop: normal block with fixed aspect-square image.
-              className="group flex-none w-full sm:w-[50%] md:w-[33%] h-full md:h-auto flex flex-col md:block"
+              // The fixed info height keeps every image frame the same size,
+              // even when product names have different lengths.
+              className="group flex-none w-full sm:w-[50%] md:w-[33%] h-full md:h-auto flex flex-col"
             >
               {/* Image area: flex-1 fills all space above the text on mobile.
                   min-h-0 lets Safari honour flex-1 in a deep h-full chain. */}
-              <div className="relative flex-1 min-h-0 md:flex-none md:aspect-square bg-gray-50 overflow-hidden mb-3">
+              <div className="relative flex-1 min-h-0 md:flex-none md:aspect-[4/5] bg-gray-100 overflow-hidden mb-3">
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
                   loading="eager"
-                  className="object-contain p-6 transition-transform duration-500 group-hover:scale-105"
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <p className="text-sm font-medium shrink-0">{product.name}</p>
-              <p className="text-sm text-gray-400 mt-0.5 shrink-0">
-                ₦{product.price.toLocaleString()}
-              </p>
+              <div className="h-12 shrink-0">
+                <p className="text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+                  {product.name}
+                </p>
+                <p className="text-sm text-gray-400 mt-0.5">
+                  ₦{product.price.toLocaleString()}
+                </p>
+              </div>
             </Link>
           ))}
         </div>
