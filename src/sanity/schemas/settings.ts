@@ -9,7 +9,19 @@ export const settings = defineType({
       name: 'announcementBar',
       title: 'Announcement Bar Text',
       type: 'string',
-      description: 'The text shown in the black bar at the top of every page',
+      description: 'Fallback text shown if no rotating messages are added',
+    }),
+    defineField({
+      name: 'announcementBars',
+      title: 'Rotating Announcement Messages',
+      type: 'array',
+      description: 'Add two or more messages to rotate through the black bar',
+      of: [
+        {
+          type: 'string',
+          title: 'Message',
+        },
+      ],
     }),
     defineField({
       name: 'announcementBarEnabled',

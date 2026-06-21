@@ -49,6 +49,17 @@ body {
   width: 100%;
 }
 
+@keyframes announcement-slide {
+  0% {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ─── Collision button ─────────────────────────────────────────────────────
    Two circles burst in from outside the button and collide in the centre,
    expanding until they fill the entire button with the brand red.

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Search, User, ShoppingBag } from 'lucide-react'
 import MobileMenu from '@/components/MobileMenu'
+import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
 import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
@@ -16,21 +17,19 @@ const navLinks = [
 
 type Settings = {
   announcementBar?: string
+  announcementBars?: string[]
   announcementBarEnabled?: boolean
 }
 
 export default async function Navbar() {
   const settings: Settings = await client.fetch(SETTINGS_QUERY) ?? {}
   const showBanner = settings.announcementBarEnabled !== false
-  const bannerText = settings.announcementBar ?? 'Free shipping on orders over ₦50,000'
+  const bannerMessages = settings.announcementBars?.filter(Boolean).length
+    ? settings.announcementBars.filter(Boolean)
+    : [settings.announcementBar ?? 'Free shipping on orders over ₦50,000']
 
   const announcementBar = showBanner ? (
-    <div
-      data-testid="nav-announcement-bar"
-      className="bg-black text-white text-center text-xs py-2 tracking-widest uppercase"
-    >
-      {bannerText}
-    </div>
+    <RotatingAnnouncementBar messages={bannerMessages} />
   ) : undefined
 
   const mainRow = (

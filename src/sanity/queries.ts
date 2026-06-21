@@ -12,5 +12,6 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
 
 export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {
   announcementBar,
+  announcementBars,
   announcementBarEnabled
 }`
