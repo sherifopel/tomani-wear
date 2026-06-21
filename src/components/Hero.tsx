@@ -5,9 +5,19 @@ import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const slides = [
+type HeroSlide = {
+  id: string
+  image: string
+  position: string
+  label?: string
+  heading: string
+  sub?: string
+  href: string
+}
+
+const fallbackSlides: HeroSlide[] = [
   {
-    id: 1,
+    id: 'fallback-1',
     image: '/images/gallary/brian-lundquist-kIdngZOEnnQ-unsplash.jpg',
     position: 'center 20%',
     label: 'New Drop',
@@ -16,7 +26,7 @@ const slides = [
     href: '/products',
   },
   {
-    id: 2,
+    id: 'fallback-2',
     image: '/images/gallary/anthony-a-eT-ORmDdFgE-unsplash.jpg',
     position: 'center 30%',
     label: 'New Collection',
@@ -25,7 +35,7 @@ const slides = [
     href: '/products',
   },
   {
-    id: 3,
+    id: 'fallback-3',
     image: '/images/gallary/minh-dang-diEOBpC-o1A-unsplash.jpg',
     position: 'center 25%',
     label: 'Lagos Originals',
@@ -35,7 +45,8 @@ const slides = [
   },
 ]
 
-export default function Hero() {
+export default function Hero({ slides = fallbackSlides }: { slides?: HeroSlide[] }) {
+  const heroSlides = slides.length ? slides : fallbackSlides
   const [emblaRef] = useEmblaCarousel(
     { loop: true, watchDrag: false },
     [Autoplay({ delay: 4000, stopOnInteraction: false })]
@@ -44,7 +55,7 @@ export default function Hero() {
   return (
     <section data-testid="home-hero-section" className="w-full h-[calc(100vh-5.25rem)] md:h-[calc(100vh-7.75rem)] overflow-hidden snap-start shrink-0" ref={emblaRef}>
       <div className="flex h-full">
-        {slides.map((slide) => (
+        {heroSlides.map((slide, index) => (
           <div key={slide.id} className="flex-none w-full h-full relative">
 
             {/* Full-bleed background image */}
@@ -54,7 +65,7 @@ export default function Hero() {
               fill
               className="object-cover"
               style={{ objectPosition: slide.position }}
-              priority={slide.id === 1}
+              priority={index === 0}
             />
 
             {/* Dark gradient overlay — fades from transparent at top to black at bottom */}
@@ -66,7 +77,7 @@ export default function Hero() {
                 data-testid="home-hero-subtitle"
                 className="text-xs uppercase tracking-widest mb-4 font-semibold text-[var(--brand-yellow)]"
               >
-                {slide.label}
+                {slide.label ?? 'New Drop'}
               </p>
               <h1
                 data-testid="home-hero-heading"
