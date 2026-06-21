@@ -45,8 +45,7 @@ export default async function Navbar() {
         data-testid="nav-logo-link"
         className="flex justify-center items-center"
       >
-        <span className="md:hidden text-xl font-bold tracking-[0.25em] uppercase">TW</span>
-        <span className="hidden md:inline text-2xl font-bold tracking-[0.25em] uppercase">Tomanni Wear</span>
+        <span className="text-xl md:text-2xl font-bold tracking-[0.25em] uppercase">Tomanni</span>
       </Link>
 
       <div className="flex items-center justify-end gap-5">
@@ -101,7 +100,7 @@ export default async function Navbar() {
                      group-data-[compact=true]:pointer-events-auto
                      transition-opacity duration-300"
         >
-          TW
+          Tomanni
         </Link>
 
         {navLinks.map((link) => (
