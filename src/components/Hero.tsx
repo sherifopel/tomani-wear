@@ -53,7 +53,7 @@ export default function Hero({
                     alt={slide.heading}
                     fill
                     sizes="100vw"
-                    className="block object-cover object-top md:hidden"
+                    className="block object-cover object-center md:hidden"
                     priority={index === 0}
                   />
 
@@ -63,7 +63,7 @@ export default function Hero({
                     alt={slide.heading}
                     fill
                     sizes="100vw"
-                    className="hidden object-cover object-top md:block lg:hidden"
+                    className="hidden object-cover object-center md:block lg:hidden"
                     priority={index === 0}
                   />
 
