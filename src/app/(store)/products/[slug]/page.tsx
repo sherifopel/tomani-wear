@@ -1,9 +1,8 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
-import ProductActions from '@/components/ProductActions'
+import ProductInteractive, { type GalleryImage, type Variant } from '@/components/ProductInteractive'
 
 type Product = {
   _id: string
@@ -13,6 +12,8 @@ type Product = {
   compareAtPrice?: number
   image: string
   hotspot?: { x: number; y: number }
+  gallery?: GalleryImage[]
+  variants?: Variant[]
   description?: string
   category?: string
   sizes?: string[]
@@ -20,9 +21,6 @@ type Product = {
 }
 
 // Pre-generate all product pages at build time so they load instantly.
-// Next.js calls this at deploy time, fetches all slugs, and builds a static
-// HTML file for each one — like pre-printing a menu instead of writing it
-// fresh for every customer who walks in.
 export async function generateStaticParams() {
   const products: { slug: string }[] = await client.fetch(
     `*[_type == "product"]{ "slug": slug.current }`
@@ -38,19 +36,15 @@ export default async function ProductPage({
   const { slug } = await params
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug })
 
-  // If no product found for this slug, show the Next.js 404 page
   if (!product) notFound()
 
-  const onSale = product.compareAtPrice && product.compareAtPrice > product.price
-  const objectPos = product.hotspot
-    ? `${product.hotspot.x * 100}% ${product.hotspot.y * 100}%`
-    : 'center center'
+  const onSale = !!(product.compareAtPrice && product.compareAtPrice > product.price)
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" data-testid="pdp-page">
 
       {/* Breadcrumb */}
-      <div className="px-6 py-4 text-xs text-gray-400 uppercase tracking-widest">
+      <div className="px-6 py-4 text-xs text-gray-400 uppercase tracking-widest" data-testid="pdp-breadcrumb">
         <Link href="/" className="hover:text-black transition-colors">Home</Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-black transition-colors">Products</Link>
@@ -58,73 +52,23 @@ export default async function ProductPage({
         <span className="text-black">{product.name}</span>
       </div>
 
-      {/* Main layout: image left, details right */}
-      <div className="max-w-7xl mx-auto px-6 pb-16 md:grid md:grid-cols-2 md:gap-16 md:items-start">
-
-        {/* Image */}
-        <div className="relative aspect-[3/4] bg-gray-50 mb-8 md:mb-0">
-          {product.image && (
-            <Image
-              src={product.image}
-              alt={product.name}
-              fill
-              priority
-              className="object-contain p-8"
-              style={{ objectPosition: objectPos }}
-            />
-          )}
-          {onSale && (
-            <span className="absolute top-4 left-4 bg-[var(--brand-red)] text-white text-[10px] uppercase tracking-widest px-2 py-1">
-              Sale
-            </span>
-          )}
-        </div>
-
-        {/* Details */}
-        <div className="md:pt-4 space-y-6">
-
-          {/* Category */}
-          {product.category && (
-            <p className="text-xs uppercase tracking-widest text-gray-400">
-              {product.category}
-            </p>
-          )}
-
-          {/* Name */}
-          <h1 className="text-2xl font-light tracking-wide">{product.name}</h1>
-
-          {/* Price */}
-          <div className="flex items-baseline gap-3">
-            <span className={`text-lg font-medium ${onSale ? 'text-[var(--brand-red)]' : ''}`}>
-              ₦{product.price.toLocaleString()}
-            </span>
-            {onSale && (
-              <span className="text-sm text-gray-400 line-through">
-                ₦{product.compareAtPrice!.toLocaleString()}
-              </span>
-            )}
-          </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-100" />
-
-          {/* Size selector + Add to cart (client component) */}
-          <ProductActions
-            sizes={product.sizes ?? []}
-            inStock={product.inStock}
-          />
-
-          {/* Divider */}
-          <div className="border-t border-gray-100" />
-
-          {/* Description */}
-          {product.description && (
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {product.description}
-            </p>
-          )}
-
-        </div>
+      {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
+      <div className="max-w-7xl mx-auto px-6 pb-16">
+        <ProductInteractive
+          productId={product._id}
+          slug={product.slug}
+          mainImage={product.image}
+          gallery={product.gallery}
+          variants={product.variants}
+          sizes={product.sizes}
+          inStock={product.inStock}
+          onSale={onSale}
+          compareAtPrice={product.compareAtPrice}
+          name={product.name}
+          price={product.price}
+          category={product.category}
+          description={product.description}
+        />
       </div>
     </div>
   )

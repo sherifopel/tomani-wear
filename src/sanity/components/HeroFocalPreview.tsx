@@ -1,23 +1,17 @@
 import React, { useState } from 'react'
 import { set, ObjectInputProps, useFormValue } from 'sanity'
-import { MemberField } from 'sanity'
 
 const BRAND_YELLOW = '#c9a227'
 
 const DEVICES = [
-  { key: 'mobile',  label: 'Mobile',  imageField: 'mobileImage',  previewW: 195, previewH: 380 },
-  { key: 'tablet',  label: 'Tablet',  imageField: 'tabletImage',  previewW: 256, previewH: 305 },
-  { key: 'desktop', label: 'Desktop', imageField: 'desktopImage', previewW: 451, previewH: 180 },
-  { key: 'xl',      label: 'XL',      imageField: 'xlImage',      previewW: 451, previewH: 180 },
+  { key: 'mobile',  label: 'Mobile',  previewW: 195, previewH: 380 },
+  { key: 'tablet',  label: 'Tablet',  previewW: 256, previewH: 305 },
+  { key: 'desktop', label: 'Desktop', previewW: 451, previewH: 180 },
 ] as const
 
 type DeviceKey = (typeof DEVICES)[number]['key']
 
 type FocalPoints = {
-  mobileImage?:  { asset?: { _ref?: string } }
-  tabletImage?:  { asset?: { _ref?: string } }
-  desktopImage?: { asset?: { _ref?: string } }
-  xlImage?:      { asset?: { _ref?: string } }
   mobile?:  number
   tablet?:  number
   desktop?: number
@@ -29,7 +23,7 @@ function sanityRefToUrl(ref: string): string {
 }
 
 export function HeroFocalPreview(props: ObjectInputProps) {
-  const { value, onChange, members, renderInput, renderField, renderItem, renderPreview } = props
+  const { value, onChange } = props
 
   const [activeDevice, setActiveDevice] = useState<DeviceKey>('desktop')
   const [localY, setLocalY] = useState<number | null>(null)
@@ -37,19 +31,11 @@ export function HeroFocalPreview(props: ObjectInputProps) {
   const focalPoints: FocalPoints = (value as FocalPoints | undefined) ?? {}
   const device = DEVICES.find((d) => d.key === activeDevice)!
 
-  // Get the image ref for the active device — fall back to the document-level image
-  const fallbackImage = useFormValue(['image']) as { asset?: { _ref?: string } } | undefined
-  const deviceImage = focalPoints[device.imageField as keyof FocalPoints] as { asset?: { _ref?: string } } | undefined
-  const activeImage = deviceImage ?? fallbackImage
-  const imageUrl = activeImage?.asset?._ref ? sanityRefToUrl(activeImage.asset._ref) : null
+  const heroImage = useFormValue(['image']) as { asset?: { _ref?: string } } | undefined
+  const imageUrl = heroImage?.asset?._ref ? sanityRefToUrl(heroImage.asset._ref) : null
 
-  const savedY   = (focalPoints[activeDevice as 'mobile' | 'tablet' | 'desktop'] as number | undefined) ?? (activeDevice === 'desktop' || activeDevice === 'xl' ? 30 : 50)
+  const savedY   = focalPoints[activeDevice] ?? (activeDevice === 'desktop' ? 30 : 50)
   const displayY = localY !== null ? localY : savedY
-
-  // Find the MemberField for the active device's image upload
-  const imageMember = members.find(
-    (m) => m.kind === 'field' && m.name === device.imageField
-  )
 
   function handleSaveForDevice() {
     if (localY === null) return
@@ -97,37 +83,12 @@ export function HeroFocalPreview(props: ObjectInputProps) {
         })}
       </div>
 
-      {/* ── Image upload for active device ── */}
-      <div style={{ marginBottom: 20 }}>
-        <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#555', marginBottom: 8 }}>
-          {device.label} Image
-        </p>
-        {imageMember && imageMember.kind === 'field' && (
-          <MemberField
-            member={imageMember}
-            renderInput={renderInput}
-            renderField={renderField}
-            renderItem={renderItem}
-            renderPreview={renderPreview}
-          />
-        )}
-      </div>
-
       {/* ── Live preview ── */}
       <div style={{ marginBottom: 16 }}>
         <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#555', marginBottom: 8 }}>
           Preview
         </p>
-        <div
-          style={{
-            width: device.previewW,
-            height: device.previewH,
-            overflow: 'hidden',
-            borderRadius: 8,
-            border: '1px solid #ddd',
-            background: '#f0f0f0',
-          }}
-        >
+        <div style={{ width: device.previewW, height: device.previewH, overflow: 'hidden', borderRadius: 8, border: '1px solid #ddd', background: '#f0f0f0' }}>
           {imageUrl ? (
             <img
               src={imageUrl}
@@ -136,7 +97,7 @@ export function HeroFocalPreview(props: ObjectInputProps) {
             />
           ) : (
             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#aaa', fontSize: 12, textAlign: 'center', padding: 16 }}>
-              Upload a {device.label} image above to see the preview
+              Upload a Hero Image above to see the preview
             </div>
           )}
         </div>
@@ -179,10 +140,11 @@ export function HeroFocalPreview(props: ObjectInputProps) {
       {/* ── Saved values summary ── */}
       <div style={{ marginTop: 16, fontSize: 12, color: '#888', display: 'flex', gap: 16 }}>
         {(['mobile', 'tablet', 'desktop'] as const).map((d) => {
-          const val = (focalPoints[d] as number | undefined) ?? (d === 'desktop' ? 30 : 50)
+          const val = focalPoints[d] ?? (d === 'desktop' ? 30 : 50)
           return <span key={d}>{d.charAt(0).toUpperCase() + d.slice(1)}: <strong>{val}%</strong></span>
         })}
       </div>
+
     </div>
   )
 }

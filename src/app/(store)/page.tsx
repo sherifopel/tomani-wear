@@ -9,15 +9,13 @@ import { connection } from 'next/server'
 type SanityHeroSlide = {
   _id: string
   image: SanityImageSource
-  mobileImage?: SanityImageSource
-  mediumImage?: SanityImageSource
-  extraLargeImage?: SanityImageSource
   label?: string
   heading: string
   sub?: string
   href: string
+  mobileFocalY: number
+  tabletFocalY: number
   desktopFocalY: number
-  focalPoints?: { mobile?: number; tablet?: number; desktop?: number }
 }
 
 type Settings = {
@@ -49,35 +47,17 @@ export default async function Home({
     sanityClient.fetch(HERO_SLIDES_QUERY),
     sanityClient.fetch(SETTINGS_QUERY),
   ])
+
   const heroSlides = sanitySlides.map((slide) => ({
     id: slide._id,
-    smallImage: urlForImage(slide.mobileImage ?? slide.image)
-      .width(800)
-      .height(1600)
-      .fit('crop')
-      .auto('format')
-      .url(),
-    mediumImage: urlForImage(slide.mediumImage ?? slide.mobileImage ?? slide.image)
-      .width(1024)
-      .height(1366)
-      .fit('crop')
-      .auto('format')
-      .url(),
-    largeImage: urlForImage(slide.image)
-      .width(1505)
-      .auto('format')
-      .url(),
-    extraLargeImage: urlForImage(slide.extraLargeImage ?? slide.image)
-      .width(1505)
-      .auto('format')
-      .url(),
+    image: urlForImage(slide.image).width(1505).auto('format').url(),
     label: slide.label,
     heading: slide.heading,
     sub: slide.sub,
     href: slide.href,
-    desktopFocalY: slide.focalPoints?.desktop ?? slide.desktopFocalY ?? 30,
-    tabletFocalY:  slide.focalPoints?.tablet  ?? 50,
-    mobileFocalY:  slide.focalPoints?.mobile  ?? 50,
+    mobileFocalY:  slide.mobileFocalY,
+    tabletFocalY:  slide.tabletFocalY,
+    desktopFocalY: slide.desktopFocalY,
   }))
 
   return (

@@ -1,5 +1,4 @@
 import { defineField, defineType } from 'sanity'
-import { FocalYSlider } from '../components/FocalYSlider'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
 
 export const heroSlide = defineType({
@@ -15,33 +14,12 @@ export const heroSlide = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'mobileImage',
-      title: 'Small Hero Image',
-      description: 'Used on phones. Crop this for the small preview.',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: 'mediumImage',
-      title: 'Medium Hero Image',
-      description: 'Used on tablets and medium screens. If empty, the small image is reused.',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
       name: 'image',
-      title: 'Large Hero Image',
-      description: 'Used on desktop. The site crops this to a 1505 x 600 hero frame.',
+      title: 'Hero Image',
+      description: 'Upload one image. The preview below shows how it crops on each device — use the slider to adjust the focal point.',
       type: 'image',
       options: { hotspot: true },
       validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'extraLargeImage',
-      title: 'Extra Large Hero Image',
-      description: 'Used on extra large screens. If empty, the large image is reused.',
-      type: 'image',
-      options: { hotspot: true },
     }),
     defineField({
       name: 'label',
@@ -75,24 +53,11 @@ export const heroSlide = defineType({
       description: 'Preview how the hero image crops on each device and adjust the focal point.',
       type: 'object',
       fields: [
-        defineField({ name: 'mobileImage',  title: 'Mobile Image',       type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'tabletImage',  title: 'Tablet Image',       type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'desktopImage', title: 'Desktop Image',      type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'xlImage',      title: 'Extra Large Image',  type: 'image', options: { hotspot: true } }),
         defineField({ name: 'mobile',  title: 'Mobile focal Y',  type: 'number', initialValue: 50 }),
         defineField({ name: 'tablet',  title: 'Tablet focal Y',  type: 'number', initialValue: 50 }),
         defineField({ name: 'desktop', title: 'Desktop focal Y', type: 'number', initialValue: 30 }),
       ],
       components: { input: HeroFocalPreview },
-    }),
-    defineField({
-      name: 'desktopFocalY',
-      title: 'Desktop Image Position (vertical)',
-      description: 'Slide to control which part of the image shows on desktop. 0 = top of image, 50 = middle, 100 = bottom. Start at 30 — most portrait photos show the face there.',
-      type: 'number',
-      initialValue: 30,
-      validation: (Rule) => Rule.min(0).max(100),
-      components: { input: FocalYSlider },
     }),
     defineField({
       name: 'order',

@@ -39,7 +39,7 @@ export const headerSelectors = (page: Page) => ({
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const openMobileMenu = async (page: Page) => {
-  await page.setViewportSize({ width: 390, height: 844 })
+  await page.setViewportSize({ width: 375, height: 667 })
   const { mobileMenu } = headerSelectors(page)
   await mobileMenu.openButton.click()
   await expect(mobileMenu.overlay).toBeVisible()
@@ -56,7 +56,7 @@ export const closeMobileMenu = async (page: Page) => {
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const assertMobileHeaderActionsVisible = async (page: Page) => {
-  await page.setViewportSize({ width: 390, height: 844 })
+  await page.setViewportSize({ width: 375, height: 667 })
   const { navBar } = headerSelectors(page)
   await expect(navBar.searchButton).toBeVisible()
   await expect(navBar.accountButton).toBeVisible()

@@ -4,7 +4,17 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+const IconPrev = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="13 4 7 10 13 16" />
+  </svg>
+)
+
+const IconNext = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="7 4 13 10 7 16" />
+  </svg>
+)
 
 type Product = {
   id: number
@@ -36,7 +46,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         aria-label="Previous"
         className="md:hidden absolute left-0 top-[40%] -translate-y-1/2 flex items-center justify-center w-8 h-8 text-black z-10"
       >
-        <ChevronLeft size={20} strokeWidth={1} />
+        <IconPrev />
       </button>
       <button
         data-testid="home-carousel-next-button"
@@ -44,7 +54,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         aria-label="Next"
         className="md:hidden absolute right-0 top-[40%] -translate-y-1/2 flex items-center justify-center w-8 h-8 text-black z-10"
       >
-        <ChevronRight size={20} strokeWidth={1} />
+        <IconNext />
       </button>
 
       {/* ── Desktop arrows ────────────────────────────────────────────── */}
@@ -54,7 +64,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         aria-label="Previous"
         className="hidden md:flex absolute -left-4 top-1/3 -translate-y-1/2 w-10 h-10 bg-black text-white items-center justify-center hover:bg-white hover:text-black transition-colors duration-300"
       >
-        <ChevronLeft size={20} strokeWidth={1.5} />
+        <IconPrev />
       </button>
       <button
         data-testid="home-carousel-next-button"
@@ -62,7 +72,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         aria-label="Next"
         className="hidden md:flex absolute -right-4 top-1/3 -translate-y-1/2 w-10 h-10 bg-black text-white items-center justify-center hover:bg-white hover:text-black transition-colors duration-300"
       >
-        <ChevronRight size={20} strokeWidth={1.5} />
+        <IconNext />
       </button>
 
       {/* ── Carousel viewport ─────────────────────────────────────────── */}
