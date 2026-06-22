@@ -35,10 +35,10 @@ export default function Hero({
   const canNavigate = showArrows && heroSlides.length > 1
 
   return (
-    <section data-testid="home-hero-section" className="relative w-full overflow-hidden snap-start shrink-0 md:mx-auto md:max-w-[1505px]" ref={emblaRef}>
-      <div className="flex">
+    <section data-testid="home-hero-section" className="relative h-[calc(100svh-5.25rem)] w-full overflow-hidden snap-start shrink-0 lg:mx-auto lg:h-[600px] lg:max-w-[1505px]" ref={emblaRef}>
+      <div className="flex h-full">
         {heroSlides.map((slide, index) => (
-          <div key={slide.id} className="flex-none w-full relative">
+          <div key={slide.id} className="flex-none w-full h-full relative">
             {(() => {
               const largeImage = slide.largeImage ?? ''
               const smallImage = slide.smallImage ?? largeImage
@@ -47,40 +47,43 @@ export default function Hero({
 
               return (
                 <>
+                  {/* Mobile: full viewport height, fill from top */}
                   <Image
                     src={smallImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="100vw"
-                    className="block w-full h-auto md:hidden"
+                    className="block object-cover object-center md:hidden"
                     priority={index === 0}
                   />
+
+                  {/* Tablet: full viewport height, fill from top */}
                   <Image
                     src={mediumImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="100vw"
-                    className="hidden w-full h-auto md:block lg:hidden"
+                    className="hidden object-cover object-center md:block lg:hidden"
                     priority={index === 0}
                   />
+
+                  {/* Desktop: fixed 600px band, fill from top */}
                   <Image
                     src={largeImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="1505px"
-                    className="hidden w-full h-auto lg:block 2xl:hidden"
+                    className="hidden object-cover object-top lg:block 2xl:hidden"
                     priority={index === 0}
                   />
+
+                  {/* XL: fixed 600px band, fill from top */}
                   <Image
                     src={extraLargeImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="1505px"
-                    className="hidden w-full h-auto 2xl:block"
+                    className="hidden object-cover object-top 2xl:block"
                     priority={index === 0}
                   />
                 </>
