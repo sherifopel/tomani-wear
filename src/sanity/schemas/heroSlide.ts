@@ -46,13 +46,6 @@ export const heroSlide = defineType({
       initialValue: '/products',
     }),
     defineField({
-      name: 'imagePosition',
-      title: 'Image Position',
-      description: 'Controls the crop position. Example: center 25%',
-      type: 'string',
-      initialValue: 'center center',
-    }),
-    defineField({
       name: 'order',
       title: 'Display Order',
       description: 'Lower numbers show first.',

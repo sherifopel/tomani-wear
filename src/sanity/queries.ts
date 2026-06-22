@@ -13,11 +13,11 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
   _id,
   "image": image.asset->url,
+  "hotspot": image.hotspot,
   label,
   heading,
   sub,
-  "href": coalesce(href, "/products"),
-  "position": coalesce(imagePosition, "center center")
+  "href": coalesce(href, "/products")
 }`
 
 export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {

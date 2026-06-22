@@ -6,7 +6,7 @@ import { HERO_SLIDES_QUERY } from '@/sanity/queries'
 type SanityHeroSlide = {
   _id: string
   image: string
-  position: string
+  hotspot?: { x: number; y: number }
   label?: string
   heading: string
   sub?: string
@@ -18,7 +18,7 @@ export default async function Home() {
   const heroSlides = sanitySlides.map((slide) => ({
     id: slide._id,
     image: slide.image,
-    position: slide.position,
+    hotspot: slide.hotspot,
     label: slide.label,
     heading: slide.heading,
     sub: slide.sub,
