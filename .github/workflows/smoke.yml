@@ -29,19 +29,39 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Wait for Vercel preview to be ready
-        uses: patrickedqvist/wait-for-vercel-preview@v1.3.2
+      - name: Get Vercel preview URL
         id: vercel_preview
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          max_timeout: 300
+        run: |
+          # Build the preview URL from the branch name — Vercel's naming convention
+          BRANCH="${{ github.head_ref }}"
+          # Replace / and _ with - and lowercase
+          SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
+          # Truncate to fit Vercel's URL limit
+          SLUG=$(echo "$SLUG" | cut -c1-63)
+          PREVIEW_URL="https://tomani-wear-git-${SLUG}-tomanni-wear.vercel.app"
+          echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "Preview URL: $PREVIEW_URL"
+
+      - name: Wait for preview to be ready
+        run: |
+          URL="${{ steps.vercel_preview.outputs.url }}?x-vercel-protection-bypass=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}"
+          echo "Waiting for ${{ steps.vercel_preview.outputs.url }}"
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Preview is ready!"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for preview"
+          exit 1
 
       - name: Run smoke tests against preview
         run: npx playwright test --grep @tomanni-smoke --project="Desktop Chrome"
         env:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
-          # Bypass Vercel Deployment Protection so CI can access the preview URL.
-          # Set this up in Vercel: Settings → Deployment Protection → Protection Bypass for Automation
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       - name: Upload Playwright report on failure
