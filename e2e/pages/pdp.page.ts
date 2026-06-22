@@ -7,7 +7,7 @@ import { Page, expect } from '@playwright/test'
 export const pdpSelectors = (page: Page) => ({
   page:         page.locator('[data-testid="pdp-page"]'),
   breadcrumb:   page.locator('[data-testid="pdp-breadcrumb"]'),
-  image:        page.locator('[data-testid="pdp-image"]'),
+  image:        page.locator('[data-testid="pdp-main-image"]'),
   name:         page.locator('[data-testid="pdp-name"]'),
   priceRow:     page.locator('[data-testid="pdp-price-row"]'),
   price:        page.locator('[data-testid="pdp-price"]'),
