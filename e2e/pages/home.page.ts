@@ -24,7 +24,7 @@ export const navSelectors = (page: Page) => ({
 // ─── 2. ACTION FUNCTIONS ──────────────────────────────────────────────────────
 export const navigate = async (page: Page, baseURL: string) => {
   await page.goto(baseURL + '/')
-  await page.waitForLoadState('networkidle')
+  await page.waitForLoadState('domcontentloaded')
 }
 
 export const clickHeroCTA = async (page: Page) => {
@@ -81,7 +81,7 @@ export const assertHeroHeightForViewport = async (
 ) => {
   await page.setViewportSize(viewport)
   await page.reload()
-  await page.waitForLoadState('networkidle')
+  await page.waitForLoadState('domcontentloaded')
 
   const box = await heroSelectors(page).section.boundingBox()
   expect(box?.height).toBeCloseTo(expectedHeight, 1)
