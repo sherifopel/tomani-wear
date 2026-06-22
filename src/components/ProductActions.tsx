@@ -15,7 +15,7 @@ export default function ProductActions({ sizes, inStock }: Props) {
 
       {/* Size selector */}
       {sizes && sizes.length > 0 && (
-        <div>
+        <div data-testid="pdp-size-selector">
           <p className="text-xs uppercase tracking-widest mb-3 font-medium">
             Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
           </p>
@@ -24,6 +24,7 @@ export default function ProductActions({ sizes, inStock }: Props) {
               <button
                 key={size}
                 onClick={() => setSelectedSize(size)}
+                data-testid={`pdp-size-${size}`}
                 className={`w-12 h-12 text-xs font-medium border transition-colors duration-200
                   ${selectedSize === size
                     ? 'bg-black text-white border-black'
@@ -40,6 +41,7 @@ export default function ProductActions({ sizes, inStock }: Props) {
       {/* Add to cart */}
       <button
         disabled={!inStock}
+        data-testid="pdp-add-to-cart"
         className={`w-full py-4 text-xs uppercase tracking-widest font-medium transition-colors duration-200
           ${inStock
             ? 'bg-black text-white hover:bg-gray-900'

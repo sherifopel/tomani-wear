@@ -47,10 +47,10 @@ export default async function ProductPage({
     : 'center center'
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white" data-testid="pdp-page">
 
       {/* Breadcrumb */}
-      <div className="px-6 py-4 text-xs text-gray-400 uppercase tracking-widest">
+      <div className="px-6 py-4 text-xs text-gray-400 uppercase tracking-widest" data-testid="pdp-breadcrumb">
         <Link href="/" className="hover:text-black transition-colors">Home</Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-black transition-colors">Products</Link>
@@ -62,7 +62,7 @@ export default async function ProductPage({
       <div className="max-w-7xl mx-auto px-6 pb-16 md:grid md:grid-cols-2 md:gap-16 md:items-start">
 
         {/* Image */}
-        <div className="relative aspect-[3/4] bg-gray-50 mb-8 md:mb-0">
+        <div className="relative aspect-[3/4] bg-gray-50 mb-8 md:mb-0" data-testid="pdp-image-container">
           {product.image && (
             <Image
               src={product.image}
@@ -71,10 +71,11 @@ export default async function ProductPage({
               priority
               className="object-contain p-8"
               style={{ objectPosition: objectPos }}
+              data-testid="pdp-image"
             />
           )}
           {onSale && (
-            <span className="absolute top-4 left-4 bg-[var(--brand-red)] text-white text-[10px] uppercase tracking-widest px-2 py-1">
+            <span className="absolute top-4 left-4 bg-[var(--brand-red)] text-white text-[10px] uppercase tracking-widest px-2 py-1" data-testid="pdp-sale-badge">
               Sale
             </span>
           )}
@@ -85,21 +86,21 @@ export default async function ProductPage({
 
           {/* Category */}
           {product.category && (
-            <p className="text-xs uppercase tracking-widest text-gray-400">
+            <p className="text-xs uppercase tracking-widest text-gray-400" data-testid="pdp-category">
               {product.category}
             </p>
           )}
 
           {/* Name */}
-          <h1 className="text-2xl font-light tracking-wide">{product.name}</h1>
+          <h1 className="text-2xl font-light tracking-wide" data-testid="pdp-name">{product.name}</h1>
 
           {/* Price */}
-          <div className="flex items-baseline gap-3">
-            <span className={`text-lg font-medium ${onSale ? 'text-[var(--brand-red)]' : ''}`}>
+          <div className="flex items-baseline gap-3" data-testid="pdp-price-row">
+            <span className={`text-lg font-medium ${onSale ? 'text-[var(--brand-red)]' : ''}`} data-testid="pdp-price">
               ₦{product.price.toLocaleString()}
             </span>
             {onSale && (
-              <span className="text-sm text-gray-400 line-through">
+              <span className="text-sm text-gray-400 line-through" data-testid="pdp-compare-price">
                 ₦{product.compareAtPrice!.toLocaleString()}
               </span>
             )}
@@ -119,7 +120,7 @@ export default async function ProductPage({
 
           {/* Description */}
           {product.description && (
-            <p className="text-sm text-gray-600 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed" data-testid="pdp-description">
               {product.description}
             </p>
           )}

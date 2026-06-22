@@ -20,6 +20,27 @@ test.describe('TW-4 Hero section — Desktop', { tag: ['@tomanni', '@TW-4', '@he
   })
 })
 
+// prettier-ignore
+test.describe('TW-4 Hero section — Mobile', { tag: ['@tomanni', '@TW-4', '@hero', '@mobile'] }, () => {
+  test.beforeEach(async ({ page, baseURL }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
+    await homePage.navigate(page, baseURL!)
+  })
+
+  test('Should display the hero section with heading, subtitle and description', async ({ page }) => {
+    await homePage.assertHeroVisible(page)
+    await homePage.assertHeroDescriptionVisible(page)
+  })
+
+  test('Should display a Shop Now CTA button', async ({ page }) => {
+    await homePage.assertHeroCTAVisible(page)
+  })
+
+  test('Should display the featured products section below the hero', async ({ page }) => {
+    await homePage.assertFeaturedProductsVisible(page)
+  })
+})
+
 test.describe('TW-5 Header — Mobile', { tag: ['@tomanni', '@TW-5', '@header', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => { await homePage.navigate(page, baseURL!) })
 
@@ -34,7 +55,7 @@ test.describe('TW-6 Hero responsive images', { tag: ['@tomanni', '@TW-6', '@hero
 
   test('Should fill the viewport height on mobile', async ({ page, baseURL }) => {
     await homePage.navigate(page, baseURL!)
-    await homePage.assertHeroHeightForViewport(page, { width: 390, height: 844 }, 844 - 84)
+    await homePage.assertHeroHeightForViewport(page, { width: 375, height: 667 }, 667 - 84)
   })
 
   test('Should fill the viewport height on tablet', async ({ page, baseURL }) => {
@@ -51,7 +72,7 @@ test.describe('TW-6 Hero responsive images', { tag: ['@tomanni', '@TW-6', '@hero
 test.describe('TW-7 Mobile menu', { tag: ['@tomanni', '@TW-7', '@mobile', '@nav'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await homePage.navigate(page, baseURL!)
-    await page.setViewportSize({ width: 390, height: 844 })
+    await page.setViewportSize({ width: 375, height: 667 })
   })
 
   test('Should open the mobile menu when the hamburger is tapped', async ({ page }) => {
@@ -83,8 +104,20 @@ test.describe('TW-7 Mobile menu', { tag: ['@tomanni', '@TW-7', '@mobile', '@nav'
 
 // ─── TOMANNI SMOKE ────────────────────────────────────────────────────────────
 // prettier-ignore
-test.describe('TW-4 Homepage Smoke — Desktop', { tag: ['@tomanni-smoke', '@TW-4', '@hero', '@desktop'] }, () => {
+test.describe('TW-4 Homepage Smoke — Desktop', { tag: ['@tomanni-smoke', '@TW-4','@hero','@desktop'] }, () => {
   test('Should render homepage with hero, CTA and featured products', async ({ page, baseURL }) => {
+    await homePage.navigate(page, baseURL!)
+    await homePage.assertHeroVisible(page)
+    await homePage.assertHeroDescriptionVisible(page)
+    await homePage.assertHeroCTAVisible(page)
+    await homePage.assertFeaturedProductsVisible(page)
+  })
+})
+
+// prettier-ignore
+test.describe('TW-4 Homepage Smoke — Mobile', { tag: ['@tomanni-smoke', '@TW-4', '@hero', '@mobile'] }, () => {
+  test('Should render homepage with hero, CTA and featured products', async ({ page, baseURL }) => {
+    await page.setViewportSize({ width: 375, height: 667 })
     await homePage.navigate(page, baseURL!)
     await homePage.assertHeroVisible(page)
     await homePage.assertHeroDescriptionVisible(page)
