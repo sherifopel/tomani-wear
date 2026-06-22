@@ -60,15 +60,16 @@ export default function ProductInteractive({
 
   const hasVariants = variants && variants.length > 0
 
+  const baseImages: GalleryImage[] = [
+    ...(mainImage ? [{ url: mainImage }] : []),
+    ...(gallery ?? []),
+  ]
+
   // Determine which images to show
   const activeImages: GalleryImage[] =
     activeVariantIndex !== null && hasVariants
       ? variants![activeVariantIndex].images
-      : gallery && gallery.length > 0
-      ? gallery
-      : mainImage
-      ? [{ url: mainImage }]
-      : []
+      : baseImages
 
   // Determine which sizes to show
   const activeSizes: string[] =
@@ -203,7 +204,7 @@ export default function ProductInteractive({
           slug={slug}
           name={name}
           price={price}
-          image={activeImages[0]?.url}
+          image={currentImage?.url ?? mainImage}
           colorName={activeVariantIndex !== null ? variants![activeVariantIndex].colorName : undefined}
           sizes={activeSizes}
           inStock={inStock}

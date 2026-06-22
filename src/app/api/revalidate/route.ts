@@ -33,10 +33,11 @@ export async function POST(request: NextRequest) {
   }
 
   revalidatePath('/', 'layout')
+  revalidatePath('/products', 'layout')
 
   return Response.json({
     revalidated: true,
-    path: '/',
+    paths: ['/', '/products'],
     now: Date.now(),
   })
 }

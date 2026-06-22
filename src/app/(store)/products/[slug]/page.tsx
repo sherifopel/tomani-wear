@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type Variant } from '@/components/ProductInteractive'
@@ -33,6 +34,8 @@ export default async function ProductPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
+  await connection()
+
   const { slug } = await params
   const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug })
 

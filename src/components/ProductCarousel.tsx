@@ -90,14 +90,14 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
             >
               {/* Image area: flex-1 fills all space above the text on mobile.
                   min-h-0 lets Safari honour flex-1 in a deep h-full chain. */}
-              <div className="relative flex-1 min-h-0 md:flex-none md:aspect-[4/5] bg-gray-100 overflow-hidden mb-3">
+              <div className="relative flex-1 min-h-0 md:flex-none md:aspect-[4/5] bg-white overflow-hidden mb-3">
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
                   loading="eager"
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="object-contain p-2 transition-transform duration-500 md:object-cover md:p-0 md:group-hover:scale-105"
                 />
               </div>
               <div className="h-12 shrink-0">
