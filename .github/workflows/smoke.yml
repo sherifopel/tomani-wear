@@ -64,10 +64,24 @@ jobs:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
-      - name: Upload Playwright report on failure
-        if: failure()
+      - name: Post test summary to GitHub
+        if: always()
+        run: |
+          if [ -f playwright-summary.html ]; then
+            echo "## 🎭 Playwright Smoke Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Preview URL: ${{ steps.vercel_preview.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            # Extract the plain-text table from the summary HTML (between <pre> tags)
+            grep -o '<pre>.*</pre>' playwright-summary.html | sed 's/<[^>]*>//g' >> $GITHUB_STEP_SUMMARY || true
+          fi
+
+      - name: Upload Playwright HTML report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: playwright-report/
-          retention-days: 7
+          path: |
+            playwright-report/
+            playwright-summary.html
+          retention-days: 14

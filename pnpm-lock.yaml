@@ -69,6 +69,9 @@ importers:
       lightningcss-darwin-arm64:
         specifier: ^1.32.0
         version: 1.32.0
+      playwright-final-summary-reporter:
+        specifier: github:sherifopel/playwright-final-summary-reporter
+        version: https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6(@playwright/test@1.61.0)
       tailwindcss:
         specifier: ^4
         version: 4.3.1
@@ -4861,6 +4864,13 @@ packages:
     resolution: {integrity: sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==}
     engines: {node: '>=18'}
     hasBin: true
+
+  playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6:
+    resolution: {gitHosted: true, integrity: sha512-nOE0Anno2N497NCwJSnj1v37km2pl3Y4qWRFvemlg2FFz9BpYheJOBQOV1fab07rTxlft3E8ROKb47OzxZFfmw==, tarball: https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6}
+    version: 1.0.0
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@playwright/test': '>=1.40.0'
 
   playwright@1.61.0:
     resolution: {integrity: sha512-Z+7BeeqQPRRzklHsVFP4KTGIyMxKUmfeRA4WisM6G3/XW6nwGeX6fX9qYaDa+CiUqpOkb2f6X3nar05R3kSuJQ==}
@@ -11274,6 +11284,10 @@ snapshots:
       - react
 
   playwright-core@1.61.0: {}
+
+  playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6(@playwright/test@1.61.0):
+    dependencies:
+      '@playwright/test': 1.61.0
 
   playwright@1.61.0:
     dependencies:
