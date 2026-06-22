@@ -16,6 +16,7 @@ type SanityHeroSlide = {
   heading: string
   sub?: string
   href: string
+  desktopFocalY: number
 }
 
 type Settings = {
@@ -63,20 +64,17 @@ export default async function Home({
       .url(),
     largeImage: urlForImage(slide.image)
       .width(1505)
-      .height(600)
-      .fit('crop')
       .auto('format')
       .url(),
     extraLargeImage: urlForImage(slide.extraLargeImage ?? slide.image)
       .width(1505)
-      .height(600)
-      .fit('crop')
       .auto('format')
       .url(),
     label: slide.label,
     heading: slide.heading,
     sub: slide.sub,
     href: slide.href,
+    desktopFocalY: slide.desktopFocalY ?? 30,
   }))
 
   return (
