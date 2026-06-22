@@ -51,10 +51,14 @@ export default async function Home({
     id: slide._id,
     smallImage: urlForImage(slide.mobileImage ?? slide.image)
       .width(800)
+      .height(1600)
+      .fit('crop')
       .auto('format')
       .url(),
     mediumImage: urlForImage(slide.mediumImage ?? slide.mobileImage ?? slide.image)
       .width(1024)
+      .height(1366)
+      .fit('crop')
       .auto('format')
       .url(),
     largeImage: urlForImage(slide.image)
