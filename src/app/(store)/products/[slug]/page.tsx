@@ -55,6 +55,8 @@ export default async function ProductPage({
       {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
       <div className="max-w-7xl mx-auto px-6 pb-16">
         <ProductInteractive
+          productId={product._id}
+          slug={product.slug}
           mainImage={product.image}
           gallery={product.gallery}
           variants={product.variants}
