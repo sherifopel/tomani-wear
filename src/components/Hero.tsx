@@ -67,23 +67,23 @@ export default function Hero({
                     priority={index === 0}
                   />
 
-                  {/* Desktop: fixed 600px band, fill from top */}
+                  {/* Desktop: aspect-ratio band, anchor upper 65% of image so heads stay visible */}
                   <Image
                     src={largeImage}
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-center lg:block 2xl:hidden"
+                    className="hidden object-cover object-[center_30%] lg:block 2xl:hidden"
                     priority={index === 0}
                   />
 
-                  {/* XL: fixed 600px band, fill from top */}
+                  {/* XL: aspect-ratio band, anchor upper 65% of image so heads stay visible */}
                   <Image
                     src={extraLargeImage}
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-center 2xl:block"
+                    className="hidden object-cover object-[center_30%] 2xl:block"
                     priority={index === 0}
                   />
                 </>
