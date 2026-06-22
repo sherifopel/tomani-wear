@@ -21,6 +21,7 @@ type Props = {
   gallery?: GalleryImage[]
   variants?: Variant[]
   sizes?: string[]
+  shoeSizes?: string
   inStock: boolean
   onSale: boolean
   compareAtPrice?: number
@@ -43,6 +44,7 @@ export default function ProductInteractive({
   gallery,
   variants,
   sizes,
+  shoeSizes,
   inStock,
   onSale,
   compareAtPrice,
@@ -195,6 +197,14 @@ export default function ProductInteractive({
 
         {/* Size selector + Add to cart */}
         <ProductActions sizes={activeSizes} inStock={inStock} />
+
+        {/* Shoe sizes */}
+        {shoeSizes && (
+          <div data-testid="pdp-shoe-sizes">
+            <p className="text-xs uppercase tracking-widest mb-2 font-medium">Shoe Sizes</p>
+            <p className="text-sm text-gray-700">{shoeSizes}</p>
+          </div>
+        )}
 
         <div className="border-t border-gray-100" />
 

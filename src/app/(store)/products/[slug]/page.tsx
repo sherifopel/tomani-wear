@@ -17,6 +17,7 @@ type Product = {
   description?: string
   category?: string
   sizes?: string[]
+  shoeSizes?: string
   inStock: boolean
 }
 
@@ -59,6 +60,7 @@ export default async function ProductPage({
           gallery={product.gallery}
           variants={product.variants}
           sizes={product.sizes}
+          shoeSizes={product.shoeSizes}
           inStock={product.inStock}
           onSale={onSale}
           compareAtPrice={product.compareAtPrice}
