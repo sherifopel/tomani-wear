@@ -89,5 +89,7 @@ export const assertHeroHeightForViewport = async (
   await page.waitForLoadState('domcontentloaded')
 
   const box = await heroSelectors(page).section.boundingBox()
-  expect(box?.height).toBeCloseTo(expectedHeight, 1)
+  // Allow ±5px tolerance for subpixel rounding and scrollbar differences
+  expect(box?.height).toBeGreaterThanOrEqual(expectedHeight - 5)
+  expect(box?.height).toBeLessThanOrEqual(expectedHeight + 5)
 }
