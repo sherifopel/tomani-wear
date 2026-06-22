@@ -1,9 +1,12 @@
 import { defineField, defineType } from 'sanity'
+import { ProductEditor } from '../components/ProductEditor'
 
 export const product = defineType({
   name: 'product',
   title: 'Product',
   type: 'document',
+  // Apply the custom UI at the document level so Tomiwa sees one clean form
+  components: { input: ProductEditor },
   fields: [
     // ── Identity ──────────────────────────────────────────────────────────
     defineField({
@@ -15,101 +18,10 @@ export const product = defineType({
     defineField({
       name: 'slug',
       title: 'Slug',
+      description: 'Auto-generated from the name. Used in the product URL.',
       type: 'slug',
       options: { source: 'name' },
       validation: (Rule) => Rule.required(),
-    }),
-
-    // ── Pricing ───────────────────────────────────────────────────────────
-    // compareAtPrice is the Shopify standard pattern for sales:
-    //   price           = what the customer pays today
-    //   compareAtPrice  = the original price (only set when on sale)
-    //
-    // If compareAtPrice is set and higher than price → item is on sale.
-    // To end a sale: just remove compareAtPrice. No boolean to forget.
-    defineField({
-      name: 'price',
-      title: 'Price (₦)',
-      description: 'Current selling price. Lower this when putting an item on sale.',
-      type: 'number',
-      validation: (Rule) => Rule.required().positive(),
-    }),
-    defineField({
-      name: 'compareAtPrice',
-      title: 'Compare-at Price (₦)',
-      description: 'Original price before the sale. Leave empty if not on sale.',
-      type: 'number',
-      validation: (Rule) => Rule.positive(),
-    }),
-
-    // ── Media ─────────────────────────────────────────────────────────────
-    defineField({
-      name: 'image',
-      title: 'Main Image',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: 'gallery',
-      title: 'Gallery Images',
-      description: 'Additional angles (front, back, detail). Used when no colour variants are defined.',
-      type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
-    }),
-    defineField({
-      name: 'variants',
-      title: 'Colour Variants',
-      description: 'Each colour gets its own images and available sizes.',
-      type: 'array',
-      of: [
-        {
-          type: 'object',
-          fields: [
-            defineField({
-              name: 'colorName',
-              title: 'Colour Name',
-              type: 'string',
-              validation: (Rule) => Rule.required(),
-            }),
-            defineField({
-              name: 'colorHex',
-              title: 'Colour Hex',
-              description: 'e.g. #000000 — used for the swatch circle on the product page',
-              type: 'string',
-            }),
-            defineField({
-              name: 'images',
-              title: 'Images',
-              type: 'array',
-              of: [{ type: 'image', options: { hotspot: true } }],
-            }),
-            defineField({
-              name: 'sizes',
-              title: 'Available Sizes',
-              description: 'Sizes available in this colour.',
-              type: 'array',
-              of: [{ type: 'string' }],
-              options: {
-                list: [
-                  { title: 'XS',  value: 'XS'  },
-                  { title: 'S',   value: 'S'   },
-                  { title: 'M',   value: 'M'   },
-                  { title: 'L',   value: 'L'   },
-                  { title: 'XL',  value: 'XL'  },
-                  { title: 'XXL', value: 'XXL' },
-                ],
-              },
-            }),
-          ],
-        },
-      ],
-    }),
-
-    // ── Details ───────────────────────────────────────────────────────────
-    defineField({
-      name: 'description',
-      title: 'Description',
-      type: 'text',
     }),
     defineField({
       name: 'category',
@@ -124,28 +36,95 @@ export const product = defineType({
       },
     }),
     defineField({
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+    }),
+
+    // ── Images (managed via ProductEditor UI) ─────────────────────────────
+    defineField({
+      name: 'image',
+      title: 'Main Image',
+      type: 'image',
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: 'gallery',
+      title: 'Additional Images',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    }),
+
+    // ── Colour Variants (managed via ProductEditor UI) ─────────────────────
+    defineField({
+      name: 'variants',
+      title: 'Colour Variants',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'colorName', title: 'Colour Name', type: 'string', validation: (Rule) => Rule.required() }),
+            defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string' }),
+            defineField({ name: 'images',    title: 'Images',      type: 'array', of: [{ type: 'image', options: { hotspot: true } }] }),
+            defineField({
+              name: 'sizes',
+              title: 'Available Sizes',
+              type: 'array',
+              of: [{ type: 'string' }],
+              options: {
+                list: [
+                  { title: 'XS', value: 'XS' }, { title: 'S', value: 'S' },
+                  { title: 'M',  value: 'M'  }, { title: 'L', value: 'L' },
+                  { title: 'XL', value: 'XL' }, { title: 'XXL', value: 'XXL' },
+                ],
+              },
+            }),
+          ],
+        },
+      ],
+    }),
+
+    // ── Sizes (managed via ProductEditor UI) ──────────────────────────────
+    defineField({
       name: 'sizes',
       title: 'Available Sizes',
-      description: 'Select all sizes currently in stock.',
       type: 'array',
       of: [{ type: 'string' }],
       options: {
         list: [
-          { title: 'XS', value: 'XS' },
-          { title: 'S',  value: 'S'  },
-          { title: 'M',  value: 'M'  },
-          { title: 'L',  value: 'L'  },
-          { title: 'XL', value: 'XL' },
-          { title: 'XXL', value: 'XXL' },
+          { title: 'XS', value: 'XS' }, { title: 'S', value: 'S'  },
+          { title: 'M',  value: 'M'  }, { title: 'L', value: 'L'  },
+          { title: 'XL', value: 'XL' }, { title: 'XXL', value: 'XXL' },
         ],
       },
+    }),
+    defineField({
+      name: 'shoeSizes',
+      title: 'Shoe Sizes',
+      description: 'Comma-separated, e.g. 40, 41, 42, 43',
+      type: 'string',
+    }),
+
+    // ── Pricing (managed via ProductEditor UI) ────────────────────────────
+    defineField({
+      name: 'price',
+      title: 'Price (₦)',
+      type: 'number',
+      validation: (Rule) => Rule.required().positive(),
+    }),
+    defineField({
+      name: 'compareAtPrice',
+      title: 'Compare-at Price (₦)',
+      type: 'number',
+      validation: (Rule) => Rule.positive(),
     }),
 
     // ── Visibility ────────────────────────────────────────────────────────
     defineField({
       name: 'featured',
       title: 'Show in New Arrivals',
-      description: 'Tick to feature this product on the homepage carousel.',
+      description: 'Tick to feature this product on the homepage.',
       type: 'boolean',
       initialValue: false,
     }),
@@ -157,4 +136,14 @@ export const product = defineType({
       initialValue: true,
     }),
   ],
+  preview: {
+    select: { title: 'name', media: 'image', price: 'price' },
+    prepare({ title, media, price }) {
+      return {
+        title:    title ?? 'Untitled product',
+        media,
+        subtitle: price ? `₦${Number(price).toLocaleString()}` : 'No price set',
+      }
+    },
+  },
 })
