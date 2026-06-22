@@ -23,12 +23,10 @@ export default function Hero({
   slides = [],
   autoplay = true,
   showArrows = false,
-  desktopRatio = '1505/600',
 }: {
   slides?: HeroSlide[]
   autoplay?: boolean
   showArrows?: boolean
-  desktopRatio?: string
 }) {
   const heroSlides = slides
   const [emblaRef, emblaApi] = useEmblaCarousel(
@@ -40,8 +38,7 @@ export default function Hero({
   return (
     <section
       data-testid="home-hero-section"
-      className="relative w-full overflow-hidden snap-start shrink-0 aspect-[3/4] md:aspect-[4/3] lg:aspect-[var(--hero-desktop-ratio)] lg:mx-auto lg:max-w-[1505px]"
-      style={{ ['--hero-desktop-ratio' as string]: desktopRatio }}
+      className="relative w-full overflow-hidden snap-start shrink-0 aspect-[3/4] md:aspect-[4/3] lg:aspect-[1505/600] lg:mx-auto lg:max-w-[1505px]"
       ref={emblaRef}
     >
       <div className="flex h-full">

@@ -43,6 +43,5 @@ export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {
   announcementBars,
   announcementBarEnabled,
   heroAutoplay,
-  heroShowArrows,
-  "heroDesktopRatio": coalesce(heroDesktopRatio, "1505/600")
+  heroShowArrows
 }`

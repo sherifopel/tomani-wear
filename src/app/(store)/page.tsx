@@ -22,7 +22,6 @@ type SanityHeroSlide = {
 type Settings = {
   heroAutoplay?: boolean
   heroShowArrows?: boolean
-  heroDesktopRatio?: string
 }
 
 export default async function Home({
@@ -84,7 +83,6 @@ export default async function Home({
         slides={heroSlides}
         autoplay={settings?.heroAutoplay !== false}
         showArrows={settings?.heroShowArrows === true}
-        desktopRatio={settings?.heroDesktopRatio ?? '1505/600'}
       />
       <FeaturedProducts />
     </main>
