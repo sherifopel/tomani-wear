@@ -15,10 +15,11 @@ export const heroSlide = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Fallback Image',
-      description: 'Used as the slide thumbnail in this list view. Upload your actual hero images in "Image Preview & Focal Points" below.',
+      title: 'Hero Image',
+      description: 'Upload one image. The preview below shows how it crops on each device — use the slider to adjust the focal point.',
       type: 'image',
       options: { hotspot: true },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'label',
@@ -52,10 +53,6 @@ export const heroSlide = defineType({
       description: 'Preview how the hero image crops on each device and adjust the focal point.',
       type: 'object',
       fields: [
-        defineField({ name: 'mobileImage',  title: 'Mobile Image',       type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'tabletImage',  title: 'Tablet Image',       type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'desktopImage', title: 'Desktop Image',      type: 'image', options: { hotspot: true } }),
-        defineField({ name: 'xlImage',      title: 'Extra Large Image',  type: 'image', options: { hotspot: true } }),
         defineField({ name: 'mobile',  title: 'Mobile focal Y',  type: 'number', initialValue: 50 }),
         defineField({ name: 'tablet',  title: 'Tablet focal Y',  type: 'number', initialValue: 50 }),
         defineField({ name: 'desktop', title: 'Desktop focal Y', type: 'number', initialValue: 30 }),
