@@ -1,0 +1,73 @@
+name: Smoke tests — Vercel preview
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  smoke:
+    name: Playwright smoke (@tomanni-smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Get Vercel preview URL
+        id: vercel_preview
+        run: |
+          # Build the preview URL from the branch name — Vercel's naming convention
+          BRANCH="${{ github.head_ref }}"
+          # Replace / and _ with - and lowercase
+          SLUG=$(echo "$BRANCH" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
+          # Truncate to fit Vercel's URL limit
+          SLUG=$(echo "$SLUG" | cut -c1-63)
+          PREVIEW_URL="https://tomani-wear-git-${SLUG}-tomanni-wear.vercel.app"
+          echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+          echo "Preview URL: $PREVIEW_URL"
+
+      - name: Wait for preview to be ready
+        run: |
+          URL="${{ steps.vercel_preview.outputs.url }}?x-vercel-protection-bypass=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}"
+          echo "Waiting for ${{ steps.vercel_preview.outputs.url }}"
+          for i in $(seq 1 30); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            echo "Attempt $i: HTTP $STATUS"
+            if [ "$STATUS" = "200" ]; then
+              echo "Preview is ready!"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Timed out waiting for preview"
+          exit 1
+
+      - name: Run smoke tests against preview
+        run: npx playwright test --grep @tomanni-smoke --project="Desktop Chrome"
+        env:
+          BASE_URL: ${{ steps.vercel_preview.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

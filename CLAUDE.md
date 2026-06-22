@@ -66,6 +66,9 @@ After the store is working, we build Claude API agents:
 - **Order Agent** — tracks and updates customers on orders
 - **Marketing Agent** — generates social media copy for new drops
 
+## Golden Rule — Never Assume
+**Always verify before acting.** If something is unclear — the branch setup, the environment, what a file contains, what's actually deployed — check it first. Read the file, run the command, look at the output. Never guess and proceed. If unsure, ask Sherif. A wrong assumption wastes more time than a quick confirmation.
+
 ## Important
 - Budget: max £30/month
 - Always choose free tiers where possible

@@ -47,27 +47,27 @@ export default async function Navbar() {
         <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-5">
+      <div className="flex items-center justify-end gap-3 md:gap-5">
         <button
           data-testid="nav-search-button"
           aria-label="Search"
-          className="hidden md:block transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="transition-transform duration-200 hover:scale-125 active:scale-95"
         >
-          <Search size={20} strokeWidth={1.5} />
+          <Search className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>
         <button
           data-testid="nav-account-button"
           aria-label="Account"
-          className="hidden md:block transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="transition-transform duration-200 hover:scale-125 active:scale-95"
         >
-          <User size={20} strokeWidth={1.5} />
+          <User className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>
         <button
           data-testid="nav-cart-button"
           aria-label="Cart"
           className="relative transition-transform duration-200 hover:scale-125 active:scale-95"
         >
-          <ShoppingBag size={20} strokeWidth={1.5} />
+          <ShoppingBag className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
           <span
             data-testid="nav-cart-count"
             className="absolute -top-1 -right-1 bg-[var(--brand-red)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center"
