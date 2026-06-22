@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { FocalYSlider } from '../components/FocalYSlider'
 
 export const heroSlide = defineType({
   name: 'heroSlide',
@@ -69,11 +70,12 @@ export const heroSlide = defineType({
     }),
     defineField({
       name: 'desktopFocalY',
-      title: 'Desktop Focal Point (vertical %)',
-      description: 'Controls which part of the desktop image stays visible. 0 = very top, 50 = centre, 100 = very bottom. Default 30 keeps faces in frame for most portrait photos.',
+      title: 'Desktop Image Position (vertical)',
+      description: 'Slide to control which part of the image shows on desktop. 0 = top of image, 50 = middle, 100 = bottom. Start at 30 — most portrait photos show the face there.',
       type: 'number',
       initialValue: 30,
       validation: (Rule) => Rule.min(0).max(100),
+      components: { input: FocalYSlider },
     }),
     defineField({
       name: 'order',
