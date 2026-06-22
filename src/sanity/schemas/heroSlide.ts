@@ -1,5 +1,4 @@
 import { defineField, defineType } from 'sanity'
-import { FocalYSlider } from '../components/FocalYSlider'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
 
 export const heroSlide = defineType({
@@ -15,31 +14,9 @@ export const heroSlide = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'mobileImage',
-      title: 'Small Hero Image',
-      description: 'Used on phones. Crop this for the small preview.',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: 'mediumImage',
-      title: 'Medium Hero Image',
-      description: 'Used on tablets and medium screens. If empty, the small image is reused.',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
       name: 'image',
-      title: 'Large Hero Image',
-      description: 'Used on desktop. The site crops this to a 1505 x 600 hero frame.',
-      type: 'image',
-      options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: 'extraLargeImage',
-      title: 'Extra Large Hero Image',
-      description: 'Used on extra large screens. If empty, the large image is reused.',
+      title: 'Fallback Image',
+      description: 'Used as the slide thumbnail in this list view. Upload your actual hero images in "Image Preview & Focal Points" below.',
       type: 'image',
       options: { hotspot: true },
     }),
@@ -84,15 +61,6 @@ export const heroSlide = defineType({
         defineField({ name: 'desktop', title: 'Desktop focal Y', type: 'number', initialValue: 30 }),
       ],
       components: { input: HeroFocalPreview },
-    }),
-    defineField({
-      name: 'desktopFocalY',
-      title: 'Desktop Image Position (vertical)',
-      description: 'Slide to control which part of the image shows on desktop. 0 = top of image, 50 = middle, 100 = bottom. Start at 30 — most portrait photos show the face there.',
-      type: 'number',
-      initialValue: 30,
-      validation: (Rule) => Rule.min(0).max(100),
-      components: { input: FocalYSlider },
     }),
     defineField({
       name: 'order',
