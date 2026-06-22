@@ -15,8 +15,8 @@ Closes #<!-- issue number -->
 - [ ] Given ... When ... Then ...
 
 ## How to test
-<!-- Steps to verify this works on the staging URL -->
-1. Go to `https://tomani-wear-git-dev-sherifopel.vercel.app`
+<!-- Steps to verify this works on the Vercel preview URL (auto-posted by Vercel bot on this PR) -->
+1. Go to the Vercel preview URL above
 2. 
 
 ## Screenshots (if visual change)
