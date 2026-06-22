@@ -20,6 +20,21 @@ export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false
   "href": coalesce(href, "/products")
 }`
 
+export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current == $slug][0] {
+  _id,
+  name,
+  "slug": slug.current,
+  price,
+  compareAtPrice,
+  "image": image.asset->url,
+  "hotspot": image.hotspot,
+  description,
+  category,
+  sizes,
+  inStock,
+  featured
+}`
+
 export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {
   announcementBar,
   announcementBars,
