@@ -86,11 +86,11 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
               data-testid={`home-product-card-${product.id}`}
               // The fixed info height keeps every image frame the same size,
               // even when product names have different lengths.
-              className="group flex-none w-full sm:w-[50%] md:w-[33%] h-full md:h-auto flex flex-col"
+              className="group flex-none w-full sm:w-[50%] md:w-[33%] h-full md:h-auto grid grid-rows-[minmax(0,1fr)_5.75rem] md:flex md:flex-col"
             >
               {/* Image area: flex-1 fills all space above the text on mobile.
                   min-h-0 lets Safari honour flex-1 in a deep h-full chain. */}
-              <div className="relative flex-1 min-h-0 md:flex-none md:aspect-[4/5] bg-white overflow-hidden mb-3">
+              <div className="relative min-h-0 md:flex-none md:aspect-[4/5] bg-white overflow-hidden mb-3">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -100,11 +100,17 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
                   className="object-contain p-2 transition-transform duration-500 md:object-cover md:p-0 md:group-hover:scale-105"
                 />
               </div>
-              <div className="h-12 shrink-0">
-                <p className="text-sm font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+              <div className="min-h-0 shrink-0">
+                <p
+                  data-testid={`home-product-name-${product.id}`}
+                  className="text-base font-medium overflow-hidden text-ellipsis whitespace-nowrap"
+                >
                   {product.name}
                 </p>
-                <p className="text-sm text-gray-400 mt-0.5">
+                <p
+                  data-testid={`home-product-price-${product.id}`}
+                  className="text-[28px] font-light tracking-widest text-gray-400 mt-1"
+                >
                   ₦{product.price.toLocaleString()}
                 </p>
               </div>

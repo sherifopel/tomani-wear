@@ -1,5 +1,5 @@
 /**
- * TW-3 Product Detail Page
+ * Product Detail Page
  *
  * Test product: skeleton-hoodie (confirmed 200 on Vercel, has name/price/description)
  * inStock: null → renders "Sold Out" — covers the out-of-stock acceptance criterion.
@@ -8,64 +8,64 @@
  * Size rendering will be covered once that data issue is fixed in Sanity.
  */
 
-import { test, expect } from '../fixtures'
-import * as pdpPage from '../pages/pdp.page'
-import * as util from '../utils/utils'
+import { test, expect } from '../../fixtures'
+import * as pdpPage from '../../pages/pdp.page'
+import * as util from '../../utils/utils'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 🖥  DESKTOP
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-3 PDP — core details', { tag: ['@tomanni', '@TW-3', '@pdp', '@desktop'] }, () => {
+test.describe('PDP — core details', { tag: ['@tomanni', '@pdp', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
   })
 
   test('Should display the product name', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.name).toBeVisible()
-    await expect(s.name).not.toBeEmpty()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.name).toBeVisible()
+    await expect(selectors.name).not.toBeEmpty()
   })
 
   test('Should display the product price in Naira', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.price).toBeVisible()
-    await expect(s.price).toContainText('₦')
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.price).toBeVisible()
+    await expect(selectors.price).toContainText('₦')
   })
 
   test('Should display a product image', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.image).toBeVisible()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.image).toBeVisible()
   })
 
   test('Should display the product description', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.description).toBeVisible()
-    await expect(s.description).not.toBeEmpty()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.description).toBeVisible()
+    await expect(selectors.description).not.toBeEmpty()
   })
 
   test('Should show the breadcrumb trail with Home / Products / product name', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.breadcrumb).toBeVisible()
-    await expect(s.breadcrumb).toContainText('Home')
-    await expect(s.breadcrumb).toContainText('Products')
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.breadcrumb).toBeVisible()
+    await expect(selectors.breadcrumb).toContainText('Home')
+    await expect(selectors.breadcrumb).toContainText('Products')
   })
 })
 
 // prettier-ignore
-test.describe('TW-3 PDP — sold-out state', { tag: ['@tomanni', '@TW-3', '@pdp', '@desktop'] }, () => {
+test.describe('PDP — sold-out state', { tag: ['@tomanni', '@pdp', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
   })
 
   test('Should show "Sold Out" and disable the button when product is not in stock', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.addToCart).toBeVisible()
-    await expect(s.addToCart).toContainText(/sold out/i)
-    await expect(s.addToCart).toBeDisabled()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.addToCart).toBeVisible()
+    await expect(selectors.addToCart).toContainText(/sold out/i)
+    await expect(selectors.addToCart).toBeDisabled()
   })
 })
 
@@ -74,27 +74,27 @@ test.describe('TW-3 PDP — sold-out state', { tag: ['@tomanni', '@TW-3', '@pdp'
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-3 PDP — core details — Mobile', { tag: ['@tomanni', '@TW-3', '@pdp', '@mobile'] }, () => {
+test.describe('PDP — core details — Mobile', { tag: ['@tomanni', '@pdp', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
   })
 
   test('Should display the product name', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.name).toBeVisible()
-    await expect(s.name).not.toBeEmpty()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.name).toBeVisible()
+    await expect(selectors.name).not.toBeEmpty()
   })
 
   test('Should display the product price in Naira', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.price).toBeVisible()
-    await expect(s.price).toContainText('₦')
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.price).toBeVisible()
+    await expect(selectors.price).toContainText('₦')
   })
 
   test('Should display a product image', async ({ page }) => {
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.image).toBeVisible()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.image).toBeVisible()
   })
 })
 
@@ -103,7 +103,7 @@ test.describe('TW-3 PDP — core details — Mobile', { tag: ['@tomanni', '@TW-3
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-3 PDP — 404 for unknown slug', { tag: ['@tomanni', '@TW-3', '@pdp'] }, () => {
+test.describe('PDP — 404 for unknown slug', { tag: ['@tomanni', '@pdp'] }, () => {
   test('Should show a 404 page when the product slug does not exist', async ({ page, baseURL }) => {
     const response = await page.goto(`${baseURL}/products/this-product-does-not-exist`, {
       waitUntil: 'domcontentloaded',
@@ -117,7 +117,7 @@ test.describe('TW-3 PDP — 404 for unknown slug', { tag: ['@tomanni', '@TW-3', 
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-3 PDP Smoke — Desktop', { tag: ['@tomanni-smoke', '@TW-3', '@pdp', '@desktop'] }, () => {
+test.describe('PDP smoke — Desktop', { tag: ['@tomanni-smoke', '@pdp', '@desktop'] }, () => {
   test('Should render PDP with name, price, image and description', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
@@ -126,13 +126,13 @@ test.describe('TW-3 PDP Smoke — Desktop', { tag: ['@tomanni-smoke', '@TW-3', '
 })
 
 // prettier-ignore
-test.describe('TW-3 PDP Smoke — Mobile', { tag: ['@tomanni-smoke', '@TW-3', '@pdp', '@mobile'] }, () => {
+test.describe('PDP smoke — Mobile', { tag: ['@tomanni-smoke', '@pdp', '@mobile'] }, () => {
   test('Should render PDP with name, price and image on mobile', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
-    const s = pdpPage.pdpSelectors(page)
-    await expect(s.name).toBeVisible()
-    await expect(s.price).toContainText('₦')
-    await expect(s.image).toBeVisible()
+    const selectors = pdpPage.pdpSelectors(page)
+    await expect(selectors.name).toBeVisible()
+    await expect(selectors.price).toContainText('₦')
+    await expect(selectors.image).toBeVisible()
   })
 })

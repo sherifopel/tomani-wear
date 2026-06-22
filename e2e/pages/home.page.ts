@@ -21,7 +21,9 @@ export const homeSelectors = (page: Page) => {
     },
 
     featured: {
-      section: page.locator('[data-testid="home-featured-products"]'),
+      section:           page.locator('[data-testid="home-featured-products"]'),
+      firstProductName:  page.locator('[data-testid="home-product-name-1"]'),
+      firstProductPrice: page.locator('[data-testid="home-product-price-1"]'),
     },
   }
 }
@@ -75,6 +77,8 @@ export const assertHeroDescriptionVisible = async (page: Page) => {
 export const assertFeaturedProductsVisible = async (page: Page) => {
   const { featured } = homeSelectors(page)
   await expect(featured.section).toBeVisible()
+  await expect(featured.firstProductName).toBeVisible()
+  await expect(featured.firstProductPrice).toBeVisible()
 }
 
 export const assertHeroHeightForViewport = async (

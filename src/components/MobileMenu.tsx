@@ -34,7 +34,7 @@ export default function MobileMenu() {
       {open && (
         <div
           data-testid="mobile-menu"
-          className="fixed inset-0 z-[100] bg-white flex flex-col md:hidden"
+          className="fixed inset-0 z-[200] bg-white flex flex-col md:hidden"
         >
           {/* ── Top bar: mirrors the Navbar header ── */}
           <div className="border-b border-gray-100 px-6 py-4 grid grid-cols-3 items-center shrink-0">

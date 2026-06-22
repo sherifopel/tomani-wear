@@ -96,7 +96,7 @@ export default async function Footer() {
       : []
 
   return (
-    <footer className="bg-white border-t border-gray-200 py-10 px-6 snap-start shrink-0">
+    <footer className="bg-white border-t border-gray-200 py-10 px-6">
       <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
         {footerLinks.length > 0 && (
           <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">

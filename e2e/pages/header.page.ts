@@ -7,6 +7,7 @@ import { Page, expect } from '@playwright/test'
 export const headerSelectors = (page: Page) => ({
 
   navBar: {
+    mainRow:       page.locator('[data-testid="nav-main-row"]'),
     searchButton:    page.locator('[data-testid="nav-search-button"]'),
     accountButton:   page.locator('[data-testid="nav-account-button"]'),
     cartButton:      page.locator('[data-testid="nav-cart-button"]'),
@@ -70,6 +71,26 @@ export const assertMobileMenuContents = async (page: Page) => {
   await expect(mobileMenu.searchButton).toBeVisible()
   await expect(mobileMenu.accountButton).toBeVisible()
   await expect(mobileMenu.cartButton).toBeVisible()
+}
+
+export const assertMobileMenuCoversHeader = async (page: Page) => {
+  const { mobileMenu, navBar } = headerSelectors(page)
+  await expect(mobileMenu.overlay).toBeVisible()
+
+  for (const locator of [navBar.announcementBar, navBar.mainRow]) {
+    const box = await locator.boundingBox()
+    expect(box).not.toBeNull()
+
+    const isMenuOnTop = await page.evaluate(({ x, y }) => {
+      const topElement = document.elementFromPoint(x, y)
+      return Boolean(topElement?.closest('[data-testid="mobile-menu"]'))
+    }, {
+      x: box!.x + box!.width / 2,
+      y: box!.y + box!.height / 2,
+    })
+
+    expect(isMenuOnTop).toBe(true)
+  }
 }
 
 export const assertMobileNavLinksVisible = async (page: Page) => {

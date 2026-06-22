@@ -34,7 +34,10 @@ export default async function Navbar() {
   ) : undefined
 
   const mainRow = (
-    <div className="border-b border-gray-100 px-6 py-4 grid grid-cols-3 items-center">
+    <div
+      data-testid="nav-main-row"
+      className="border-b border-gray-100 px-6 py-4 grid grid-cols-3 items-center"
+    >
       <div className="flex items-center">
         <MobileMenu />
         <span className="hidden md:block text-xs text-gray-400 uppercase tracking-widest">Lagos, NG</span>
