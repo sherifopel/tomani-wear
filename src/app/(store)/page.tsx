@@ -63,14 +63,10 @@ export default async function Home({
       .url(),
     largeImage: urlForImage(slide.image)
       .width(1505)
-      .height(600)
-      .fit('crop')
       .auto('format')
       .url(),
     extraLargeImage: urlForImage(slide.extraLargeImage ?? slide.image)
       .width(1505)
-      .height(600)
-      .fit('crop')
       .auto('format')
       .url(),
     label: slide.label,

@@ -35,7 +35,7 @@ export default function Hero({
   const canNavigate = showArrows && heroSlides.length > 1
 
   return (
-    <section data-testid="home-hero-section" className="relative h-[calc(100svh-5.25rem)] w-full overflow-hidden snap-start shrink-0 lg:mx-auto lg:h-[600px] lg:max-w-[1505px]" ref={emblaRef}>
+    <section data-testid="home-hero-section" className="relative w-full overflow-hidden snap-start shrink-0 aspect-[3/4] md:aspect-[4/3] lg:aspect-[1505/600] lg:mx-auto lg:max-w-[1505px]" ref={emblaRef}>
       <div className="flex h-full">
         {heroSlides.map((slide, index) => (
           <div key={slide.id} className="flex-none w-full h-full relative">
@@ -73,7 +73,7 @@ export default function Hero({
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-top lg:block 2xl:hidden"
+                    className="hidden object-cover object-center lg:block 2xl:hidden"
                     priority={index === 0}
                   />
 
@@ -83,7 +83,7 @@ export default function Hero({
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-top 2xl:block"
+                    className="hidden object-cover object-center 2xl:block"
                     priority={index === 0}
                   />
                 </>
