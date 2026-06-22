@@ -5,7 +5,7 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
   name,
   "slug": slug.current,
   price,
-  "image": image.asset->url,
+  "image": coalesce(productImages[isMain == true][0].image.asset->url, productImages[0].image.asset->url),
   description,
   category
 }`
@@ -28,9 +28,9 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   "slug": slug.current,
   price,
   compareAtPrice,
-  "image": image.asset->url,
-  "hotspot": image.hotspot,
-  "gallery": gallery[]{ "url": asset->url, hotspot },
+  "image": coalesce(productImages[isMain == true][0].image.asset->url, productImages[0].image.asset->url),
+  "hotspot": coalesce(productImages[isMain == true][0].image.hotspot, productImages[0].image.hotspot),
+  "gallery": productImages[isMain != true][]{ "url": image.asset->url, "hotspot": image.hotspot },
   "variants": variants[]{ colorName, colorHex, "images": images[]{ "url": asset->url, hotspot }, sizes },
   description,
   category,

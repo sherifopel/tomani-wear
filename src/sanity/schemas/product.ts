@@ -42,17 +42,27 @@ export const product = defineType({
     }),
 
     // ── Images (managed via ProductEditor UI) ─────────────────────────────
+    // All product images live in one pool. The one marked isMain = true
+    // becomes the hero shot; the rest become the gallery.
     defineField({
-      name: 'image',
-      title: 'Main Image',
-      type: 'image',
-      options: { hotspot: true },
-    }),
-    defineField({
-      name: 'gallery',
-      title: 'Additional Images',
+      name: 'productImages',
+      title: 'Product Images',
       type: 'array',
-      of: [{ type: 'image', options: { hotspot: true } }],
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({ name: 'image', title: 'Image', type: 'image', options: { hotspot: true } }),
+            defineField({ name: 'isMain', title: 'Main Display', type: 'boolean', initialValue: false }),
+          ],
+          preview: {
+            select: { media: 'image', isMain: 'isMain' },
+            prepare({ media, isMain }) {
+              return { title: isMain ? '★ Main Display' : 'Gallery image', media }
+            },
+          },
+        },
+      ],
     }),
 
     // ── Colour Variants (managed via ProductEditor UI) ─────────────────────
@@ -137,7 +147,7 @@ export const product = defineType({
     }),
   ],
   preview: {
-    select: { title: 'name', media: 'image', price: 'price' },
+    select: { title: 'name', media: 'productImages.0.image', price: 'price' },
     prepare({ title, media, price }) {
       return {
         title:    title ?? 'Untitled product',
