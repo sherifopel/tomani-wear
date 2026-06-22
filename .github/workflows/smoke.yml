@@ -34,13 +34,15 @@ jobs:
         id: vercel_preview
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          vercel_token: ${{ secrets.VERCEL_TOKEN }}
           max_timeout: 300
 
       - name: Run smoke tests against preview
         run: npx playwright test --grep @tomanni-smoke --project="Desktop Chrome"
         env:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
+          # Bypass Vercel Deployment Protection so CI can access the preview URL.
+          # Set this up in Vercel: Settings → Deployment Protection → Protection Bypass for Automation
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
 
       - name: Upload Playwright report on failure
         if: failure()
