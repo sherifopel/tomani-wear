@@ -19,7 +19,8 @@ export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false
   label,
   heading,
   sub,
-  "href": coalesce(href, "/products")
+  "href": coalesce(href, "/products"),
+  "desktopFocalY": coalesce(desktopFocalY, 30)
 }`
 
 export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current == $slug][0] {

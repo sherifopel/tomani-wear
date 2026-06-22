@@ -16,6 +16,7 @@ type SanityHeroSlide = {
   heading: string
   sub?: string
   href: string
+  desktopFocalY: number
 }
 
 type Settings = {
@@ -73,6 +74,7 @@ export default async function Home({
     heading: slide.heading,
     sub: slide.sub,
     href: slide.href,
+    desktopFocalY: slide.desktopFocalY ?? 30,
   }))
 
   return (

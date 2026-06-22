@@ -68,6 +68,14 @@ export const heroSlide = defineType({
       initialValue: '/products',
     }),
     defineField({
+      name: 'desktopFocalY',
+      title: 'Desktop Focal Point (vertical %)',
+      description: 'Controls which part of the desktop image stays visible. 0 = very top, 50 = centre, 100 = very bottom. Default 30 keeps faces in frame for most portrait photos.',
+      type: 'number',
+      initialValue: 30,
+      validation: (Rule) => Rule.min(0).max(100),
+    }),
+    defineField({
       name: 'order',
       title: 'Display Order',
       description: 'Lower numbers show first.',

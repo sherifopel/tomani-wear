@@ -16,6 +16,7 @@ type HeroSlide = {
   heading: string
   sub?: string
   href: string
+  desktopFocalY?: number
 }
 
 export default function Hero({
@@ -45,9 +46,11 @@ export default function Hero({
               const mediumImage = slide.mediumImage ?? smallImage
               const extraLargeImage = slide.extraLargeImage ?? largeImage
 
+              const desktopObjectPosition = `center ${slide.desktopFocalY ?? 30}%`
+
               return (
                 <>
-                  {/* Mobile: full viewport height, fill from top */}
+                  {/* Mobile: portrait aspect ratio, centred */}
                   <Image
                     src={smallImage}
                     alt={slide.heading}
@@ -57,7 +60,7 @@ export default function Hero({
                     priority={index === 0}
                   />
 
-                  {/* Tablet: full viewport height, fill from top */}
+                  {/* Tablet: 4/3 aspect ratio, centred */}
                   <Image
                     src={mediumImage}
                     alt={slide.heading}
@@ -67,23 +70,25 @@ export default function Hero({
                     priority={index === 0}
                   />
 
-                  {/* Desktop: aspect-ratio band, anchor upper 65% of image so heads stay visible */}
+                  {/* Desktop: focal point controlled per-slide from Sanity */}
                   <Image
                     src={largeImage}
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-[center_30%] lg:block 2xl:hidden"
+                    className="hidden object-cover lg:block 2xl:hidden"
+                    style={{ objectPosition: desktopObjectPosition }}
                     priority={index === 0}
                   />
 
-                  {/* XL: aspect-ratio band, anchor upper 65% of image so heads stay visible */}
+                  {/* XL: focal point controlled per-slide from Sanity */}
                   <Image
                     src={extraLargeImage}
                     alt={slide.heading}
                     fill
                     sizes="1505px"
-                    className="hidden object-cover object-[center_30%] 2xl:block"
+                    className="hidden object-cover 2xl:block"
+                    style={{ objectPosition: desktopObjectPosition }}
                     priority={index === 0}
                   />
                 </>
