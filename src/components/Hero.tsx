@@ -16,6 +16,8 @@ type HeroSlide = {
   heading: string
   sub?: string
   href: string
+  mobileFocalY?: number
+  tabletFocalY?: number
   desktopFocalY?: number
 }
 
@@ -50,27 +52,31 @@ export default function Hero({
               const mediumImage = slide.mediumImage ?? smallImage
               const extraLargeImage = slide.extraLargeImage ?? largeImage
 
+              const mobileObjectPosition  = `center ${slide.mobileFocalY  ?? 50}%`
+              const tabletObjectPosition  = `center ${slide.tabletFocalY  ?? 50}%`
               const desktopObjectPosition = `center ${slide.desktopFocalY ?? 30}%`
 
               return (
                 <>
-                  {/* Mobile: portrait aspect ratio, centred */}
+                  {/* Mobile: full viewport height, focal point from Sanity */}
                   <Image
                     src={smallImage}
                     alt={slide.heading}
                     fill
                     sizes="100vw"
-                    className="block object-cover object-center md:hidden"
+                    className="block object-cover md:hidden"
+                    style={{ objectPosition: mobileObjectPosition }}
                     priority={index === 0}
                   />
 
-                  {/* Tablet: 4/3 aspect ratio, centred */}
+                  {/* Tablet: full viewport height, focal point from Sanity */}
                   <Image
                     src={mediumImage}
                     alt={slide.heading}
                     fill
                     sizes="100vw"
-                    className="hidden object-cover object-center md:block lg:hidden"
+                    className="hidden object-cover md:block lg:hidden"
+                    style={{ objectPosition: tabletObjectPosition }}
                     priority={index === 0}
                   />
 
