@@ -47,6 +47,27 @@ test.describe('TW-6 Hero responsive images', { tag: ['@tomanni', '@TW-6', '@hero
   })
 })
 
+test.describe('TW-7 Mobile menu', { tag: ['@tomanni', '@TW-7', '@mobile', '@nav'] }, () => {
+  test.beforeEach(async ({ page, baseURL }) => {
+    await homePage.navigate(page, baseURL!)
+    await page.setViewportSize({ width: 390, height: 844 })
+  })
+
+  test('Should open the mobile menu when the hamburger is tapped', async ({ page }) => {
+    await homePage.openMobileMenu(page)
+  })
+
+  test('Should show close button, logo, search, account and cart inside the menu', async ({ page }) => {
+    await homePage.openMobileMenu(page)
+    await homePage.assertMobileMenuContents(page)
+  })
+
+  test('Should close the menu when the close button is tapped', async ({ page }) => {
+    await homePage.openMobileMenu(page)
+    await homePage.closeMobileMenu(page)
+  })
+})
+
 // ─── TOMANNI SMOKE ────────────────────────────────────────────────────────────
 // prettier-ignore
 test.describe('TW-4 Homepage Smoke — Desktop', { tag: ['@tomanni-smoke', '@TW-4', '@hero', '@desktop'] }, () => {

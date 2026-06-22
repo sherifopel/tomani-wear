@@ -26,6 +26,16 @@ export const navSelectors = (page: Page) => ({
   cartButton: page.locator('[data-testid="nav-cart-button"]'),
 })
 
+export const mobileMenuSelectors = (page: Page) => ({
+  openButton:    page.locator('[data-testid="mobile-menu-open-button"]'),
+  overlay:       page.locator('[data-testid="mobile-menu"]'),
+  closeButton:   page.locator('[data-testid="mobile-menu-close-button"]'),
+  logo:          page.locator('[data-testid="mobile-menu-logo"]'),
+  searchButton:  page.locator('[data-testid="mobile-menu-search-button"]'),
+  accountButton: page.locator('[data-testid="mobile-menu-account-button"]'),
+  cartButton:    page.locator('[data-testid="mobile-menu-cart-button"]'),
+})
+
 // ─── 2. ACTION FUNCTIONS ──────────────────────────────────────────────────────
 export const navigate = async (page: Page, baseURL: string) => {
   await page.goto(baseURL + '/')
@@ -77,6 +87,26 @@ export const assertMobileHeaderActionsVisible = async (page: Page) => {
   await expect(selectors.searchButton).toBeVisible()
   await expect(selectors.accountButton).toBeVisible()
   await expect(selectors.cartButton).toBeVisible()
+}
+
+export const openMobileMenu = async (page: Page) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await mobileMenuSelectors(page).openButton.click()
+  await expect(mobileMenuSelectors(page).overlay).toBeVisible()
+}
+
+export const assertMobileMenuContents = async (page: Page) => {
+  const m = mobileMenuSelectors(page)
+  await expect(m.closeButton).toBeVisible()
+  await expect(m.logo).toBeVisible()
+  await expect(m.searchButton).toBeVisible()
+  await expect(m.accountButton).toBeVisible()
+  await expect(m.cartButton).toBeVisible()
+}
+
+export const closeMobileMenu = async (page: Page) => {
+  await mobileMenuSelectors(page).closeButton.click()
+  await expect(mobileMenuSelectors(page).overlay).not.toBeVisible()
 }
 
 export const assertHeroHeightForViewport = async (
