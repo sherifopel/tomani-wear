@@ -44,21 +44,21 @@ export default async function Navbar() {
         data-testid="nav-logo-link"
         className="flex justify-center items-center"
       >
-        <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.12em] md:tracking-[0.22em] uppercase">Tomanni</span>
+        <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
       <div className="flex items-center justify-end gap-5">
         <button
           data-testid="nav-search-button"
           aria-label="Search"
-          className="transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="hidden md:block transition-transform duration-200 hover:scale-125 active:scale-95"
         >
           <Search size={20} strokeWidth={1.5} />
         </button>
         <button
           data-testid="nav-account-button"
           aria-label="Account"
-          className="transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="hidden md:block transition-transform duration-200 hover:scale-125 active:scale-95"
         >
           <User size={20} strokeWidth={1.5} />
         </button>
