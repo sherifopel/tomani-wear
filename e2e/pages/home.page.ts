@@ -1,15 +1,20 @@
 import { Page, expect } from '@playwright/test'
 
 // ─── 1. SELECTOR FACTORY ──────────────────────────────────────────────────────
-export const heroSelectors = (page: Page) => ({
-  section:     page.locator('[data-testid="home-hero-section"]'),
-  subtitle:    page.locator('[data-testid="home-hero-subtitle"]'),
-  heading:     page.locator('[data-testid="home-hero-heading"]'),
-  description: page.locator('[data-testid="home-hero-description"]'),
-  ctaButton:   page.locator('[data-testid="home-hero-cta-button"]'),
-  prevButton:  page.locator('[data-testid="home-carousel-prev-button"]'),
-  nextButton:  page.locator('[data-testid="home-carousel-next-button"]'),
-})
+export const heroSelectors = (page: Page) => {
+  // The carousel renders all slides in the DOM simultaneously.
+  // Scope to the first slide so selectors don't match all 3 at once.
+  const firstSlide = page.locator('[data-testid="home-hero-section"] > div > div').first()
+  return {
+    section:     page.locator('[data-testid="home-hero-section"]'),
+    subtitle:    firstSlide.locator('[data-testid="home-hero-subtitle"]'),
+    heading:     firstSlide.locator('[data-testid="home-hero-heading"]'),
+    description: firstSlide.locator('[data-testid="home-hero-description"]'),
+    ctaButton:   firstSlide.locator('[data-testid="home-hero-cta-button"]'),
+    prevButton:  page.locator('[data-testid="home-carousel-prev-button"]'),
+    nextButton:  page.locator('[data-testid="home-carousel-next-button"]'),
+  }
+}
 
 export const featuredSelectors = (page: Page) => ({
   section: page.locator('[data-testid="home-featured-products"]'),
