@@ -1,5 +1,6 @@
 import { defineField, defineType } from 'sanity'
 import { FocalYSlider } from '../components/FocalYSlider'
+import { HeroFocalPreview } from '../components/HeroFocalPreview'
 
 export const heroSlide = defineType({
   name: 'heroSlide',
@@ -67,6 +68,22 @@ export const heroSlide = defineType({
       description: 'Example: /products',
       type: 'string',
       initialValue: '/products',
+    }),
+    defineField({
+      name: 'focalPoints',
+      title: 'Image Preview & Focal Points',
+      description: 'Preview how the hero image crops on each device and adjust the focal point.',
+      type: 'object',
+      fields: [
+        defineField({ name: 'mobileImage',  title: 'Mobile Image',       type: 'image', options: { hotspot: true } }),
+        defineField({ name: 'tabletImage',  title: 'Tablet Image',       type: 'image', options: { hotspot: true } }),
+        defineField({ name: 'desktopImage', title: 'Desktop Image',      type: 'image', options: { hotspot: true } }),
+        defineField({ name: 'xlImage',      title: 'Extra Large Image',  type: 'image', options: { hotspot: true } }),
+        defineField({ name: 'mobile',  title: 'Mobile focal Y',  type: 'number', initialValue: 50 }),
+        defineField({ name: 'tablet',  title: 'Tablet focal Y',  type: 'number', initialValue: 50 }),
+        defineField({ name: 'desktop', title: 'Desktop focal Y', type: 'number', initialValue: 30 }),
+      ],
+      components: { input: HeroFocalPreview },
     }),
     defineField({
       name: 'desktopFocalY',
