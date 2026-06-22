@@ -35,10 +35,10 @@ export default function Hero({
   const canNavigate = showArrows && heroSlides.length > 1
 
   return (
-    <section data-testid="home-hero-section" className="relative w-full overflow-hidden snap-start shrink-0 md:mx-auto md:max-w-[1505px]" ref={emblaRef}>
-      <div className="flex">
+    <section data-testid="home-hero-section" className="relative w-full overflow-hidden snap-start shrink-0 lg:mx-auto lg:h-[600px] lg:max-w-[1505px]" ref={emblaRef}>
+      <div className="flex lg:h-full">
         {heroSlides.map((slide, index) => (
-          <div key={slide.id} className="flex-none w-full relative">
+          <div key={slide.id} className="flex-none w-full relative lg:h-full">
             {(() => {
               const largeImage = slide.largeImage ?? ''
               const smallImage = slide.smallImage ?? largeImage
@@ -47,6 +47,7 @@ export default function Hero({
 
               return (
                 <>
+                  {/* Mobile + tablet: natural height, zero cropping */}
                   <Image
                     src={smallImage}
                     alt={slide.heading}
@@ -65,22 +66,22 @@ export default function Hero({
                     className="hidden w-full h-auto md:block lg:hidden"
                     priority={index === 0}
                   />
+
+                  {/* Desktop + XL: fixed 600px band, fill and crop from top */}
                   <Image
                     src={largeImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
-                    sizes="1505px"
-                    className="hidden w-full h-auto lg:block 2xl:hidden"
+                    fill
+                    sizes="(min-width: 1024px) 1505px"
+                    className="hidden object-cover object-top lg:block 2xl:hidden"
                     priority={index === 0}
                   />
                   <Image
                     src={extraLargeImage}
                     alt={slide.heading}
-                    width={0}
-                    height={0}
+                    fill
                     sizes="1505px"
-                    className="hidden w-full h-auto 2xl:block"
+                    className="hidden object-cover object-top 2xl:block"
                     priority={index === 0}
                   />
                 </>
