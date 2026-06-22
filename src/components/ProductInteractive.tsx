@@ -17,6 +17,8 @@ export type Variant = {
 }
 
 type Props = {
+  productId: string
+  slug: string
   mainImage?: string
   gallery?: GalleryImage[]
   variants?: Variant[]
@@ -39,6 +41,8 @@ function slugify(str: string): string {
 }
 
 export default function ProductInteractive({
+  productId,
+  slug,
   mainImage,
   gallery,
   variants,
@@ -194,7 +198,16 @@ export default function ProductInteractive({
         )}
 
         {/* Size selector + Add to cart */}
-        <ProductActions sizes={activeSizes} inStock={inStock} />
+        <ProductActions
+          productId={productId}
+          slug={slug}
+          name={name}
+          price={price}
+          image={activeImages[0]?.url}
+          colorName={activeVariantIndex !== null ? variants![activeVariantIndex].colorName : undefined}
+          sizes={activeSizes}
+          inStock={inStock}
+        />
 
         <div className="border-t border-gray-100" />
 

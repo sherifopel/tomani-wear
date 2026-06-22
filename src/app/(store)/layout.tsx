@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
+import { CartProvider } from '@/context/CartContext'
 
 export default function StoreLayout({
   children,
@@ -7,7 +8,7 @@ export default function StoreLayout({
   children: React.ReactNode
 }) {
   return (
-    <>
+    <CartProvider>
       <Navbar />
       {/*
        * Mobile: main IS the scroll container.
@@ -30,6 +31,6 @@ export default function StoreLayout({
         {children}
         <Footer />
       </main>
-    </>
+    </CartProvider>
   )
 }

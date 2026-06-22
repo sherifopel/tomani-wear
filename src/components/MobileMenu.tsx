@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Search, User, ShoppingBag, ChevronRight } from 'lucide-react'
+import { useCart } from '@/hooks/useCart'
 
 const navLinks = [
   { label: 'New In',       href: '/new',          accent: false },
@@ -15,6 +16,7 @@ const navLinks = [
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
+  const { totalItems } = useCart()
 
   return (
     <>
@@ -75,16 +77,20 @@ export default function MobileMenu() {
               >
                 <User size={18} strokeWidth={1.5} />
               </button>
-              <button
+              <Link
+                href="/cart"
                 data-testid="mobile-menu-cart-button"
-                aria-label="Cart"
+                aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}
                 className="relative transition-transform duration-200 hover:scale-125 active:scale-95"
+                onClick={() => setOpen(false)}
               >
                 <ShoppingBag size={18} strokeWidth={1.5} />
-                <span className="absolute -top-1 -right-1 bg-[var(--brand-red)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                  0
-                </span>
-              </button>
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[var(--brand-red)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
             </div>
           </div>
 
