@@ -49,6 +49,61 @@ export const product = defineType({
       type: 'image',
       options: { hotspot: true },
     }),
+    defineField({
+      name: 'gallery',
+      title: 'Gallery Images',
+      description: 'Additional angles (front, back, detail). Used when no colour variants are defined.',
+      type: 'array',
+      of: [{ type: 'image', options: { hotspot: true } }],
+    }),
+    defineField({
+      name: 'variants',
+      title: 'Colour Variants',
+      description: 'Each colour gets its own images and available sizes.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({
+              name: 'colorName',
+              title: 'Colour Name',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'colorHex',
+              title: 'Colour Hex',
+              description: 'e.g. #000000 — used for the swatch circle on the product page',
+              type: 'string',
+            }),
+            defineField({
+              name: 'images',
+              title: 'Images',
+              type: 'array',
+              of: [{ type: 'image', options: { hotspot: true } }],
+            }),
+            defineField({
+              name: 'sizes',
+              title: 'Available Sizes',
+              description: 'Sizes available in this colour.',
+              type: 'array',
+              of: [{ type: 'string' }],
+              options: {
+                list: [
+                  { title: 'XS',  value: 'XS'  },
+                  { title: 'S',   value: 'S'   },
+                  { title: 'M',   value: 'M'   },
+                  { title: 'L',   value: 'L'   },
+                  { title: 'XL',  value: 'XL'  },
+                  { title: 'XXL', value: 'XXL' },
+                ],
+              },
+            }),
+          ],
+        },
+      ],
+    }),
 
     // ── Details ───────────────────────────────────────────────────────────
     defineField({
