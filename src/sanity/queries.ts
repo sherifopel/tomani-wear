@@ -35,6 +35,8 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   compareAtPrice,
   "image": image.asset->url,
   "hotspot": image.hotspot,
+  "gallery": gallery[]{ "url": asset->url, hotspot },
+  "variants": variants[]{ colorName, colorHex, "images": images[]{ "url": asset->url, hotspot }, sizes },
   description,
   category,
   sizes,
