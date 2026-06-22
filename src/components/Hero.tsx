@@ -35,10 +35,10 @@ export default function Hero({
   const canNavigate = showArrows && heroSlides.length > 1
 
   return (
-    <section data-testid="home-hero-section" className="relative h-[calc(100svh-5.25rem)] w-full overflow-hidden snap-start shrink-0 md:mx-auto md:h-[600px] md:max-w-[1505px]" ref={emblaRef}>
-      <div className="flex h-full">
+    <section data-testid="home-hero-section" className="relative w-full overflow-hidden snap-start shrink-0 md:mx-auto md:max-w-[1505px]" ref={emblaRef}>
+      <div className="flex">
         {heroSlides.map((slide, index) => (
-          <div key={slide.id} className="flex-none w-full h-full relative">
+          <div key={slide.id} className="flex-none w-full relative">
             {(() => {
               const largeImage = slide.largeImage ?? ''
               const smallImage = slide.smallImage ?? largeImage
@@ -50,36 +50,37 @@ export default function Hero({
                   <Image
                     src={smallImage}
                     alt={slide.heading}
-                    fill
-                    sizes="(max-width: 767px) 100vw"
-                    className="block object-cover md:hidden"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="block w-full h-auto md:hidden"
                     priority={index === 0}
                   />
-
                   <Image
                     src={mediumImage}
                     alt={slide.heading}
-                    fill
-                    sizes="(min-width: 768px) and (max-width: 1023px) 100vw"
-                    className="hidden object-cover md:block lg:hidden"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="hidden w-full h-auto md:block lg:hidden"
                     priority={index === 0}
                   />
-
                   <Image
                     src={largeImage}
                     alt={slide.heading}
-                    fill
-                    sizes="(min-width: 1024px) and (max-width: 1535px) 1505px"
-                    className="hidden object-cover lg:block 2xl:hidden"
+                    width={0}
+                    height={0}
+                    sizes="1505px"
+                    className="hidden w-full h-auto lg:block 2xl:hidden"
                     priority={index === 0}
                   />
-
                   <Image
                     src={extraLargeImage}
                     alt={slide.heading}
-                    fill
-                    sizes="(min-width: 1536px) 1505px"
-                    className="hidden object-cover 2xl:block"
+                    width={0}
+                    height={0}
+                    sizes="1505px"
+                    className="hidden w-full h-auto 2xl:block"
                     priority={index === 0}
                   />
                 </>
