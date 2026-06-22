@@ -14,10 +14,18 @@ export const heroSlide = defineType({
     }),
     defineField({
       name: 'image',
-      title: 'Hero Image',
+      title: 'Desktop Hero Image',
+      description: 'Use a wide landscape image. Click the crop icon to control how it appears on desktop.',
       type: 'image',
       options: { hotspot: true },
       validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'mobileImage',
+      title: 'Mobile Hero Image',
+      description: 'Optional. Use a tall portrait image for phones. If empty, the desktop image is reused.',
+      type: 'image',
+      options: { hotspot: true },
     }),
     defineField({
       name: 'label',
@@ -59,4 +67,18 @@ export const heroSlide = defineType({
       initialValue: true,
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      media: 'image',
+      order: 'order',
+    },
+    prepare({ title, media, order }) {
+      return {
+        title,
+        media,
+        subtitle: typeof order === 'number' ? `Slide order: ${order}` : 'Hero slide',
+      }
+    },
+  },
 })

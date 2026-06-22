@@ -12,8 +12,8 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
 
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
   _id,
-  "image": image.asset->url,
-  "hotspot": image.hotspot,
+  image,
+  mobileImage,
   label,
   heading,
   sub,

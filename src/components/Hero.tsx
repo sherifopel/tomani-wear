@@ -8,23 +8,17 @@ import Link from 'next/link'
 type HeroSlide = {
   id: string
   image: string
-  hotspot?: { x: number; y: number }
+  mobileImage?: string
   label?: string
   heading: string
   sub?: string
   href: string
 }
 
-function objectPosition(hotspot?: { x: number; y: number }): string {
-  if (!hotspot) return 'center center'
-  return `${hotspot.x * 100}% ${hotspot.y * 100}%`
-}
-
 const fallbackSlides: HeroSlide[] = [
   {
     id: 'fallback-1',
     image: '/images/gallary/brian-lundquist-kIdngZOEnnQ-unsplash.jpg',
-    hotspot: { x: 0.5, y: 0.2 },
     label: 'New Drop',
     heading: 'Built\nDifferent.',
     sub: 'Premium streetwear. Lagos originals.',
@@ -33,7 +27,6 @@ const fallbackSlides: HeroSlide[] = [
   {
     id: 'fallback-2',
     image: '/images/gallary/anthony-a-eT-ORmDdFgE-unsplash.jpg',
-    hotspot: { x: 0.5, y: 0.3 },
     label: 'New Collection',
     heading: 'Wear What\nYou Are.',
     sub: 'For the modern African. Worn everywhere.',
@@ -42,7 +35,6 @@ const fallbackSlides: HeroSlide[] = [
   {
     id: 'fallback-3',
     image: '/images/gallary/minh-dang-diEOBpC-o1A-unsplash.jpg',
-    hotspot: { x: 0.5, y: 0.25 },
     label: 'Lagos Originals',
     heading: 'Steady\nGrowth.',
     sub: 'Growing eternally. Season 01.',
@@ -68,8 +60,16 @@ export default function Hero({ slides = fallbackSlides }: { slides?: HeroSlide[]
               src={slide.image}
               alt={slide.heading}
               fill
-              className="object-cover"
-              style={{ objectPosition: objectPosition(slide.hotspot) }}
+              sizes="100vw"
+              className="hidden md:block object-cover"
+              priority={index === 0}
+            />
+            <Image
+              src={slide.mobileImage ?? slide.image}
+              alt={slide.heading}
+              fill
+              sizes="100vw"
+              className="md:hidden object-cover"
               priority={index === 0}
             />
 
