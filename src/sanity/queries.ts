@@ -14,6 +14,8 @@ export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false
   _id,
   image,
   mobileImage,
+  mediumImage,
+  extraLargeImage,
   label,
   heading,
   sub,
@@ -38,5 +40,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
 export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {
   announcementBar,
   announcementBars,
-  announcementBarEnabled
+  announcementBarEnabled,
+  heroAutoplay,
+  heroShowArrows
 }`

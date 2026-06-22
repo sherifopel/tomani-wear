@@ -2,32 +2,74 @@ import Hero from '@/components/Hero'
 import FeaturedProducts from '@/components/FeaturedProducts'
 import { client } from '@/sanity/client'
 import { urlForImage } from '@/sanity/image'
-import { HERO_SLIDES_QUERY } from '@/sanity/queries'
+import { HERO_SLIDES_QUERY, SETTINGS_QUERY } from '@/sanity/queries'
 import type { SanityImageSource } from '@sanity/image-url'
+import { connection } from 'next/server'
 
 type SanityHeroSlide = {
   _id: string
   image: SanityImageSource
   mobileImage?: SanityImageSource
+  mediumImage?: SanityImageSource
+  extraLargeImage?: SanityImageSource
   label?: string
   heading: string
   sub?: string
   href: string
 }
 
-export default async function Home() {
-  const sanitySlides: SanityHeroSlide[] = await client.fetch(HERO_SLIDES_QUERY)
+type Settings = {
+  heroAutoplay?: boolean
+  heroShowArrows?: boolean
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: Promise<{ draft?: string }>
+}) {
+  await connection()
+
+  const params = await searchParams
+  const canReadDrafts =
+    process.env.NODE_ENV === 'development' &&
+    params?.draft === '1' &&
+    Boolean(process.env.SANITY_API_READ_TOKEN)
+  const sanityClient = canReadDrafts
+    ? client.withConfig({
+        token: process.env.SANITY_API_READ_TOKEN,
+        perspective: 'drafts',
+        useCdn: false,
+      })
+    : client
+
+  const [sanitySlides, settings]: [SanityHeroSlide[], Settings | null] = await Promise.all([
+    sanityClient.fetch(HERO_SLIDES_QUERY),
+    sanityClient.fetch(SETTINGS_QUERY),
+  ])
   const heroSlides = sanitySlides.map((slide) => ({
     id: slide._id,
-    image: urlForImage(slide.image)
-      .width(1800)
-      .height(1100)
+    smallImage: urlForImage(slide.mobileImage ?? slide.image)
+      .width(800)
+      .height(1560)
       .fit('crop')
       .auto('format')
       .url(),
-    mobileImage: urlForImage(slide.mobileImage ?? slide.image)
-      .width(900)
-      .height(1400)
+    mediumImage: urlForImage(slide.mediumImage ?? slide.mobileImage ?? slide.image)
+      .width(1024)
+      .height(600)
+      .fit('crop')
+      .auto('format')
+      .url(),
+    largeImage: urlForImage(slide.image)
+      .width(1505)
+      .height(600)
+      .fit('crop')
+      .auto('format')
+      .url(),
+    extraLargeImage: urlForImage(slide.extraLargeImage ?? slide.image)
+      .width(1505)
+      .height(600)
       .fit('crop')
       .auto('format')
       .url(),
@@ -39,7 +81,11 @@ export default async function Home() {
 
   return (
     <main className="flex-1">
-      <Hero slides={heroSlides} />
+      <Hero
+        slides={heroSlides}
+        autoplay={settings?.heroAutoplay !== false}
+        showArrows={settings?.heroShowArrows === true}
+      />
       <FeaturedProducts />
     </main>
   )

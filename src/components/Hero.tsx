@@ -4,74 +4,87 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 type HeroSlide = {
   id: string
-  image: string
-  mobileImage?: string
+  smallImage?: string
+  mediumImage?: string
+  largeImage?: string
+  extraLargeImage?: string
   label?: string
   heading: string
   sub?: string
   href: string
 }
 
-const fallbackSlides: HeroSlide[] = [
-  {
-    id: 'fallback-1',
-    image: '/images/gallary/brian-lundquist-kIdngZOEnnQ-unsplash.jpg',
-    label: 'New Drop',
-    heading: 'Built\nDifferent.',
-    sub: 'Premium streetwear. Lagos originals.',
-    href: '/products',
-  },
-  {
-    id: 'fallback-2',
-    image: '/images/gallary/anthony-a-eT-ORmDdFgE-unsplash.jpg',
-    label: 'New Collection',
-    heading: 'Wear What\nYou Are.',
-    sub: 'For the modern African. Worn everywhere.',
-    href: '/products',
-  },
-  {
-    id: 'fallback-3',
-    image: '/images/gallary/minh-dang-diEOBpC-o1A-unsplash.jpg',
-    label: 'Lagos Originals',
-    heading: 'Steady\nGrowth.',
-    sub: 'Growing eternally. Season 01.',
-    href: '/products',
-  },
-]
-
-export default function Hero({ slides = fallbackSlides }: { slides?: HeroSlide[] }) {
-  const heroSlides = slides.length ? slides : fallbackSlides
-  const [emblaRef] = useEmblaCarousel(
+export default function Hero({
+  slides = [],
+  autoplay = true,
+  showArrows = false,
+}: {
+  slides?: HeroSlide[]
+  autoplay?: boolean
+  showArrows?: boolean
+}) {
+  const heroSlides = slides
+  const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, watchDrag: false },
-    [Autoplay({ delay: 4000, stopOnInteraction: false })]
+    autoplay ? [Autoplay({ delay: 4000, stopOnInteraction: false })] : []
   )
+  const canNavigate = showArrows && heroSlides.length > 1
 
   return (
-    <section data-testid="home-hero-section" className="w-full h-[calc(100vh-5.25rem)] md:h-[calc(100vh-7.75rem)] overflow-hidden snap-start shrink-0" ref={emblaRef}>
+    <section data-testid="home-hero-section" className="relative h-[calc(100svh-5.25rem)] w-full overflow-hidden snap-start shrink-0 md:mx-auto md:h-[600px] md:max-w-[1505px]" ref={emblaRef}>
       <div className="flex h-full">
         {heroSlides.map((slide, index) => (
           <div key={slide.id} className="flex-none w-full h-full relative">
+            {(() => {
+              const largeImage = slide.largeImage ?? ''
+              const smallImage = slide.smallImage ?? largeImage
+              const mediumImage = slide.mediumImage ?? smallImage
+              const extraLargeImage = slide.extraLargeImage ?? largeImage
 
-            {/* Full-bleed background image */}
-            <Image
-              src={slide.image}
-              alt={slide.heading}
-              fill
-              sizes="100vw"
-              className="hidden md:block object-cover"
-              priority={index === 0}
-            />
-            <Image
-              src={slide.mobileImage ?? slide.image}
-              alt={slide.heading}
-              fill
-              sizes="100vw"
-              className="md:hidden object-cover"
-              priority={index === 0}
-            />
+              return (
+                <>
+                  <Image
+                    src={smallImage}
+                    alt={slide.heading}
+                    fill
+                    sizes="(max-width: 767px) 100vw"
+                    className="block object-cover md:hidden"
+                    priority={index === 0}
+                  />
+
+                  <Image
+                    src={mediumImage}
+                    alt={slide.heading}
+                    fill
+                    sizes="(min-width: 768px) and (max-width: 1023px) 100vw"
+                    className="hidden object-cover md:block lg:hidden"
+                    priority={index === 0}
+                  />
+
+                  <Image
+                    src={largeImage}
+                    alt={slide.heading}
+                    fill
+                    sizes="(min-width: 1024px) and (max-width: 1535px) 1505px"
+                    className="hidden object-cover lg:block 2xl:hidden"
+                    priority={index === 0}
+                  />
+
+                  <Image
+                    src={extraLargeImage}
+                    alt={slide.heading}
+                    fill
+                    sizes="(min-width: 1536px) 1505px"
+                    className="hidden object-cover 2xl:block"
+                    priority={index === 0}
+                  />
+                </>
+              )
+            })()}
 
             {/* Dark gradient overlay — fades from transparent at top to black at bottom */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -108,6 +121,27 @@ export default function Hero({ slides = fallbackSlides }: { slides?: HeroSlide[]
           </div>
         ))}
       </div>
+
+      {canNavigate && (
+        <>
+          <button
+            type="button"
+            aria-label="Previous hero slide"
+            onClick={() => emblaApi?.scrollPrev()}
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center border border-white/70 text-white bg-black/20 hover:bg-black/50 transition-colors"
+          >
+            <ChevronLeft size={22} strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            aria-label="Next hero slide"
+            onClick={() => emblaApi?.scrollNext()}
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center border border-white/70 text-white bg-black/20 hover:bg-black/50 transition-colors"
+          >
+            <ChevronRight size={22} strokeWidth={1.5} />
+          </button>
+        </>
+      )}
     </section>
   )
 }

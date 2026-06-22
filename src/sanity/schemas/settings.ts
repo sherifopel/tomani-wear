@@ -29,5 +29,19 @@ export const settings = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+    defineField({
+      name: 'heroAutoplay',
+      title: 'Hero Autoplay',
+      description: 'Automatically rotate through hero slides.',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'heroShowArrows',
+      title: 'Show Hero Arrows',
+      description: 'Show previous and next controls on the hero carousel.',
+      type: 'boolean',
+      initialValue: false,
+    }),
   ],
 })

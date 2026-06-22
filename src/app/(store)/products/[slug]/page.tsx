@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { client } from '@/sanity/client'
-import { PRODUCT_BY_SLUG_QUERY, PRODUCTS_QUERY } from '@/sanity/queries'
+import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductActions from '@/components/ProductActions'
 
 type Product = {

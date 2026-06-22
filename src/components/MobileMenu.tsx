@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { createPortal } from 'react-dom'
+import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 
@@ -16,9 +15,6 @@ const navLinks = [
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
-  // createPortal needs the DOM — only run after mount
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => setMounted(true), [])
 
   return (
     <>
@@ -31,10 +27,7 @@ export default function MobileMenu() {
         {open ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
       </button>
 
-      {/* Overlay — portalled to <body> so it lives OUTSIDE the header's
-          stacking context. Header is z-[101], overlay is z-[100]:
-          header always paints on top, seamless effect. */}
-      {mounted && open && createPortal(
+      {open && (
         <div className="fixed inset-0 z-[100] bg-white">
           <nav className="flex flex-col px-6 pt-[5.5rem] gap-1">
             {navLinks.map((link) => (
@@ -50,8 +43,7 @@ export default function MobileMenu() {
               </Link>
             ))}
           </nav>
-        </div>,
-        document.body
+        </div>
       )}
     </>
   )
