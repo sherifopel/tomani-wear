@@ -32,7 +32,7 @@ export default function CartPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 py-10 pb-28 md:pb-10" data-testid="cart-page">
 
-      <Breadcrumbs />
+      <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
 
       {/* Header */}
       <h1 className="text-2xl font-medium uppercase tracking-widest mb-8">
