@@ -60,10 +60,13 @@ jobs:
           # The statuses endpoint returns newest-first, so .[0] is the latest.
           # We wait for state=success before running tests so we never test
           # against a stale deployment that was already live at HTTP 200.
-          echo "Waiting for Vercel status on ${{ github.sha }}"
+          # github.sha is the merge commit GitHub creates for the PR — Vercel posts
+          # to the actual branch HEAD instead, which is pull_request.head.sha.
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          echo "Waiting for Vercel status on $HEAD_SHA"
           for i in $(seq 1 60); do
             STATE=$(gh api \
-              "repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+              "repos/${{ github.repository }}/statuses/$HEAD_SHA" \
               --jq '[.[] | select(.context == "Vercel")] | .[0].state // empty' \
               2>/dev/null)
             echo "Attempt $i: state=${STATE:-none}"
