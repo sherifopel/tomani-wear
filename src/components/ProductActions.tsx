@@ -20,7 +20,7 @@ const btnClass = (inStock: boolean, justAdded: boolean) =>
       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
       : justAdded
       ? 'bg-[var(--brand-yellow)] text-black'
-      : 'bg-black text-white btn-collision'
+      : 'bg-black text-white border border-black btn-wipe'
   }`
 
 const btnLabel = (inStock: boolean, justAdded: boolean) =>
@@ -36,7 +36,7 @@ export default function ProductActions({
   sizes,
   inStock,
 }: Props) {
-  const { addItem } = useCart()
+  const { addItem, openMiniCart } = useCart()
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [sizeError, setSizeError] = useState(false)
@@ -64,6 +64,7 @@ export default function ProductActions({
     addItem({ productId, slug, name, price, image, colorName, size: selectedSize ?? '', quantity })
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 2000)
+    openMiniCart()
   }
 
   const Stepper = () => (
@@ -103,7 +104,7 @@ export default function ProductActions({
                 key={size}
                 onClick={() => { setSelectedSize(size); setSizeError(false) }}
                 data-testid={`pdp-size-${size}`}
-                className={`w-12 h-12 text-xs font-medium border transition-colors duration-200
+                className={`w-12 h-12 text-xs font-medium border rounded-md transition-colors duration-200
                   ${selectedSize === size
                     ? 'bg-black text-white border-black'
                     : 'bg-white text-black border-gray-300 hover:border-black'

@@ -177,6 +177,54 @@ Key gotcha: in `pull_request` events, `github.sha` is a **merge commit** GitHub 
 
 Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` to the selectors in the page object. Playwright's `:visible` pseudo-class filters to whichever copy is actually rendered for the current viewport — exactly one matches at a time.
 
+---
+
+## Session 4 — Mini Cart, Cart Page & UI Polish
+
+### What we built
+
+**`btn-wipe` animation (replaces `btn-collision`)**
+- Two CSS pseudo-elements (`::before` from left, `::after` from right), both `width: 0` at rest
+- On hover both expand to `width: 55%` simultaneously — they meet in the centre over 450ms
+- The `z-index: -1` trick: pseudo-elements paint *above* the button's background but *below* the text. So the white fill slides in without covering the label
+- Two variants: `btn-wipe` (black button → white fill) and `btn-wipe-white` (outlined → black fill)
+- Used on: Add to Cart, Checkout button, Shop Now in hero
+
+**Mini Cart drawer**
+- Slides in from the right (`translate-x-full` → `translate-x-0`) over 300ms
+- Overlay behind it (`opacity-40`) blocks the rest of the page
+- Body scroll locked while open (`document.body.style.overflow = 'hidden'`)
+- Escape key closes it
+- Trigger points: cart icon in navbar AND after "Add to Cart" is tapped on PDP
+- `miniCartOpen`, `openMiniCart`, `closeMiniCart` live in `CartContext` alongside the existing reducer state — both `useReducer` and `useState` can live in the same Context
+
+**Cart page rewrite**
+- Breadcrumbs, square product thumbnails, inline item layout
+- Order summary hidden on mobile — replaced by a sticky bottom bar (`fixed bottom-0`) with Total + Checkout button
+- `data-testid` on every interactive element in the order summary for Playwright tests
+- `pb-28` on the page wrapper so content doesn't hide behind the sticky bar
+
+**Navbar logo centering on mobile**
+- Old: `grid-cols-[auto_1fr_auto]` — logo tried to centre within the 1fr column but left (burger) and right (icons) columns have unequal widths, so it wasn't truly centred
+- Fix: `position: absolute; left: 50%; transform: translateX(-50%)` on mobile, `static` on desktop
+- The logo is pulled out of grid flow on mobile so it centres relative to the full viewport width regardless of what's on either side
+
+**Footer sticky-to-bottom fix**
+- Root layout `<body>` has `min-h-full flex flex-col`
+- Store layout wrapper needs `flex-1 flex flex-col` with `<main className="flex-1">` — otherwise the wrapper fills remaining height as a block but doesn't push the footer down; it just makes a huge whitespace gap
+
+### Key concepts learned
+
+**`z-index` and stacking contexts** — `z-index: -1` on a pseudo-element makes it render *behind the element's own background paint* — but only if the element has `position: relative` and `z-index: 1` (or `auto` depending on context). This is why `btn-wipe` works: the button has `z-index: 1`, so its stacking context is the boundary — the `z-index: -1` pseudo sits above the page background but below the button's own content.
+
+**React Context with multiple state types** — one Context can hold both `useReducer` state (complex cart logic) and `useState` booleans (UI flags like `miniCartOpen`). Both are just JavaScript values — combine them freely in the `value` object.
+
+**`translate-x-full` drawer pattern** — `translate-x-full` shifts an element right by 100% of its own width (off-screen). `translate-x-0` returns it. Paired with `transition-transform duration-300` this is the standard slide-in drawer pattern used by Nike, Noble Panacea, and most high-end stores.
+
+**`position: absolute` inside a CSS Grid** — an absolutely positioned child is removed from grid flow. It positions relative to the nearest `position: relative` ancestor (the grid container). Combined with `left-1/2 -translate-x-1/2` this gives true viewport-centre placement even when the grid columns on either side are unequal widths.
+
+---
+
 ### Key concepts learned
 
 **pnpm `allowBuilds`** — pnpm v10's supply chain policy: git-hosted packages can't run build scripts unless explicitly listed in `pnpm-workspace.yaml`. This is like CORS but for package builds. Must use the full tarball URL + commit hash as the key.

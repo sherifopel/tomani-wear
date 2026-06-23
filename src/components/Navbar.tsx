@@ -36,7 +36,7 @@ export default async function Navbar() {
   const mainRow = (
     <div
       data-testid="nav-main-row"
-      className="border-b border-gray-100 px-6 py-4 grid grid-cols-3 items-center"
+      className="relative border-b border-gray-100 px-6 py-4 grid grid-cols-[auto_1fr_auto] items-center"
     >
       <div className="flex items-center">
         <MobileMenu />
@@ -46,23 +46,23 @@ export default async function Navbar() {
       <Link
         href="/"
         data-testid="nav-logo-link"
-        className="flex justify-center items-center"
+        className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex justify-center items-center"
       >
         <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-3 md:gap-5">
+      <div className="flex items-center justify-end gap-5 md:gap-6">
         <button
           data-testid="nav-search-button"
           aria-label="Search"
-          className="nav-icon-fill p-1.5"
+          className="p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
         >
           <Search className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>
         <button
           data-testid="nav-account-button"
           aria-label="Account"
-          className="nav-icon-fill p-1.5"
+          className="p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
         >
           <User className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>

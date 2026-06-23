@@ -60,97 +60,49 @@ body {
   }
 }
 
-/* ─── Nav icon fill ────────────────────────────────────────────────────────
-   Inset box-shadow expands from a 1px border to flood-fill the icon button.
-   Applied to burger menu, cart, and account nav icons.
-   Usage: add class "nav-icon-fill" to the button.
+/* ─── CTA fill wipe ────────────────────────────────────────────────────────
+   White fills in from both edges simultaneously, meeting in the centre.
+   btn-wipe       — black button → white fill (Add to Cart)
+   btn-wipe-white — transparent/white button → black fill (Shop Now on hero)
 ─────────────────────────────────────────────────────────────────────────── */
 
-.nav-icon-fill {
+.btn-wipe,
+.btn-wipe-white {
   position: relative;
   overflow: hidden;
-}
-
-.nav-icon-fill::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  height: 100%;
-  width: 100%;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px currentColor;
-  transition: box-shadow 0.4s ease;
-  pointer-events: none;
-}
-
-.nav-icon-fill:hover::before {
-  box-shadow: inset 0 0 0 40px currentColor;
-}
-
-.nav-icon-fill svg {
-  position: relative;
   z-index: 1;
-  transition: color 0.4s ease;
+  transition: color 450ms ease-in-out;
 }
 
-.nav-icon-fill:hover svg {
-  color: white;
-}
-
-/* ─── Collision button ─────────────────────────────────────────────────────
-   Two circles burst in from outside the button and collide in the centre,
-   expanding until they fill the entire button with the brand red.
-   The button itself stays transparent — the circles provide the fill.
-─────────────────────────────────────────────────────────────────────────── */
-
-@keyframes criss-cross-left {
-  0%   { left: -20px; }
-  50%  { left: 50%; width: 20px; height: 20px; }
-  100% { left: 50%; width: 500px; height: 500px; }
-}
-
-@keyframes criss-cross-right {
-  0%   { right: -20px; }
-  50%  { right: 50%; width: 20px; height: 20px; }
-  100% { right: 50%; width: 500px; height: 500px; }
-}
-
-.btn-collision {
-  position: relative;
-  overflow: hidden;
-  z-index: 0;
-}
-
-.btn-collision::before,
-.btn-collision::after {
+.btn-wipe::before,
+.btn-wipe::after,
+.btn-wipe-white::before,
+.btn-wipe-white::after {
   content: '';
   position: absolute;
-  top: 50%;
-  width: 20px;
-  height: 20px;
-  background-color: var(--brand-red);
-  border-radius: 50%;
+  top: 0;
+  width: 0;
+  height: 100%;
   z-index: -1;
+  transition: width 450ms ease-in-out;
 }
 
-.btn-collision::before {
-  left: -20px;
-  transform: translate(-50%, -50%);
+/* Left half */
+.btn-wipe::before     { left: 0;  background: white; }
+.btn-wipe::after      { right: 0; background: white; }
+.btn-wipe-white::before { left: 0;  background: black; }
+.btn-wipe-white::after  { right: 0; background: black; }
+
+.btn-wipe:hover::before,
+.btn-wipe:hover::after {
+  width: 55%;
 }
 
-.btn-collision::after {
-  right: -20px;
-  transform: translate(50%, -50%);
+.btn-wipe-white:hover::before,
+.btn-wipe-white:hover::after {
+  width: 55%;
 }
 
-.btn-collision:hover::before {
-  animation: criss-cross-left 0.8s both;
-}
+.btn-wipe:hover       { color: black; }
+.btn-wipe-white:hover { color: white; }
 
-.btn-collision:hover::after {
-  animation: criss-cross-right 0.8s both;
-}
-
-.btn-collision:hover {
-  border-color: var(--brand-red);
-}
