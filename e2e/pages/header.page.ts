@@ -9,6 +9,7 @@ export const headerSelectors = (page: Page) => ({
 
   navBar: {
     mainRow:       page.locator('[data-testid="nav-main-row"]'),
+    logo:          page.locator('[data-testid="nav-logo-link"]'),
     searchButton:    page.locator('[data-testid="nav-search-button"]'),
     accountButton:   page.locator('[data-testid="nav-account-button"]'),
     cartButton:      page.locator('[data-testid="nav-cart-button"]'),
@@ -19,10 +20,6 @@ export const headerSelectors = (page: Page) => ({
     openButton:    page.locator('[data-testid="mobile-menu-open-button"]'),
     overlay:       page.locator('[data-testid="mobile-menu"]'),
     closeButton:   page.locator('[data-testid="mobile-menu-close-button"]'),
-    logo:          page.locator('[data-testid="mobile-menu-logo"]'),
-    searchButton:  page.locator('[data-testid="mobile-menu-search-button"]'),
-    accountButton: page.locator('[data-testid="mobile-menu-account-button"]'),
-    cartButton:    page.locator('[data-testid="mobile-menu-cart-button"]'),
   },
 
   mobileLinks: {
@@ -70,22 +67,22 @@ export const assertMobileHeaderActionsVisible = async (page: Page) => {
 }
 
 export const assertMobileMenuContents = async (page: Page) => {
-  Log.section('Mobile menu contents')
-  const { mobileMenu } = headerSelectors(page)
+  Log.section('Mobile header remains visible with menu open')
+  const { mobileMenu, navBar } = headerSelectors(page)
   await expect(mobileMenu.closeButton).toBeVisible()
   Log.ok('close button')
-  await expect(mobileMenu.logo).toBeVisible()
+  await expect(navBar.logo).toBeVisible()
   Log.ok('logo')
-  await expect(mobileMenu.searchButton).toBeVisible()
+  await expect(navBar.searchButton).toBeVisible()
   Log.ok('search button')
-  await expect(mobileMenu.accountButton).toBeVisible()
+  await expect(navBar.accountButton).toBeVisible()
   Log.ok('account button')
-  await expect(mobileMenu.cartButton).toBeVisible()
+  await expect(navBar.cartButton).toBeVisible()
   Log.ok('cart button')
 }
 
-export const assertMobileMenuCoversHeader = async (page: Page) => {
-  Log.section('Mobile menu covers header')
+export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
+  Log.section('Mobile menu does not cover header')
   const { mobileMenu, navBar } = headerSelectors(page)
   await expect(mobileMenu.overlay).toBeVisible()
 
@@ -101,9 +98,15 @@ export const assertMobileMenuCoversHeader = async (page: Page) => {
       y: box!.y + box!.height / 2,
     })
 
-    expect(isMenuOnTop).toBe(true)
-    Log.ok('menu overlays ' + (await locator.getAttribute('data-testid')))
+    expect(isMenuOnTop).toBe(false)
+    Log.ok('header stays above ' + (await locator.getAttribute('data-testid')))
   }
+
+  const menuBox = await mobileMenu.overlay.boundingBox()
+  const headerBox = await navBar.mainRow.boundingBox()
+  expect(menuBox).not.toBeNull()
+  expect(headerBox).not.toBeNull()
+  expect(menuBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1)
 }
 
 export const assertMobileNavLinksVisible = async (page: Page) => {

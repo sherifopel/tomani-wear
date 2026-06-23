@@ -2,6 +2,7 @@ import { defineField, defineType } from 'sanity'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
 import { HeroContentPreview } from '../components/HeroContentPreview'
 import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
+import { ColorPickerInput } from '../components/ColorPickerInput'
 
 export const heroSlide = defineType({
   name: 'heroSlide',
@@ -128,20 +129,28 @@ export const heroSlide = defineType({
         }),
         defineField({
           name: 'textPosition',
-          title: 'Text Vertical Position',
-          description: '0 = top of image · 100 = bottom. Default 85 places text near the bottom.',
+          title: 'Default Text Vertical Position',
+          description: 'Fallback used when a screen-specific vertical position is empty.',
           type: 'number',
           initialValue: 85,
           components: { input: FocalYSlider },
         }),
         defineField({
           name: 'textPositionX',
-          title: 'Text Horizontal Position',
-          description: '0 = left edge · 50 = centre · 100 = right edge.',
+          title: 'Default Text Horizontal Position',
+          description: 'Fallback used when a screen-specific horizontal position is empty.',
           type: 'number',
           initialValue: 0,
           components: { input: FocalXSlider },
         }),
+        defineField({ name: 'mobileTextPosition',   title: 'Small Text Vertical Position',       description: 'Phones. 0 = top · 100 = bottom.', type: 'number', components: { input: FocalYSlider } }),
+        defineField({ name: 'mobileTextPositionX',  title: 'Small Text Horizontal Position',     description: 'Phones. 0 = left · 50 = centre · 100 = right.', type: 'number', components: { input: FocalXSlider } }),
+        defineField({ name: 'tabletTextPosition',   title: 'Medium Text Vertical Position',      description: 'Tablets. 0 = top · 100 = bottom.', type: 'number', components: { input: FocalYSlider } }),
+        defineField({ name: 'tabletTextPositionX',  title: 'Medium Text Horizontal Position',    description: 'Tablets. 0 = left · 50 = centre · 100 = right.', type: 'number', components: { input: FocalXSlider } }),
+        defineField({ name: 'desktopTextPosition',  title: 'Large Text Vertical Position',       description: 'Desktop. 0 = top · 100 = bottom.', type: 'number', components: { input: FocalYSlider } }),
+        defineField({ name: 'desktopTextPositionX', title: 'Large Text Horizontal Position',     description: 'Desktop. 0 = left · 50 = centre · 100 = right.', type: 'number', components: { input: FocalXSlider } }),
+        defineField({ name: 'xlTextPosition',       title: 'Extra Large Text Vertical Position', description: 'Wide screens. 0 = top · 100 = bottom.', type: 'number', components: { input: FocalYSlider } }),
+        defineField({ name: 'xlTextPositionX',      title: 'Extra Large Text Horizontal Position', description: 'Wide screens. 0 = left · 50 = centre · 100 = right.', type: 'number', components: { input: FocalXSlider } }),
         defineField({
           name: 'textColor',
           title: 'Text Colour',
@@ -158,8 +167,8 @@ export const heroSlide = defineType({
         }),
         defineField({
           name: 'buttonColor',
-          title: 'Button Colour',
-          description: 'Border and text colour of the button. Only applies when a Button Link is set above.',
+          title: 'Button Preset Colour',
+          description: 'Quick preset for border and text. Custom colour below overrides this.',
           type: 'string',
           initialValue: 'white',
           options: {
@@ -170,6 +179,20 @@ export const heroSlide = defineType({
             ],
             layout: 'radio',
           },
+        }),
+        defineField({
+          name: 'buttonCustomColor',
+          title: 'Custom Button Text & Border Colour',
+          description: 'Overrides the preset above. Leave empty to use the preset.',
+          type: 'string',
+          components: { input: ColorPickerInput },
+        }),
+        defineField({
+          name: 'buttonBackgroundColor',
+          title: 'Custom Button Background Colour',
+          description: 'Optional. Leave empty for the transparent outline button style.',
+          type: 'string',
+          components: { input: ColorPickerInput },
         }),
       ],
     }),

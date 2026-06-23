@@ -4,6 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import Link from 'next/link'
+import type { CSSProperties } from 'react'
 
 const IconPrev = () => (
   <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -24,6 +25,12 @@ const BUTTON_CLASSES: Record<string, string> = {
   gold:  'border-[var(--brand-yellow)] text-[var(--brand-yellow)] hover:bg-[var(--brand-yellow)] hover:text-black',
 }
 
+const BUTTON_COLORS: Record<string, string> = {
+  white: '#ffffff',
+  black: '#000000',
+  gold:  '#FFD700',
+}
+
 type HeroSlide = {
   id: string
   imageMobile:   string
@@ -42,10 +49,20 @@ type HeroSlide = {
   heading: string
   sub?: string
   href?: string
-  textPosition:  number
-  textPositionX: number
+  textPosition:         number
+  textPositionX:        number
+  mobileTextPosition:   number
+  mobileTextPositionX:  number
+  tabletTextPosition:   number
+  tabletTextPositionX:  number
+  desktopTextPosition:  number
+  desktopTextPositionX: number
+  xlTextPosition:       number
+  xlTextPositionX:      number
   textColor: 'white' | 'black'
   buttonColor: 'white' | 'black' | 'gold'
+  buttonCustomColor?: string
+  buttonBackgroundColor?: string
 }
 
 export default function Hero({
@@ -73,6 +90,25 @@ export default function Hero({
         {slides.map((slide, index) => {
           const textColor = slide.textColor === 'black' ? '#000' : '#fff'
           const btnClasses = BUTTON_CLASSES[slide.buttonColor] ?? BUTTON_CLASSES.white
+          const hasCustomButtonColor = Boolean(slide.buttonCustomColor || slide.buttonBackgroundColor)
+          const fallbackButtonColor = BUTTON_COLORS[slide.buttonColor] ?? BUTTON_COLORS.white
+          const buttonStyle = hasCustomButtonColor
+            ? {
+                color: slide.buttonCustomColor || fallbackButtonColor,
+                borderColor: slide.buttonCustomColor || fallbackButtonColor,
+                backgroundColor: slide.buttonBackgroundColor || 'transparent',
+              }
+            : undefined
+          const textPositionStyle = {
+            '--hero-mobile-y':  `${slide.mobileTextPosition}%`,
+            '--hero-mobile-x':  `${slide.mobileTextPositionX}%`,
+            '--hero-tablet-y':  `${slide.tabletTextPosition}%`,
+            '--hero-tablet-x':  `${slide.tabletTextPositionX}%`,
+            '--hero-desktop-y': `${slide.desktopTextPosition}%`,
+            '--hero-desktop-x': `${slide.desktopTextPositionX}%`,
+            '--hero-xl-y':      `${slide.xlTextPosition}%`,
+            '--hero-xl-x':      `${slide.xlTextPositionX}%`,
+          } as CSSProperties
 
           return (
             <div key={slide.id} className="flex-none w-full h-full relative">
@@ -126,12 +162,18 @@ export default function Hero({
 
               {/* Text overlay — vertical + horizontal position from CMS */}
               <div
-                className="absolute p-6 md:p-16 max-w-xl z-10"
-                style={{
-                  top:       `${slide.textPosition}%`,
-                  left:      `${slide.textPositionX}%`,
-                  transform: `translateY(-100%) translateX(-${slide.textPositionX}%)`,
-                }}
+                className="
+                  hero-copy absolute z-10 max-w-xl p-6 md:p-16
+                  top-[var(--hero-mobile-y)] left-[var(--hero-mobile-x)]
+                  -translate-y-full translate-x-[calc(-1*var(--hero-mobile-x))]
+                  md:top-[var(--hero-tablet-y)] md:left-[var(--hero-tablet-x)]
+                  md:translate-x-[calc(-1*var(--hero-tablet-x))]
+                  lg:top-[var(--hero-desktop-y)] lg:left-[var(--hero-desktop-x)]
+                  lg:translate-x-[calc(-1*var(--hero-desktop-x))]
+                  xl:top-[var(--hero-xl-y)] xl:left-[var(--hero-xl-x)]
+                  xl:translate-x-[calc(-1*var(--hero-xl-x))]
+                "
+                style={textPositionStyle}
               >
                 {slide.label && (
                   <p
@@ -161,7 +203,8 @@ export default function Hero({
                   <Link
                     href={slide.href}
                     data-testid="home-hero-cta-button"
-                    className={`inline-block border px-8 py-3 text-xs uppercase tracking-widest font-medium transition-colors duration-300 ${btnClasses}`}
+                    className={`inline-block border px-8 py-3 text-xs uppercase tracking-widest font-medium transition-colors duration-300 ${hasCustomButtonColor ? '' : btnClasses}`}
+                    style={buttonStyle}
                   >
                     Shop Now
                   </Link>

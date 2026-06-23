@@ -109,7 +109,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
                 </p>
                 <p
                   data-testid={`home-product-price-${product.id}`}
-                  className="text-[28px] font-light tracking-widest text-gray-400 mt-1"
+                  className="mt-1 text-[18px] font-normal leading-[27px] tracking-normal text-gray-400"
                 >
                   ₦{product.price.toLocaleString()}
                 </p>

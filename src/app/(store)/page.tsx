@@ -24,10 +24,20 @@ type SanityHeroSlide = {
   heading: string
   sub?: string
   href?: string
-  textPosition:  number
-  textPositionX: number
+  textPosition:         number
+  textPositionX:        number
+  mobileTextPosition:   number
+  mobileTextPositionX:  number
+  tabletTextPosition:   number
+  tabletTextPositionX:  number
+  desktopTextPosition:  number
+  desktopTextPositionX: number
+  xlTextPosition:       number
+  xlTextPositionX:      number
   textColor: 'white' | 'black'
   buttonColor: 'white' | 'black' | 'gold'
+  buttonCustomColor?: string
+  buttonBackgroundColor?: string
 }
 
 type Settings = {
@@ -80,10 +90,20 @@ export default async function Home({
       heading:       slide.heading,
       sub:           slide.sub,
       href:          slide.href || undefined,
-      textPosition:  slide.textPosition,
-      textPositionX: slide.textPositionX,
-      textColor:     slide.textColor,
-      buttonColor:   slide.buttonColor,
+      textPosition:         slide.textPosition,
+      textPositionX:        slide.textPositionX,
+      mobileTextPosition:   slide.mobileTextPosition,
+      mobileTextPositionX:  slide.mobileTextPositionX,
+      tabletTextPosition:   slide.tabletTextPosition,
+      tabletTextPositionX:  slide.tabletTextPositionX,
+      desktopTextPosition:  slide.desktopTextPosition,
+      desktopTextPositionX: slide.desktopTextPositionX,
+      xlTextPosition:       slide.xlTextPosition,
+      xlTextPositionX:      slide.xlTextPositionX,
+      textColor:            slide.textColor,
+      buttonColor:          slide.buttonColor,
+      buttonCustomColor:    slide.buttonCustomColor,
+      buttonBackgroundColor: slide.buttonBackgroundColor,
     }))
 
   return (
