@@ -34,7 +34,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
     // On mobile: h-full threads height down from the flex-1 section wrapper.
     // px-8 keeps 32px gutters on each side for the arrow buttons.
     // On desktop: back to normal flow (h-auto).
-    <div className="relative h-full md:h-auto px-8 md:px-0">
+    <div className="relative px-8 md:px-0">
 
       {/* ── Mobile arrows ─────────────────────────────────────────────────
           Absolutely positioned in the px-8 gutters, vertically centred
@@ -77,20 +77,16 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
 
       {/* ── Carousel viewport ─────────────────────────────────────────── */}
       {/* h-full on mobile so embla fills the section height */}
-      <div ref={emblaRef} className="overflow-hidden h-full md:h-auto">
-        <div className="flex h-full md:h-auto gap-4">
+      <div ref={emblaRef} className="overflow-hidden">
+        <div className="flex gap-4">
           {products.map((product) => (
             <Link
               key={product.id}
               href={product.href}
               data-testid={`home-product-card-${product.id}`}
-              // The fixed info height keeps every image frame the same size,
-              // even when product names have different lengths.
-              className="group flex-none w-full sm:w-[50%] md:w-[33%] h-full md:h-auto grid grid-rows-[minmax(0,1fr)_5.75rem] md:flex md:flex-col"
+              className="group flex-none w-full sm:w-[50%] md:w-[33%] flex flex-col"
             >
-              {/* Image area: flex-1 fills all space above the text on mobile.
-                  min-h-0 lets Safari honour flex-1 in a deep h-full chain. */}
-              <div className="relative min-h-0 md:flex-none md:aspect-[4/5] bg-white overflow-hidden mb-3">
+              <div className="relative aspect-[4/5] bg-white overflow-hidden mb-3">
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -100,16 +96,16 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
                   className="object-contain p-2 transition-transform duration-500 md:object-cover md:p-0 md:group-hover:scale-105"
                 />
               </div>
-              <div className="min-h-0 shrink-0">
+              <div className="shrink-0 text-center">
                 <p
                   data-testid={`home-product-name-${product.id}`}
-                  className="text-base font-medium overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="text-base font-light leading-5 text-black overflow-hidden text-ellipsis whitespace-nowrap"
                 >
                   {product.name}
                 </p>
                 <p
                   data-testid={`home-product-price-${product.id}`}
-                  className="text-[28px] font-light tracking-widest text-gray-400 mt-1"
+                  className="mt-1 text-[18px] font-normal leading-[27px] text-black"
                 >
                   ₦{product.price.toLocaleString()}
                 </p>

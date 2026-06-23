@@ -1,4 +1,6 @@
 'use client'
+import React, { useState, useEffect } from 'react'
+import { ObjectInputProps, MemberField, set, unset, useFormValue } from 'sanity'
 
 /**
  * ProductEditor — unified product management UI for Sanity Studio.
@@ -7,8 +9,6 @@
  * Everything else flows from there — gallery, sizes, pricing.
  */
 
-import React, { useState, useEffect } from 'react'
-import { ObjectInputProps, MemberField, set, unset, useFormValue } from 'sanity'
 
 const BRAND_YELLOW = '#c9a227'
 const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL']
@@ -78,6 +78,7 @@ type ProductImage = {
   image?: { asset?: SanityImageAsset; hotspot?: unknown }
   isMain?: boolean
 }
+type ColorItem = { _key: string; colorName?: string; colorHex?: string }
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -87,18 +88,21 @@ export function ProductEditor(props: ObjectInputProps) {
 
   // Read live document values (paths are at document root — this component
   // is mounted at the document level via components: { input: ProductEditor })
-  const currentProductImages = (useFormValue(['productImages']) as ProductImage[] | undefined) ?? []
-  const currentSizes         = (useFormValue(['sizes'])          as string[]      | undefined) ?? []
-  const currentShoeSizes     = (useFormValue(['shoeSizes'])       as string        | undefined) ?? ''
-  const currentPrice         = (useFormValue(['price'])           as number        | undefined)
-  const currentCompareAt     = (useFormValue(['compareAtPrice'])  as number        | undefined)
+  const currentProductImages = (useFormValue(['productImages']) as ProductImage[]  | undefined) ?? []
+  const currentColors        = (useFormValue(['colors'])        as ColorItem[]     | undefined) ?? []
+  const currentSizes         = (useFormValue(['sizes'])         as string[]        | undefined) ?? []
+  const currentShoeSizes     = (useFormValue(['shoeSizes'])     as string          | undefined) ?? ''
+  const currentPrice         = (useFormValue(['price'])         as number          | undefined)
+  const currentCompareAt     = (useFormValue(['compareAtPrice']) as number         | undefined)
 
   // Local controlled state for text/number inputs (so the field doesn't lose
   // focus on every keystroke — we only write to Sanity on blur)
-  const [localShoeSizes, setLocalShoeSizes] = useState(currentShoeSizes)
-  const [localPrice,     setLocalPrice]     = useState(currentPrice != null ? String(currentPrice) : '')
-  const [localCompareAt, setLocalCompareAt] = useState(currentCompareAt != null ? String(currentCompareAt) : '')
-  const [onSale,         setOnSale]         = useState(currentCompareAt != null)
+  const [localShoeSizes, setLocalShoeSizes]   = useState(currentShoeSizes)
+  const [localPrice,     setLocalPrice]       = useState(currentPrice != null ? String(currentPrice) : '')
+  const [localCompareAt, setLocalCompareAt]   = useState(currentCompareAt != null ? String(currentCompareAt) : '')
+  const [onSale,         setOnSale]           = useState(currentCompareAt != null)
+  const [newColorName,   setNewColorName]     = useState('')
+  const [newColorHex,    setNewColorHex]      = useState(BRAND_YELLOW)
 
   // Sync local state when the document updates from outside (undo, initial load)
   useEffect(() => { setLocalShoeSizes(currentShoeSizes) }, [currentShoeSizes])
@@ -123,6 +127,19 @@ export function ProductEditor(props: ObjectInputProps) {
       set(img._key === clickedKey, ['productImages', { _key: img._key }, 'isMain'])
     )
     onChange(patches)
+  }
+
+  // ── Colours ───────────────────────────────────────────────────────────────
+  function addColor() {
+    if (!newColorName.trim()) return
+    const key = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`
+    onChange(set([...currentColors, { _key: key, colorName: newColorName.trim(), colorHex: newColorHex }], ['colors']))
+    setNewColorName('')
+    setNewColorHex(BRAND_YELLOW)
+  }
+
+  function removeColor(key: string) {
+    onChange(set(currentColors.filter((c) => c._key !== key), ['colors']))
   }
 
   // ── Clothing sizes — chip toggles ─────────────────────────────────────────
@@ -162,7 +179,6 @@ export function ProductEditor(props: ObjectInputProps) {
   }
 
   const productImagesMember = member('productImages')
-  const variantsMember      = member('variants')
 
   const identityFields   = ['name', 'slug', 'category', 'description']
   const visibilityFields = ['featured', 'inStock']
@@ -271,16 +287,75 @@ export function ProductEditor(props: ObjectInputProps) {
         )}
       </div>
 
-      {/* ── SECTION 2: COLOUR VARIANTS ── */}
+      {/* ── SECTION 2: AVAILABLE COLOURS ── */}
       <div style={card}>
-        <p style={heading}>Colour Variants</p>
+        <p style={heading}>Available Colours</p>
         <p style={{ fontSize: 13, color: '#555', margin: '0 0 16px 0' }}>
-          Optional — use this if the product comes in multiple colours. Each variant gets its own
-          images and available sizes. Leave empty if it&apos;s one colour only.
+          Optional — add each colour this product comes in. Leave empty for single-colour items.
         </p>
-        {variantsMember?.kind === 'field' && (
-          <MemberField member={variantsMember} {...renderProps} />
+
+        {/* Existing colour pills */}
+        {currentColors.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+            {currentColors.map((color) => (
+              <div
+                key={color._key}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  background: '#fff', border: '1px solid #e5e5e5',
+                  borderRadius: 20, padding: '6px 10px 6px 8px',
+                }}
+              >
+                <div style={{
+                  width: 16, height: 16, borderRadius: '50%',
+                  background: color.colorHex ?? '#ccc',
+                  border: '1px solid rgba(0,0,0,0.15)', flexShrink: 0,
+                }} />
+                <span style={{ fontSize: 13, color: '#333' }}>{color.colorName}</span>
+                <button
+                  type="button"
+                  onClick={() => removeColor(color._key)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 0 2px', fontSize: 15, color: '#aaa', lineHeight: 1 }}
+                  title="Remove colour"
+                >×</button>
+              </div>
+            ))}
+          </div>
         )}
+
+        {/* Add new colour row */}
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <input
+            type="color"
+            value={newColorHex}
+            onChange={(e) => setNewColorHex(e.target.value)}
+            title="Pick a colour"
+            style={{ width: 38, height: 38, padding: 2, border: '1px solid #ccc', borderRadius: 6, cursor: 'pointer', background: 'none', flexShrink: 0 }}
+          />
+          <input
+            type="text"
+            value={newColorName}
+            onChange={(e) => setNewColorName(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && addColor()}
+            placeholder="Colour name (e.g. Burgundy)"
+            style={{ ...inputStyle, flex: 1 }}
+          />
+          <button
+            type="button"
+            onClick={addColor}
+            disabled={!newColorName.trim()}
+            style={{
+              padding: '10px 16px',
+              background: newColorName.trim() ? BRAND_YELLOW : '#e5e5e5',
+              color: newColorName.trim() ? '#fff' : '#aaa',
+              border: 'none', borderRadius: 6,
+              fontSize: 13, fontWeight: 600,
+              cursor: newColorName.trim() ? 'pointer' : 'default',
+              whiteSpace: 'nowrap', flexShrink: 0,
+            }}
+          >Add</button>
+        </div>
+        <p style={hint}>Tap the colour square to open the picker. Press Enter or click Add.</p>
       </div>
 
       {/* ── SECTION 3: SIZES ── */}

@@ -33,11 +33,11 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Install Playwright system deps (cached browsers)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium
 
       - name: Get Vercel preview URL
         id: vercel_preview
@@ -52,24 +52,35 @@ jobs:
           echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
           echo "Preview URL: $PREVIEW_URL"
 
-      - name: Wait for preview to be ready
+      - name: Wait for Vercel deployment to complete
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          URL="${{ steps.vercel_preview.outputs.url }}?x-vercel-protection-bypass=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}"
-          echo "Waiting for ${{ steps.vercel_preview.outputs.url }}"
-          for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "Preview is ready!"
+          # Vercel posts a commit STATUS (not a check-run) — poll that API.
+          # The statuses endpoint returns newest-first, so .[0] is the latest.
+          # We wait for state=success before running tests so we never test
+          # against a stale deployment that was already live at HTTP 200.
+          # github.sha is the merge commit GitHub creates for the PR — Vercel posts
+          # to the actual branch HEAD instead, which is pull_request.head.sha.
+          HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          echo "Waiting for Vercel status on $HEAD_SHA"
+          for i in $(seq 1 60); do
+            STATE=$(gh api \
+              "repos/${{ github.repository }}/statuses/$HEAD_SHA" \
+              --jq '[.[] | select(.context == "Vercel")] | .[0].state // empty' \
+              2>/dev/null)
+            echo "Attempt $i: state=${STATE:-none}"
+            if [ "$STATE" = "success" ]; then
+              echo "Vercel deployment complete!"
               exit 0
             fi
             sleep 10
           done
-          echo "Timed out waiting for preview"
+          echo "Timed out waiting for Vercel"
           exit 1
 
       - name: Run smoke tests against preview
-        run: npx playwright test --grep @tomanni-smoke --project="Desktop Chrome"
+        run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome"
         env:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}

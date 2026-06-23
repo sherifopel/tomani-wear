@@ -1,10 +1,12 @@
 import { defineField, defineType } from 'sanity'
+import { ShoppingBag } from 'lucide-react'
 import { ProductEditor } from '../components/ProductEditor'
 
 export const product = defineType({
   name: 'product',
   title: 'Product',
   type: 'document',
+  icon: ShoppingBag,
   // Apply the custom UI at the document level so Tomiwa sees one clean form
   components: { input: ProductEditor },
   fields: [
@@ -65,32 +67,21 @@ export const product = defineType({
       ],
     }),
 
-    // ── Colour Variants (managed via ProductEditor UI) ─────────────────────
+    // ── Available Colours (managed via ProductEditor UI) ──────────────────
     defineField({
-      name: 'variants',
-      title: 'Colour Variants',
+      name: 'colors',
+      title: 'Available Colours',
       type: 'array',
       of: [
         {
           type: 'object',
           fields: [
             defineField({ name: 'colorName', title: 'Colour Name', type: 'string', validation: (Rule) => Rule.required() }),
-            defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string' }),
-            defineField({ name: 'images',    title: 'Images',      type: 'array', of: [{ type: 'image', options: { hotspot: true } }] }),
-            defineField({
-              name: 'sizes',
-              title: 'Available Sizes',
-              type: 'array',
-              of: [{ type: 'string' }],
-              options: {
-                list: [
-                  { title: 'XS', value: 'XS' }, { title: 'S', value: 'S' },
-                  { title: 'M',  value: 'M'  }, { title: 'L', value: 'L' },
-                  { title: 'XL', value: 'XL' }, { title: 'XXL', value: 'XXL' },
-                ],
-              },
-            }),
+            defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string', initialValue: '#000000' }),
           ],
+          preview: {
+            select: { title: 'colorName', subtitle: 'colorHex' },
+          },
         },
       ],
     }),

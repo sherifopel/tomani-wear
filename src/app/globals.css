@@ -60,6 +60,39 @@ body {
   }
 }
 
+/* ─── Nav icon fill ────────────────────────────────────────────────────────
+   Inset box-shadow expands from a 1px border to flood-fill the icon button.
+   Applied to burger menu, cart, and account nav icons.
+   Usage: add class "nav-icon-fill" to the button.
+─────────────────────────────────────────────────────────────────────────── */
+
+.nav-icon-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-icon-fill::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px currentColor;
+  transition: box-shadow 0.4s ease;
+  pointer-events: none;
+}
+
+.nav-icon-fill:hover::before {
+  box-shadow: inset 0 0 0 40px currentColor;
+}
+
+.nav-icon-fill:hover svg {
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
 /* ─── Collision button ─────────────────────────────────────────────────────
    Two circles burst in from outside the button and collide in the centre,
    expanding until they fill the entire button with the brand red.

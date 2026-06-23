@@ -25,7 +25,7 @@ importers:
         version: 8.6.0(react@19.2.4)
       logr-kit:
         specifier: github:sherifopel/pw-log
-        version: https://codeload.github.com/sherifopel/pw-log/tar.gz/a8d72c71a34b0ccd6d17c4ea6a4322c8942e16de
+        version: https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5
       lucide-react:
         specifier: ^1.21.0
         version: 1.21.0(react@19.2.4)
@@ -72,6 +72,9 @@ importers:
       lightningcss-darwin-arm64:
         specifier: ^1.32.0
         version: 1.32.0
+      playwright-final-summary-reporter:
+        specifier: github:sherifopel/playwright-final-summary-reporter
+        version: https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6(@playwright/test@1.61.0)
       tailwindcss:
         specifier: ^4
         version: 4.3.1
@@ -3000,6 +3003,11 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
+  browserslist@4.28.4:
+    resolution: {integrity: sha512-MTc8i/x9jBQd1iMw2CFGS+rwMa07eYjLR0CCTLDACl9xhxy+nIs3KeML/biicXtk9JrZ6dnnTatmc7ErPXIxqw==}
+    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
+    hasBin: true
+
   buffer-from@1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
 
@@ -4436,8 +4444,8 @@ packages:
     resolution: {integrity: sha512-ja1E3yCr9i/0hmBVaM0bfwDjnGy8I/s6PP4DFp+yP+a+mrHO4Rm7DtmnqROTUkHIkqffC84YY7AeqX6oFk0WFg==}
     engines: {node: '>=18'}
 
-  logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/a8d72c71a34b0ccd6d17c4ea6a4322c8942e16de:
-    resolution: {gitHosted: true, integrity: sha512-7phJF9s0/vnG67WZGORt4DnQRKT4ywvhyywlVFEyZIntFUTvLpnOXiq6gEmH2Bta//XhDCAxYBSsWdqyU+JZpg==, tarball: https://codeload.github.com/sherifopel/pw-log/tar.gz/a8d72c71a34b0ccd6d17c4ea6a4322c8942e16de}
+  logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5:
+    resolution: {gitHosted: true, integrity: sha512-XbDCmcAJZpXMqDy8jgKkhtvJQppNvx9SwfvIjhbYpzb8s6jWzhDkXg18b79l358Sg31xMwJmN6qxwC2wdcSQgQ==, tarball: https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5}
     version: 1.0.0
 
   loose-envify@1.4.0:
@@ -4593,6 +4601,11 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  nanoid@3.3.15:
+    resolution: {integrity: sha512-y7Wygv/7mEOvxTuEQDB8StXdMRBWf1kR/tlhAzBRUFkB2jfcLOAxO/SHmOO2zgz1pVgK29/kyupn059/bCHdjA==}
+    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
   nanoid@5.1.15:
     resolution: {integrity: sha512-kBg3RpGtIe+RpTbyXwoI6pk5yD7KUiI3sygUqgeBMRst42KmhB4RZC7eiO9Wa1HIpaCCtpE2DJ6OI4Wi5ebwFw==}
     engines: {node: ^18 || >=20}
@@ -4732,6 +4745,10 @@ packages:
     resolution: {integrity: sha512-84cglkRILFxdtA8hAvLNdMrtBpPNBTrQ9/ulg0FA7xLMnD6mifv+enAIeRmvtv+WgdCE+LPGOfQmtJRrVaIVhQ==}
     engines: {node: '>=20'}
 
+  ora@9.4.1:
+    resolution: {integrity: sha512-6VlU9MLXbjVQD04AZCMX28hVtA5bUoadvUqO76MUCVA0ilwJbMiHsITRPfyVm6p/BC0Av/BXMujx39WCe1LEqw==}
+    engines: {node: '>=20'}
+
   own-keys@1.0.1:
     resolution: {integrity: sha512-qFOyK5PjiWZd+QQIh+1jhdb9LpxTF0qs7Pm8o5QHYZ0M3vKqSqzsZaEB6oWlxZ+q2sJBMI/Ktgd2N5ZwQoRHfg==}
     engines: {node: '>= 0.4'}
@@ -4864,6 +4881,13 @@ packages:
     resolution: {integrity: sha512-caX7TrY3Ml6egyDX0WUcTHDxodl/b51y5wJOdCEA36QviK/s2g081hvmGs8eaE3DWb6NYZQ6BjO/QkNRPenoPA==}
     engines: {node: '>=18'}
     hasBin: true
+
+  playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6:
+    resolution: {gitHosted: true, tarball: https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6}
+    version: 1.0.0
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      '@playwright/test': '>=1.40.0'
 
   playwright@1.61.0:
     resolution: {integrity: sha512-Z+7BeeqQPRRzklHsVFP4KTGIyMxKUmfeRA4WisM6G3/XW6nwGeX6fX9qYaDa+CiUqpOkb2f6X3nar05R3kSuJQ==}
@@ -6139,7 +6163,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.29.7
       '@babel/helper-validator-option': 7.29.7
-      browserslist: 4.28.2
+      browserslist: 4.28.4
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -8020,7 +8044,7 @@ snapshots:
       jsdom: 29.1.1(@noble/hashes@2.2.0)
       json-lexer: 1.2.0
       log-symbols: 7.0.1
-      ora: 9.4.0
+      ora: 9.4.1
       read-package-up: 12.0.0
       rxjs: 7.8.2
       tsx: 4.22.4
@@ -8140,7 +8164,7 @@ snapshots:
     dependencies:
       '@sanity/eventsource': 5.0.2
       get-it: 8.8.0
-      nanoid: 3.3.13
+      nanoid: 3.3.15
       rxjs: 7.8.2
 
   '@sanity/codegen@7.0.3(@oclif/core@4.11.7)(@sanity/cli-core@2.0.1(@noble/hashes@2.2.0)(@types/node@20.19.43)(esbuild@0.28.1)(yaml@2.9.0))(react@19.2.7)':
@@ -9248,6 +9272,14 @@ snapshots:
       electron-to-chromium: 1.5.376
       node-releases: 2.0.48
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
+
+  browserslist@4.28.4:
+    dependencies:
+      baseline-browser-mapping: 2.10.38
+      caniuse-lite: 1.0.30001799
+      electron-to-chromium: 1.5.376
+      node-releases: 2.0.48
+      update-browserslist-db: 1.2.3(browserslist@4.28.4)
 
   buffer-from@1.1.2: {}
 
@@ -10849,7 +10881,7 @@ snapshots:
       is-unicode-supported: 2.1.0
       yoctocolors: 2.1.2
 
-  logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/a8d72c71a34b0ccd6d17c4ea6a4322c8942e16de:
+  logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5:
     dependencies:
       chalk: 5.6.2
 
@@ -10981,6 +11013,8 @@ snapshots:
   nano-pubsub@3.0.0: {}
 
   nanoid@3.3.13: {}
+
+  nanoid@3.3.15: {}
 
   nanoid@5.1.15: {}
 
@@ -11157,6 +11191,17 @@ snapshots:
       stdin-discarder: 0.3.2
       string-width: 8.2.1
 
+  ora@9.4.1:
+    dependencies:
+      chalk: 5.6.2
+      cli-cursor: 5.0.0
+      cli-spinners: 3.4.0
+      is-interactive: 2.0.0
+      is-unicode-supported: 2.1.0
+      log-symbols: 7.0.1
+      stdin-discarder: 0.3.2
+      string-width: 8.2.1
+
   own-keys@1.0.1:
     dependencies:
       get-intrinsic: 1.3.0
@@ -11277,6 +11322,10 @@ snapshots:
       - react
 
   playwright-core@1.61.0: {}
+
+  playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6(@playwright/test@1.61.0):
+    dependencies:
+      '@playwright/test': 1.61.0
 
   playwright@1.61.0(patch_hash=fd3b5c0db0982dd22382301e36a37dd2417cd82790752138f5e0cd7df56361cd):
     dependencies:
@@ -12333,6 +12382,12 @@ snapshots:
   update-browserslist-db@1.2.3(browserslist@4.28.2):
     dependencies:
       browserslist: 4.28.2
+      escalade: 3.2.0
+      picocolors: 1.1.1
+
+  update-browserslist-db@1.2.3(browserslist@4.28.4):
+    dependencies:
+      browserslist: 4.28.4
       escalade: 3.2.0
       picocolors: 1.1.1
 

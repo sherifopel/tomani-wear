@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, Search, User, ShoppingBag, ChevronRight } from 'lucide-react'
-import { useCart } from '@/hooks/useCart'
+import { Menu, X, ChevronRight } from 'lucide-react'
 
 const navLinks = [
   { label: 'New In',       href: '/new',          accent: false },
@@ -16,86 +15,54 @@ const navLinks = [
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
-  const { totalItems } = useCart()
+  const [panelTop, setPanelTop] = useState(0)
+
+  useEffect(() => {
+    // Tell StickyHeader whether the menu is open so it can keep the banner visible
+    document.dispatchEvent(new CustomEvent('mobilemenu', { detail: { open } }))
+
+    if (!open) return
+
+    const measure = () => {
+      const header = document.querySelector('[data-testid="nav-header"]')
+      setPanelTop(header?.getBoundingClientRect().bottom ?? 0)
+    }
+
+    // Measure immediately so the panel starts in the right place when the
+    // banner is already visible (page at top, not compact).
+    measure()
+
+    // Re-measure after the banner's 300ms expand animation for the case where
+    // the header was compact (banner collapsed) and is now expanding.
+    const timer = setTimeout(measure, 320)
+    window.addEventListener('resize', measure)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', measure)
+    }
+  }, [open])
 
   return (
     <>
       {/* Hamburger — sits inside the Navbar header */}
       <button
-        data-testid="mobile-menu-open-button"
-        aria-label="Open menu"
-        onClick={() => setOpen(true)}
+        data-testid={open ? 'mobile-menu-close-button' : 'mobile-menu-open-button'}
+        aria-label={open ? 'Close menu' : 'Open menu'}
+        onClick={() => setOpen((current) => !current)}
         className="md:hidden transition-transform duration-200 hover:scale-110 active:scale-95"
       >
-        <Menu size={22} strokeWidth={1.5} />
+        {open ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
       </button>
 
-      {/* Full-screen overlay */}
+      {/* Menu panel — opens below the sticky banner/header instead of covering it. */}
       {open && (
         <div
           data-testid="mobile-menu"
-          className="fixed inset-0 z-[200] bg-white flex flex-col md:hidden"
+          className="fixed left-0 right-0 bottom-0 z-[100] bg-white border-t border-gray-100 md:hidden"
+          style={{ top: panelTop }}
         >
-          {/* ── Top bar: mirrors the Navbar header ── */}
-          <div className="border-b border-gray-100 px-6 py-4 grid grid-cols-3 items-center shrink-0">
-
-            {/* Close button — left slot */}
-            <button
-              data-testid="mobile-menu-close-button"
-              aria-label="Close menu"
-              onClick={() => setOpen(false)}
-              className="transition-transform duration-200 hover:scale-110 active:scale-95 justify-self-start"
-            >
-              <X size={22} strokeWidth={1.5} />
-            </button>
-
-            {/* Logo — centre slot */}
-            <Link
-              href="/"
-              data-testid="mobile-menu-logo"
-              onClick={() => setOpen(false)}
-              className="flex justify-center items-center"
-            >
-              <span className="text-[20px] font-light leading-none tracking-[0.22em] uppercase">
-                Tomanni
-              </span>
-            </Link>
-
-            {/* Actions — right slot */}
-            <div className="flex items-center justify-end gap-3">
-              <button
-                data-testid="mobile-menu-search-button"
-                aria-label="Search"
-                className="transition-transform duration-200 hover:scale-125 active:scale-95"
-              >
-                <Search size={18} strokeWidth={1.5} />
-              </button>
-              <button
-                data-testid="mobile-menu-account-button"
-                aria-label="Account"
-                className="transition-transform duration-200 hover:scale-125 active:scale-95"
-              >
-                <User size={18} strokeWidth={1.5} />
-              </button>
-              <Link
-                href="/cart"
-                data-testid="mobile-menu-cart-button"
-                aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}
-                className="relative transition-transform duration-200 hover:scale-125 active:scale-95"
-                onClick={() => setOpen(false)}
-              >
-                <ShoppingBag size={18} strokeWidth={1.5} />
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[var(--brand-red)] text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                    {totalItems}
-                  </span>
-                )}
-              </Link>
-            </div>
-          </div>
-
           {/* ── Nav links ── */}
-          <nav className="flex flex-col px-6 overflow-y-auto">
+          <nav className="flex h-full flex-col px-6 overflow-y-auto">
             {navLinks.map((link) => (
               <Link
                 key={link.href}

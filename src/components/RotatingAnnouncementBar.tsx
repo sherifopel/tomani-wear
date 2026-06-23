@@ -22,11 +22,11 @@ export default function RotatingAnnouncementBar({
   return (
     <div
       data-testid="nav-announcement-bar"
-      className="bg-black text-white text-center text-xs py-2 tracking-widest uppercase overflow-hidden"
+      className="bg-black text-white text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden"
     >
       <span
         key={activeIndex}
-        className="block animate-[announcement-slide_400ms_ease-out]"
+        className="mx-auto block max-w-[34rem] leading-relaxed animate-[announcement-slide_400ms_ease-out]"
       >
         {messages[activeIndex]}
       </span>

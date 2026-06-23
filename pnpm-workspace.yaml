@@ -2,5 +2,7 @@ allowBuilds:
   esbuild: false
   sharp: false
   unrs-resolver: false
+  "playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6": true
+  "logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5": true
 patchedDependencies:
   playwright@1.61.0: patches/playwright@1.61.0.patch

@@ -40,6 +40,7 @@ export default function StickyHeader({
   children?: React.ReactNode
 }) {
   const [compact, setCompact] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   // Refs avoid stale closures inside the scroll handler
   const compactRef = useRef(false)
@@ -93,25 +94,32 @@ export default function StickyHeader({
     }
   }, [])
 
+  useEffect(() => {
+    const handler = (e: Event) => setMenuOpen((e as CustomEvent<{ open: boolean }>).detail.open)
+    document.addEventListener('mobilemenu', handler)
+    return () => document.removeEventListener('mobilemenu', handler)
+  }, [])
+
   // On desktop the main row also collapses; on mobile it stays put.
   // We compute this at render time — SSR-safe because compact starts false.
   const isDesktop = typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BP
-  const collapseMainRow = compact && isDesktop
+  // When the mobile menu is open, never collapse — banner must stay visible
+  const suppressCompact = compact && !menuOpen
+  const collapseMainRow = suppressCompact && isDesktop
 
   return (
     <header
       data-testid="nav-header"
-      data-compact={compact}
+      data-compact={suppressCompact}
       className="sticky top-0 z-[101] bg-white group"
     >
 
       {/* ── Announcement bar ──────────────────────────────────────────────
-          Collapses on both mobile and desktop.
-          max-height trick: CSS can't transition to/from `height: auto`,
-          but it CAN transition between two fixed max-height values. */}
+          Collapses on both mobile and desktop — but never when the mobile
+          menu is open (banner must stay visible above the menu panel). */}
       {announcementBar && (
         <div
-          style={{ maxHeight: compact ? '0' : '3rem' }}
+          style={{ maxHeight: suppressCompact ? '0' : '3rem' }}
           className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
         >
           {announcementBar}
@@ -128,6 +136,7 @@ export default function StickyHeader({
       >
         {mainRow}
       </div>
+
 
       {/* ── Category nav / other children ─────────────────────────────── */}
       {children}

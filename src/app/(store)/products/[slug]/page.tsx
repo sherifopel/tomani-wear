@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
-import ProductInteractive, { type GalleryImage, type Variant } from '@/components/ProductInteractive'
+import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
 
 type Product = {
   _id: string
@@ -14,7 +14,7 @@ type Product = {
   image: string
   hotspot?: { x: number; y: number }
   gallery?: GalleryImage[]
-  variants?: Variant[]
+  colors?: ColorOption[]
   description?: string
   category?: string
   sizes?: string[]
@@ -62,7 +62,7 @@ export default async function ProductPage({
           slug={product.slug}
           mainImage={product.image}
           gallery={product.gallery}
-          variants={product.variants}
+          colors={product.colors}
           sizes={product.sizes}
           inStock={product.inStock}
           onSale={onSale}

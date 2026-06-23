@@ -8,14 +8,36 @@ import { connection } from 'next/server'
 
 type SanityHeroSlide = {
   _id: string
-  image: SanityImageSource
+  imageMobile:  SanityImageSource
+  imageTablet:  SanityImageSource
+  imageDesktop: SanityImageSource
+  imageXl:      SanityImageSource
+  mobileFocalY:  number
+  tabletFocalY:  number
+  desktopFocalY: number
+  xlFocalY:      number
+  mobileFocalX:  number
+  tabletFocalX:  number
+  desktopFocalX: number
+  xlFocalX:      number
   label?: string
   heading: string
   sub?: string
-  href: string
-  mobileFocalY: number
-  tabletFocalY: number
-  desktopFocalY: number
+  href?: string
+  textPosition:         number
+  textPositionX:        number
+  mobileTextPosition:   number
+  mobileTextPositionX:  number
+  tabletTextPosition:   number
+  tabletTextPositionX:  number
+  desktopTextPosition:  number
+  desktopTextPositionX: number
+  xlTextPosition:       number
+  xlTextPositionX:      number
+  textColor: 'white' | 'black'
+  buttonColor: 'white' | 'black' | 'gold'
+  buttonCustomColor?: string
+  buttonBackgroundColor?: string
 }
 
 type Settings = {
@@ -48,28 +70,44 @@ export default async function Home({
     sanityClient.fetch(SETTINGS_QUERY),
   ])
 
-  const heroSlides = sanitySlides.map((slide) => ({
-    id: slide._id,
-    image: urlForImage(slide.image).width(1505).auto('format').url(),
-    label: slide.label,
-    heading: slide.heading,
-    sub: slide.sub,
-    href: slide.href,
-    mobileFocalY:  slide.mobileFocalY,
-    tabletFocalY:  slide.tabletFocalY,
-    desktopFocalY: slide.desktopFocalY,
-  }))
+  const heroSlides = sanitySlides
+    .filter((slide) => slide.imageMobile && slide.heading?.trim())
+    .map((slide) => ({
+      id:            slide._id,
+      imageMobile:   urlForImage(slide.imageMobile).width(800).auto('format').url(),
+      imageTablet:   urlForImage(slide.imageTablet).width(1024).auto('format').url(),
+      imageDesktop:  urlForImage(slide.imageDesktop).width(1505).auto('format').url(),
+      imageXl:       urlForImage(slide.imageXl).width(1920).auto('format').url(),
+      mobileFocalY:  slide.mobileFocalY,
+      tabletFocalY:  slide.tabletFocalY,
+      desktopFocalY: slide.desktopFocalY,
+      xlFocalY:      slide.xlFocalY,
+      mobileFocalX:  slide.mobileFocalX,
+      tabletFocalX:  slide.tabletFocalX,
+      desktopFocalX: slide.desktopFocalX,
+      xlFocalX:      slide.xlFocalX,
+      label:         slide.label,
+      heading:       slide.heading,
+      sub:           slide.sub,
+      href:          slide.href || undefined,
+      textPosition:         slide.textPosition,
+      textPositionX:        slide.textPositionX,
+      mobileTextPosition:   slide.mobileTextPosition,
+      mobileTextPositionX:  slide.mobileTextPositionX,
+      tabletTextPosition:   slide.tabletTextPosition,
+      tabletTextPositionX:  slide.tabletTextPositionX,
+      desktopTextPosition:  slide.desktopTextPosition,
+      desktopTextPositionX: slide.desktopTextPositionX,
+      xlTextPosition:       slide.xlTextPosition,
+      xlTextPositionX:      slide.xlTextPositionX,
+      textColor:            slide.textColor,
+      buttonColor:          slide.buttonColor,
+      buttonCustomColor:    slide.buttonCustomColor,
+      buttonBackgroundColor: slide.buttonBackgroundColor,
+    }))
 
   return (
-    <main
-      className="
-        h-[calc(100vh-5.25rem)] md:h-auto
-        overflow-y-scroll md:overflow-visible
-        overscroll-y-contain md:overscroll-auto
-        snap-y snap-mandatory md:snap-none
-        md:flex-1
-      "
-    >
+    <main className="flex-1">
       <Hero
         slides={heroSlides}
         autoplay={settings?.heroAutoplay !== false}

@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { Log } from 'logr-kit'
 
 // ╔════════════════════════════════════════════════════════════════════════════╗
 // ║  LOCATORS                                                                  ║
@@ -25,16 +26,18 @@ export const cartSelectors = (page: Page) => ({
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const navigate = async (page: Page, baseURL: string) => {
+  Log.navigate(`${baseURL}/cart`)
   await page.goto(`${baseURL}/cart`, { waitUntil: 'domcontentloaded' })
 }
 
 /** Navigate to a PDP, select the first available size, and click Add to Cart */
 export const addProductToCart = async (page: Page, baseURL: string, slug: string) => {
+  Log.navigate(`${baseURL}/products/${slug}`)
   await page.goto(`${baseURL}/products/${slug}`, { waitUntil: 'domcontentloaded' })
-  // Click the first available size button
   const firstSize = page.locator('[data-testid^="pdp-size-"]').first()
   await firstSize.click()
+  Log.info('selected first available size')
   await page.locator('[data-testid="pdp-add-to-cart"]').click()
-  // Wait for the "✓ Added" feedback so we know the dispatch happened
   await expect(page.locator('[data-testid="pdp-add-to-cart"]')).toContainText(/added/i, { timeout: 3000 })
+  Log.ok('product added to cart')
 }
