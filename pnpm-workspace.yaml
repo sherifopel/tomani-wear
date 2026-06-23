@@ -2,5 +2,6 @@ allowBuilds:
   esbuild: false
   sharp: false
   unrs-resolver: false
+  playwright-final-summary-reporter: true
 patchedDependencies:
   playwright@1.61.0: patches/playwright@1.61.0.patch
