@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { useCart } from '@/hooks/useCart'
 
 type Props = {
@@ -41,19 +41,6 @@ export default function ProductActions({
   const [quantity, setQuantity] = useState(1)
   const [sizeError, setSizeError] = useState(false)
   const [justAdded, setJustAdded] = useState(false)
-  const [showSticky, setShowSticky] = useState(false)
-  const mainBtnRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    const el = mainBtnRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowSticky(!entry.isIntersecting),
-      { threshold: 0 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
 
   function handleAddToCart() {
     if (sizes.length > 0 && !selectedSize) {
@@ -109,11 +96,10 @@ export default function ProductActions({
         </div>
       )}
 
-      {/* Quantity + Add to Cart row */}
-      <div className="flex gap-3 h-14" data-testid="pdp-add-to-cart-row">
-        <Stepper />
+      {/* Inline quantity + Add to Cart — desktop only */}
+      <div className="hidden md:flex gap-3 h-14" data-testid="pdp-add-to-cart-row">
+        <QtySelect />
         <button
-          ref={mainBtnRef}
           onClick={handleAddToCart}
           disabled={!inStock}
           data-testid="pdp-add-to-cart"
@@ -129,25 +115,23 @@ export default function ProductActions({
         </p>
       )}
 
-      {/* Spacer so sticky bar never covers content below */}
-      {showSticky && <div className="h-20 md:hidden" aria-hidden />}
+      {/* Spacer so sticky bar never covers content below — mobile only */}
+      <div className="h-20 md:hidden" aria-hidden />
 
-      {/* Sticky bar — mobile only, appears when main button scrolls out of view */}
-      {showSticky && (
-        <div className="fixed bottom-0 left-0 right-0 z-[99] md:hidden bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-          <div className="flex gap-3 h-14">
-            <QtySelect />
-            <button
-              onClick={handleAddToCart}
-              disabled={!inStock}
-              data-testid="pdp-sticky-add-to-cart"
-              className={btnClass(inStock, justAdded)}
-            >
-              {btnLabel(inStock, justAdded)}
-            </button>
-          </div>
+      {/* Sticky bar — mobile only, always visible */}
+      <div className="fixed bottom-0 left-0 right-0 z-[99] md:hidden bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+        <div className="flex gap-3 h-14">
+          <QtySelect />
+          <button
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            data-testid="pdp-sticky-add-to-cart"
+            className={btnClass(inStock, justAdded)}
+          >
+            {btnLabel(inStock, justAdded)}
+          </button>
         </div>
-      )}
+      </div>
 
     </div>
   )
