@@ -28,7 +28,12 @@ export default function MobileMenu() {
       setPanelTop(header?.getBoundingClientRect().bottom ?? 0)
     }
 
-    // Wait for the banner's 300ms expand animation to finish before measuring
+    // Measure immediately so the panel starts in the right place when the
+    // banner is already visible (page at top, not compact).
+    measure()
+
+    // Re-measure after the banner's 300ms expand animation for the case where
+    // the header was compact (banner collapsed) and is now expanding.
     const timer = setTimeout(measure, 320)
     window.addEventListener('resize', measure)
     return () => {
