@@ -156,7 +156,7 @@ export default function ProductInteractive({
           )}
 
           <div
-            className="relative w-full max-w-2xl mx-8 aspect-[3/4]"
+            className="relative w-full max-w-2xl mx-8 aspect-square"
             onClick={e => e.stopPropagation()}
           >
             <Image
@@ -184,7 +184,7 @@ export default function ProductInteractive({
         <div data-testid="pdp-gallery">
           {/* Main image with arrows + zoom button */}
           <div
-            className="relative aspect-[3/4] bg-gray-50 cursor-zoom-in"
+            className="relative w-full aspect-square bg-gray-50 cursor-zoom-in"
             data-testid="pdp-main-image"
             onClick={() => setIsZoomed(true)}
           >
@@ -194,8 +194,7 @@ export default function ProductInteractive({
                 alt={name}
                 fill
                 priority
-                className="object-cover"
-                style={{ objectPosition: objectPosition(currentImage.hotspot) }}
+                className="object-contain"
               />
             )}
 
@@ -209,7 +208,7 @@ export default function ProductInteractive({
             )}
 
             {/* Zoom hint */}
-            <div className="absolute bottom-3 right-3 bg-white/80 p-1.5 z-10 pointer-events-none">
+            <div className="absolute top-3 right-3 bg-white/80 p-1.5 z-10 pointer-events-none">
               <IconZoomIn />
             </div>
 
@@ -236,25 +235,43 @@ export default function ProductInteractive({
             )}
           </div>
 
+          {/* Scroll dots — pill for active, circle for others */}
+          {allImages.length > 1 && (
+            <div className="flex justify-center gap-1.5 mt-3">
+              {allImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveImageIndex(i)}
+                  aria-label={`Go to image ${i + 1}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    i === activeImageIndex
+                      ? 'w-6 bg-black'
+                      : 'w-2 bg-gray-300 hover:bg-gray-500'
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+
           {/* Thumbnail strip */}
           {allImages.length > 1 && (
-            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+            <div className="flex justify-center gap-2 mt-3 overflow-x-auto py-1 px-0.5">
               {allImages.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveImageIndex(i)}
                   data-testid={`pdp-thumbnail-${i}`}
-                  className={`relative w-20 h-20 shrink-0 border-2 transition-colors duration-150 cursor-pointer ${
-                    i === activeImageIndex
-                      ? 'border-black'
-                      : 'border-gray-200 hover:border-gray-400'
-                  }`}
+                  className="relative w-[60px] h-[60px] shrink-0 rounded cursor-pointer transition-all duration-150"
+                  style={{
+                    outline: i === activeImageIndex ? '2px solid #000' : '2px solid transparent',
+                    outlineOffset: '2px',
+                  }}
                 >
                   <Image
                     src={img.url}
                     alt={`${name} thumbnail ${i + 1}`}
                     fill
-                    className="object-cover"
+                    className="object-cover rounded"
                     style={{ objectPosition: objectPosition(img.hotspot) }}
                   />
                 </button>
@@ -301,12 +318,12 @@ export default function ProductInteractive({
                     onClick={() => setActiveColorIndex(i)}
                     data-testid={`pdp-colour-swatch-${slugify(color.colorName)}`}
                     title={color.colorName}
-                    className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all duration-150 ${
-                      i === activeColorIndex
-                        ? 'border-black ring-2 ring-offset-2 ring-black'
-                        : 'border-transparent hover:border-gray-400'
-                    }`}
-                    style={{ backgroundColor: color.colorHex ?? '#D1D5DB' }}
+                    className="w-8 h-8 rounded-full cursor-pointer transition-all duration-150"
+                    style={{
+                      backgroundColor: color.colorHex ?? '#D1D5DB',
+                      outline: i === activeColorIndex ? '2px solid #000' : '2px solid transparent',
+                      outlineOffset: '2px',
+                    }}
                   />
                 ))}
               </div>

@@ -28,12 +28,10 @@ export default async function FeaturedProducts() {
     <section
       data-testid="home-featured-products"
       className="
-        h-[calc(100vh-5.25rem)] md:h-auto
         shrink-0
         flex flex-col md:block
         pt-3 px-4 md:pt-10 md:pb-16 md:px-10
         bg-[#f9f9f9] border-t border-gray-200
-        snap-start
       "
     >
       <div className="max-w-7xl mx-auto w-full flex-1 flex flex-col md:block">

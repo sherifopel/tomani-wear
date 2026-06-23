@@ -67,21 +67,21 @@ export default function ProductActions({
   }
 
   const Stepper = () => (
-    <div className="flex items-center border border-gray-300 h-full">
+    <div className="flex items-center border border-gray-300 h-full shrink-0">
       <button
         type="button"
         aria-label="Decrease quantity"
         onClick={() => setQuantity(q => Math.max(1, q - 1))}
-        className="px-3 h-full text-lg leading-none hover:bg-gray-50 transition-colors"
+        className="px-2 h-full text-base leading-none hover:bg-gray-50 transition-colors"
       >
         −
       </button>
-      <span className="px-3 text-sm font-medium min-w-[2rem] text-center">{quantity}</span>
+      <span className="px-2 text-sm font-medium w-6 text-center">{quantity}</span>
       <button
         type="button"
         aria-label="Increase quantity"
         onClick={() => setQuantity(q => Math.min(10, q + 1))}
-        className="px-3 h-full text-lg leading-none hover:bg-gray-50 transition-colors"
+        className="px-2 h-full text-base leading-none hover:bg-gray-50 transition-colors"
       >
         +
       </button>
