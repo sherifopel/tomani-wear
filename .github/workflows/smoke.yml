@@ -33,11 +33,11 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Install Playwright system deps (cached browsers)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium
 
       - name: Get Vercel preview URL
         id: vercel_preview
@@ -68,8 +68,14 @@ jobs:
           echo "Timed out waiting for preview"
           exit 1
 
+      - name: Debug — confirm Playwright version and test discovery
+        run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome" --list --reporter=line
+        env:
+          BASE_URL: ${{ steps.vercel_preview.outputs.url }}
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
       - name: Run smoke tests against preview
-        run: npx playwright test --grep "smoke" --project="Desktop Chrome"
+        run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome"
         env:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
