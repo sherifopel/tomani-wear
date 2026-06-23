@@ -68,15 +68,6 @@ jobs:
           echo "Timed out waiting for preview"
           exit 1
 
-      - name: Build logr-kit (github package — dist not committed to repo)
-        run: cd node_modules/logr-kit && ../../node_modules/.bin/tsc
-
-      - name: Debug — confirm Playwright version and test discovery
-        run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome" --list --reporter=line
-        env:
-          BASE_URL: ${{ steps.vercel_preview.outputs.url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-
       - name: Run smoke tests against preview
         run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome"
         env:
