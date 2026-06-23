@@ -1,9 +1,11 @@
 import { defineField, defineType } from 'sanity'
+import { Settings2 } from 'lucide-react'
 
 export const settings = defineType({
   name: 'settings',
   title: 'Settings',
   type: 'document',
+  icon: Settings2,
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'hero', title: 'Hero' },

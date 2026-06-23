@@ -1,4 +1,5 @@
 import { defineField, defineType } from 'sanity'
+import { Image } from 'lucide-react'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
 import { HeroContentPreview } from '../components/HeroContentPreview'
 import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
@@ -8,6 +9,7 @@ export const heroSlide = defineType({
   name: 'heroSlide',
   title: 'Hero Slide',
   type: 'document',
+  icon: Image,
 
   // Groups create visual tabs in Sanity Studio.
   // Fields without a group appear above the tabs (always visible).

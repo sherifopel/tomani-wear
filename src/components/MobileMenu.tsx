@@ -18,16 +18,23 @@ export default function MobileMenu() {
   const [panelTop, setPanelTop] = useState(0)
 
   useEffect(() => {
+    // Tell StickyHeader whether the menu is open so it can keep the banner visible
+    document.dispatchEvent(new CustomEvent('mobilemenu', { detail: { open } }))
+
     if (!open) return
 
-    const updatePanelTop = () => {
+    const measure = () => {
       const header = document.querySelector('[data-testid="nav-header"]')
       setPanelTop(header?.getBoundingClientRect().bottom ?? 0)
     }
 
-    updatePanelTop()
-    window.addEventListener('resize', updatePanelTop)
-    return () => window.removeEventListener('resize', updatePanelTop)
+    // Wait for the banner's 300ms expand animation to finish before measuring
+    const timer = setTimeout(measure, 320)
+    window.addEventListener('resize', measure)
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', measure)
+    }
   }, [open])
 
   return (

@@ -1,10 +1,12 @@
 import { defineField, defineType } from 'sanity'
+import { ShoppingBag } from 'lucide-react'
 import { ProductEditor } from '../components/ProductEditor'
 
 export const product = defineType({
   name: 'product',
   title: 'Product',
   type: 'document',
+  icon: ShoppingBag,
   // Apply the custom UI at the document level so Tomiwa sees one clean form
   components: { input: ProductEditor },
   fields: [
