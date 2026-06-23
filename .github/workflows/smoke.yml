@@ -52,20 +52,27 @@ jobs:
           echo "url=$PREVIEW_URL" >> $GITHUB_OUTPUT
           echo "Preview URL: $PREVIEW_URL"
 
-      - name: Wait for preview to be ready
+      - name: Wait for Vercel deployment to complete
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          URL="${{ steps.vercel_preview.outputs.url }}?x-vercel-protection-bypass=${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}"
-          echo "Waiting for ${{ steps.vercel_preview.outputs.url }}"
-          for i in $(seq 1 30); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            echo "Attempt $i: HTTP $STATUS"
-            if [ "$STATUS" = "200" ]; then
-              echo "Preview is ready!"
+          # Poll the GitHub Checks API for Vercel's check on this exact commit.
+          # Polling HTTP 200 is not enough — the old deployment is already live and
+          # returns 200 immediately, so tests would run against stale code.
+          echo "Waiting for Vercel check on ${{ github.sha }}"
+          for i in $(seq 1 60); do
+            CONCLUSION=$(gh api \
+              "repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs" \
+              --jq '[.check_runs[] | select(.name == "Vercel")] | .[0].conclusion // empty' \
+              2>/dev/null)
+            echo "Attempt $i: conclusion=${CONCLUSION:-pending}"
+            if [ "$CONCLUSION" = "success" ]; then
+              echo "Vercel deployment complete!"
               exit 0
             fi
             sleep 10
           done
-          echo "Timed out waiting for preview"
+          echo "Timed out waiting for Vercel"
           exit 1
 
       - name: Run smoke tests against preview
