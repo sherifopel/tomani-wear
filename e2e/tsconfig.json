@@ -1,11 +1,14 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "moduleResolution": "node16",
+    "module": "Node16",
+    "moduleResolution": "Node16",
     "isolatedModules": false
   },
   "include": [
     "./**/*.ts"
+  ],
+  "exclude": [
+    "../node_modules"
   ]
 }
