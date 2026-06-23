@@ -2,6 +2,6 @@ allowBuilds:
   esbuild: false
   sharp: false
   unrs-resolver: false
-  playwright-final-summary-reporter: true
+  "playwright-final-summary-reporter@https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6": true
 patchedDependencies:
   playwright@1.61.0: patches/playwright@1.61.0.patch
