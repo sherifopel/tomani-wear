@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useCart } from '@/hooks/useCart'
 
 type Props = {
@@ -41,10 +41,12 @@ export default function ProductActions({
   const [quantity, setQuantity] = useState(1)
   const [sizeError, setSizeError] = useState(false)
   const [justAdded, setJustAdded] = useState(false)
+  const sizeRef = useRef<HTMLDivElement>(null)
 
   function handleAddToCart() {
     if (sizes.length > 0 && !selectedSize) {
       setSizeError(true)
+      sizeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
     setSizeError(false)
@@ -73,7 +75,7 @@ export default function ProductActions({
 
       {/* Size selector */}
       {sizes.length > 0 && (
-        <div data-testid="pdp-size-selector" className="flex flex-col items-center">
+        <div data-testid="pdp-size-selector" className="flex flex-col items-center" ref={sizeRef}>
           <p className="text-xs uppercase tracking-widest mb-3 font-medium">
             Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
           </p>
