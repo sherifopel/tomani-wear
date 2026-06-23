@@ -55,14 +55,14 @@ export default async function Navbar() {
         <button
           data-testid="nav-search-button"
           aria-label="Search"
-          className="transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="nav-icon-fill p-1.5"
         >
           <Search className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>
         <button
           data-testid="nav-account-button"
           aria-label="Account"
-          className="transition-transform duration-200 hover:scale-125 active:scale-95"
+          className="nav-icon-fill p-1.5"
         >
           <User className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>

@@ -20,7 +20,7 @@ const btnClass = (inStock: boolean, justAdded: boolean) =>
       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
       : justAdded
       ? 'bg-[var(--brand-yellow)] text-black'
-      : 'bg-black text-white hover:bg-gray-900'
+      : 'bg-black text-white btn-collision'
   }`
 
 const btnLabel = (inStock: boolean, justAdded: boolean) =>
