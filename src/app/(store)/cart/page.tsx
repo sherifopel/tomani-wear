@@ -171,7 +171,7 @@ export default function CartPage() {
 
 function Breadcrumbs() {
   return (
-    <nav className="flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest mb-8">
+    <nav className="hidden md:flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest mb-8">
       <Link href="/" className="hover:text-black transition-colors">Home</Link>
       <span>/</span>
       <span className="text-black">Cart</span>
