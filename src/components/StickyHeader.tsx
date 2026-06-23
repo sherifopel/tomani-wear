@@ -119,7 +119,7 @@ export default function StickyHeader({
           menu is open (banner must stay visible above the menu panel). */}
       {announcementBar && (
         <div
-          style={{ maxHeight: suppressCompact ? '0' : '3rem' }}
+          style={{ maxHeight: (suppressCompact && isDesktop) ? '0' : '3rem' }}
           className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
         >
           {announcementBar}
