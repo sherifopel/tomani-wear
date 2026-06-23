@@ -2,7 +2,7 @@ import { defineField, defineType } from 'sanity'
 
 export const settings = defineType({
   name: 'settings',
-  title: 'Global Settings',
+  title: 'Settings',
   type: 'document',
   groups: [
     { name: 'announcement', title: 'Announcement' },

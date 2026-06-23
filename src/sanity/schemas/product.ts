@@ -76,7 +76,6 @@ export const product = defineType({
           fields: [
             defineField({ name: 'colorName', title: 'Colour Name', type: 'string', validation: (Rule) => Rule.required() }),
             defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string' }),
-            defineField({ name: 'images',    title: 'Images',      type: 'array', of: [{ type: 'image', options: { hotspot: true } }] }),
             defineField({
               name: 'sizes',
               title: 'Available Sizes',
