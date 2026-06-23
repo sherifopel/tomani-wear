@@ -4,6 +4,7 @@ import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 type Product = {
   _id: string
@@ -46,14 +47,14 @@ export default async function ProductPage({
   return (
     <div className="min-h-screen bg-white" data-testid="pdp-page">
 
-      {/* Breadcrumb */}
-      <div className="hidden md:block px-6 py-4 text-xs text-gray-400 uppercase tracking-widest" data-testid="pdp-breadcrumb">
-        <Link href="/" className="hover:text-black transition-colors">Home</Link>
-        <span className="mx-2">/</span>
-        <Link href="/products" className="hover:text-black transition-colors">Products</Link>
-        <span className="mx-2">/</span>
-        <span className="text-black">{product.name}</span>
-      </div>
+      <Breadcrumbs
+        testId="pdp-breadcrumb"
+        crumbs={[
+          { label: 'Home', href: '/' },
+          { label: 'Products', href: '/products' },
+          { label: product.name },
+        ]}
+      />
 
       {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
       <div className="max-w-7xl mx-auto px-6 pb-16">

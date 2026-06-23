@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Trash2, Minus, Plus } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import Breadcrumbs from '@/components/Breadcrumbs'
 
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, increment, decrement } = useCart()
@@ -12,7 +13,7 @@ export default function CartPage() {
   if (items.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10" data-testid="cart-empty">
-        <Breadcrumbs />
+        <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
         <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
           <p className="text-sm uppercase tracking-widest text-gray-400">Your cart is empty</p>
           <Link
@@ -169,12 +170,3 @@ export default function CartPage() {
   )
 }
 
-function Breadcrumbs() {
-  return (
-    <nav className="hidden md:flex items-center gap-2 text-xs text-gray-400 uppercase tracking-widest mb-8">
-      <Link href="/" className="hover:text-black transition-colors">Home</Link>
-      <span>/</span>
-      <span className="text-black">Cart</span>
-    </nav>
-  )
-}
