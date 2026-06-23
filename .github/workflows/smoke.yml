@@ -56,17 +56,18 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Poll the GitHub Checks API for Vercel's check on this exact commit.
-          # Polling HTTP 200 is not enough — the old deployment is already live and
-          # returns 200 immediately, so tests would run against stale code.
-          echo "Waiting for Vercel check on ${{ github.sha }}"
+          # Vercel posts a commit STATUS (not a check-run) — poll that API.
+          # The statuses endpoint returns newest-first, so .[0] is the latest.
+          # We wait for state=success before running tests so we never test
+          # against a stale deployment that was already live at HTTP 200.
+          echo "Waiting for Vercel status on ${{ github.sha }}"
           for i in $(seq 1 60); do
-            CONCLUSION=$(gh api \
-              "repos/${{ github.repository }}/commits/${{ github.sha }}/check-runs" \
-              --jq '[.check_runs[] | select(.name == "Vercel")] | .[0].conclusion // empty' \
+            STATE=$(gh api \
+              "repos/${{ github.repository }}/statuses/${{ github.sha }}" \
+              --jq '[.[] | select(.context == "Vercel")] | .[0].state // empty' \
               2>/dev/null)
-            echo "Attempt $i: conclusion=${CONCLUSION:-pending}"
-            if [ "$CONCLUSION" = "success" ]; then
+            echo "Attempt $i: state=${STATE:-none}"
+            if [ "$STATE" = "success" ]; then
               echo "Vercel deployment complete!"
               exit 0
             fi
