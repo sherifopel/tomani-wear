@@ -291,7 +291,7 @@ export default function ProductInteractive({
           )}
 
           {/* Name — desktop only (mobile version is above the image) */}
-          <h1 className="hidden md:block text-2xl font-light tracking-wide" data-testid="pdp-name-desktop">
+          <h1 className="hidden md:block text-2xl font-light tracking-wide" data-testid="pdp-name">
             {name}
           </h1>
 
