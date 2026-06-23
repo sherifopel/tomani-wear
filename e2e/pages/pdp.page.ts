@@ -28,23 +28,23 @@ export const navigate = async (page: Page, baseURL: string, slug: string) => {
 }
 
 export const assertCoreDetailsVisible = async (page: Page) => {
-  const s = pdpSelectors(page)
-  await expect(s.name).toBeVisible()
-  await expect(s.price).toBeVisible()
-  await expect(s.image).toBeVisible()
-  await expect(s.description).toBeVisible()
+  const selectors = pdpSelectors(page)
+  await expect(selectors.name).toBeVisible()
+  await expect(selectors.price).toBeVisible()
+  await expect(selectors.image).toBeVisible()
+  await expect(selectors.description).toBeVisible()
 }
 
 export const assertSizesVisible = async (page: Page, sizes: string[]) => {
-  const s = pdpSelectors(page)
-  await expect(s.sizeSelector).toBeVisible()
+  const selectors = pdpSelectors(page)
+  await expect(selectors.sizeSelector).toBeVisible()
   for (const size of sizes) {
-    await expect(s.sizeButton(size)).toBeVisible()
+    await expect(selectors.sizeButton(size)).toBeVisible()
   }
 }
 
 export const selectSize = async (page: Page, size: string) => {
-  const s = pdpSelectors(page)
-  await s.sizeButton(size).click()
-  await expect(s.sizeButton(size)).toHaveClass(/bg-black/)
+  const selectors = pdpSelectors(page)
+  await selectors.sizeButton(size).click()
+  await expect(selectors.sizeButton(size)).toHaveClass(/bg-black/)
 }

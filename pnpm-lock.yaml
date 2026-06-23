@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  playwright@1.61.0: fd3b5c0db0982dd22382301e36a37dd2417cd82790752138f5e0cd7df56361cd
+
 importers:
 
   .:
@@ -7750,7 +7753,7 @@ snapshots:
 
   '@playwright/test@1.61.0':
     dependencies:
-      playwright: 1.61.0
+      playwright: 1.61.0(patch_hash=fd3b5c0db0982dd22382301e36a37dd2417cd82790752138f5e0cd7df56361cd)
 
   '@pnpm/config.env-replace@1.1.0': {}
 
@@ -11275,7 +11278,7 @@ snapshots:
 
   playwright-core@1.61.0: {}
 
-  playwright@1.61.0:
+  playwright@1.61.0(patch_hash=fd3b5c0db0982dd22382301e36a37dd2417cd82790752138f5e0cd7df56361cd):
     dependencies:
       playwright-core: 1.61.0
     optionalDependencies:

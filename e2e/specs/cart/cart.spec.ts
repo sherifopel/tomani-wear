@@ -1,5 +1,5 @@
 /**
- * TW-4 Shopping Cart
+ * Shopping Cart
  *
  * Tests rely on a product with sizes and inStock: true.
  * Currently `skeleton-hoodie` has no sizes (data not migrated to productSetup yet).
@@ -10,17 +10,17 @@
  * run without needing product size data.
  */
 
-import { test, expect } from '../fixtures'
-import * as cartPage from '../pages/cart.page'
-import * as pdpPage from '../pages/pdp.page'
-import * as util from '../utils/utils'
+import { test, expect } from '../../fixtures'
+import * as cartPage from '../../pages/cart.page'
+import * as pdpPage from '../../pages/pdp.page'
+import * as util from '../../utils/utils'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 🖥  DESKTOP
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-4 Cart — empty state', { tag: ['@tomanni', '@TW-4', '@cart', '@desktop'] }, () => {
+test.describe('Cart — empty state', { tag: ['@tomanni', '@cart', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     // Clear localStorage so cart is empty for each test
@@ -30,19 +30,19 @@ test.describe('TW-4 Cart — empty state', { tag: ['@tomanni', '@TW-4', '@cart',
   })
 
   test('Should show empty cart message when no items are in the cart', async ({ page }) => {
-    const s = cartPage.cartSelectors(page)
-    await expect(s.empty).toBeVisible()
+    const selectors = cartPage.cartSelectors(page)
+    await expect(selectors.empty).toBeVisible()
   })
 
   test('Should show a "Start Shopping" link that goes to /products', async ({ page }) => {
-    const s = cartPage.cartSelectors(page)
-    await expect(s.startShopping).toBeVisible()
-    await expect(s.startShopping).toHaveAttribute('href', '/products')
+    const selectors = cartPage.cartSelectors(page)
+    await expect(selectors.startShopping).toBeVisible()
+    await expect(selectors.startShopping).toHaveAttribute('href', '/products')
   })
 })
 
 // prettier-ignore
-test.describe('TW-4 Cart — size validation', { tag: ['@tomanni', '@TW-4', '@cart', '@desktop'] }, () => {
+test.describe('Cart — size validation', { tag: ['@tomanni', '@cart', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await page.goto(baseURL!, { waitUntil: 'domcontentloaded' })
@@ -71,7 +71,7 @@ test.describe('TW-4 Cart — size validation', { tag: ['@tomanni', '@TW-4', '@ca
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-4 Cart — empty state — Mobile', { tag: ['@tomanni', '@TW-4', '@cart', '@mobile'] }, () => {
+test.describe('Cart — empty state — Mobile', { tag: ['@tomanni', '@cart', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await page.goto(baseURL!, { waitUntil: 'domcontentloaded' })
@@ -80,8 +80,8 @@ test.describe('TW-4 Cart — empty state — Mobile', { tag: ['@tomanni', '@TW-4
   })
 
   test('Should show empty cart message on mobile', async ({ page }) => {
-    const s = cartPage.cartSelectors(page)
-    await expect(s.empty).toBeVisible()
+    const selectors = cartPage.cartSelectors(page)
+    await expect(selectors.empty).toBeVisible()
   })
 })
 
@@ -90,14 +90,14 @@ test.describe('TW-4 Cart — empty state — Mobile', { tag: ['@tomanni', '@TW-4
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('TW-4 Cart Smoke', { tag: ['@tomanni-smoke', '@TW-4', '@cart'] }, () => {
+test.describe('Cart smoke', { tag: ['@tomanni-smoke', '@cart'] }, () => {
   test('Should render the cart page and show empty state', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await page.goto(baseURL!, { waitUntil: 'domcontentloaded' })
     await page.evaluate(() => localStorage.removeItem('tomani-cart'))
     await cartPage.navigate(page, baseURL!)
-    const s = cartPage.cartSelectors(page)
-    await expect(s.empty).toBeVisible()
-    await expect(s.startShopping).toBeVisible()
+    const selectors = cartPage.cartSelectors(page)
+    await expect(selectors.empty).toBeVisible()
+    await expect(selectors.startShopping).toBeVisible()
   })
 })
