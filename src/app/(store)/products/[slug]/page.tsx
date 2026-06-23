@@ -47,7 +47,7 @@ export default async function ProductPage({
     <div className="min-h-screen bg-white" data-testid="pdp-page">
 
       {/* Breadcrumb */}
-      <div className="px-6 py-4 text-xs text-gray-400 uppercase tracking-widest" data-testid="pdp-breadcrumb">
+      <div className="hidden md:block px-6 py-4 text-xs text-gray-400 uppercase tracking-widest" data-testid="pdp-breadcrumb">
         <Link href="/" className="hover:text-black transition-colors">Home</Link>
         <span className="mx-2">/</span>
         <Link href="/products" className="hover:text-black transition-colors">Products</Link>
