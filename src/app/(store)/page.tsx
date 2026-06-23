@@ -8,14 +8,25 @@ import { connection } from 'next/server'
 
 type SanityHeroSlide = {
   _id: string
-  image: SanityImageSource
+  imageMobile:  SanityImageSource
+  imageTablet:  SanityImageSource
+  imageDesktop: SanityImageSource
+  imageXl:      SanityImageSource
+  mobileFocalY:  number
+  tabletFocalY:  number
+  desktopFocalY: number
+  xlFocalY:      number
+  mobileFocalX:  number
+  tabletFocalX:  number
+  desktopFocalX: number
+  xlFocalX:      number
   label?: string
   heading: string
   sub?: string
-  href: string
-  mobileFocalY: number
-  tabletFocalY: number
-  desktopFocalY: number
+  href?: string
+  textPosition: number
+  textColor: 'white' | 'black'
+  buttonColor: 'white' | 'black' | 'gold'
 }
 
 type Settings = {
@@ -48,17 +59,30 @@ export default async function Home({
     sanityClient.fetch(SETTINGS_QUERY),
   ])
 
-  const heroSlides = sanitySlides.map((slide) => ({
-    id: slide._id,
-    image: urlForImage(slide.image).width(1505).auto('format').url(),
-    label: slide.label,
-    heading: slide.heading,
-    sub: slide.sub,
-    href: slide.href,
-    mobileFocalY:  slide.mobileFocalY,
-    tabletFocalY:  slide.tabletFocalY,
-    desktopFocalY: slide.desktopFocalY,
-  }))
+  const heroSlides = sanitySlides
+    .filter((slide) => slide.imageMobile)
+    .map((slide) => ({
+      id:            slide._id,
+      imageMobile:   urlForImage(slide.imageMobile).width(800).auto('format').url(),
+      imageTablet:   urlForImage(slide.imageTablet).width(1024).auto('format').url(),
+      imageDesktop:  urlForImage(slide.imageDesktop).width(1505).auto('format').url(),
+      imageXl:       urlForImage(slide.imageXl).width(1920).auto('format').url(),
+      mobileFocalY:  slide.mobileFocalY,
+      tabletFocalY:  slide.tabletFocalY,
+      desktopFocalY: slide.desktopFocalY,
+      xlFocalY:      slide.xlFocalY,
+      mobileFocalX:  slide.mobileFocalX,
+      tabletFocalX:  slide.tabletFocalX,
+      desktopFocalX: slide.desktopFocalX,
+      xlFocalX:      slide.xlFocalX,
+      label:         slide.label,
+      heading:       slide.heading,
+      sub:           slide.sub,
+      href:          slide.href || undefined,
+      textPosition:  slide.textPosition,
+      textColor:     slide.textColor,
+      buttonColor:   slide.buttonColor,
+    }))
 
   return (
     <main

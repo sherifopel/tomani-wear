@@ -65,31 +65,21 @@ export const product = defineType({
       ],
     }),
 
-    // ── Colour Variants (managed via ProductEditor UI) ─────────────────────
+    // ── Available Colours (managed via ProductEditor UI) ──────────────────
     defineField({
-      name: 'variants',
-      title: 'Colour Variants',
+      name: 'colors',
+      title: 'Available Colours',
       type: 'array',
       of: [
         {
           type: 'object',
           fields: [
             defineField({ name: 'colorName', title: 'Colour Name', type: 'string', validation: (Rule) => Rule.required() }),
-            defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string' }),
-            defineField({
-              name: 'sizes',
-              title: 'Available Sizes',
-              type: 'array',
-              of: [{ type: 'string' }],
-              options: {
-                list: [
-                  { title: 'XS', value: 'XS' }, { title: 'S', value: 'S' },
-                  { title: 'M',  value: 'M'  }, { title: 'L', value: 'L' },
-                  { title: 'XL', value: 'XL' }, { title: 'XXL', value: 'XXL' },
-                ],
-              },
-            }),
+            defineField({ name: 'colorHex',  title: 'Hex Code',    type: 'string', initialValue: '#000000' }),
           ],
+          preview: {
+            select: { title: 'colorName', subtitle: 'colorHex' },
+          },
         },
       ],
     }),

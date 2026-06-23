@@ -11,6 +11,14 @@ export const settings = defineType({
   ],
   fields: [
     defineField({
+      name: 'title',
+      title: 'Document Title',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
+      initialValue: 'Settings',
+    }),
+    defineField({
       name: 'announcementBar',
       title: 'Announcement Bar Text',
       type: 'string',
@@ -53,16 +61,7 @@ export const settings = defineType({
       initialValue: false,
       group: 'hero',
     }),
-    defineField({
-      name: 'instagramUrl',
-      title: 'Instagram URL (legacy)',
-      description: 'Old single Instagram field. Prefer Social Links below.',
-      type: 'url',
-      validation: (Rule) => Rule.uri({ scheme: ['http', 'https'] }),
-      group: 'footer',
-      hidden: ({ document }) => Boolean(document?.socialLinks),
-    }),
-    defineField({
+defineField({
       name: 'footerLinks',
       title: 'Footer Site Links',
       description: 'Optional links shown in the footer, such as Contact, Shipping, Returns, or Size Guide.',
@@ -143,4 +142,10 @@ export const settings = defineType({
       ],
     }),
   ],
+  preview: {
+    select: { id: '_id' },
+    prepare() {
+      return { title: 'Settings' }
+    },
+  },
 })

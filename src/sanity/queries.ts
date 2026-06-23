@@ -17,14 +17,25 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
 
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
   _id,
-  image,
-  label,
-  heading,
-  sub,
-  "href": coalesce(href, "/products"),
-  "mobileFocalY":  coalesce(focalPoints.mobile,  50),
-  "tabletFocalY":  coalesce(focalPoints.tablet,  50),
-  "desktopFocalY": coalesce(focalPoints.desktop, 30)
+  "label":    coalesce(content.label,    label),
+  "heading":  coalesce(content.heading,  heading),
+  "sub":      coalesce(content.sub,      sub),
+  "href":     coalesce(content.href,     href),
+  "imageMobile":  coalesce(focalPoints.imageMobile,  image),
+  "imageTablet":  coalesce(focalPoints.imageTablet,  focalPoints.imageMobile,  image),
+  "imageDesktop": coalesce(focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile,  image),
+  "imageXl":      coalesce(focalPoints.imageXl,      focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile, image),
+  "mobileFocalY":  coalesce(focalPoints.mobile,   50),
+  "tabletFocalY":  coalesce(focalPoints.tablet,   50),
+  "desktopFocalY": coalesce(focalPoints.desktop,  30),
+  "xlFocalY":      coalesce(focalPoints.xlarge,   30),
+  "mobileFocalX":  coalesce(focalPoints.mobileX,  50),
+  "tabletFocalX":  coalesce(focalPoints.tabletX,  50),
+  "desktopFocalX": coalesce(focalPoints.desktopX, 50),
+  "xlFocalX":      coalesce(focalPoints.xlargeX,  50),
+  "textPosition": coalesce(content.textPosition, textPosition, 85),
+  "textColor":    coalesce(content.textColor,    textColor,    "white"),
+  "buttonColor":  coalesce(content.buttonColor,  buttonColor,  "white")
 }`
 
 export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current == $slug][0] {
@@ -56,7 +67,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
     },
     []
   ),
-  "variants": variants[]{ colorName, colorHex, "images": images[]{ "url": asset->url, hotspot }, sizes },
+  "colors": colors[]{ colorName, colorHex },
   description,
   category,
   sizes,
@@ -71,7 +82,6 @@ export const SETTINGS_QUERY = groq`*[_type == "settings"][0] {
   announcementBarEnabled,
   heroAutoplay,
   heroShowArrows,
-  instagramUrl,
   footerLinks[]{
     label,
     href

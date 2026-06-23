@@ -9,11 +9,9 @@ export type GalleryImage = {
   hotspot?: { x: number; y: number }
 }
 
-export type Variant = {
+export type ColorOption = {
   colorName: string
   colorHex?: string
-  images: GalleryImage[]
-  sizes: string[]
 }
 
 type Props = {
@@ -21,7 +19,7 @@ type Props = {
   slug: string
   mainImage?: string
   gallery?: GalleryImage[]
-  variants?: Variant[]
+  colors?: ColorOption[]
   sizes?: string[]
   inStock: boolean
   onSale: boolean
@@ -45,7 +43,7 @@ export default function ProductInteractive({
   slug,
   mainImage,
   gallery,
-  variants,
+  colors,
   sizes,
   inStock,
   onSale,
@@ -55,34 +53,18 @@ export default function ProductInteractive({
   category,
   description,
 }: Props) {
-  const [activeVariantIndex, setActiveVariantIndex] = useState<number | null>(null)
+  const [activeColorIndex, setActiveColorIndex] = useState<number | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
 
-  const hasVariants = variants && variants.length > 0
+  const hasColors = colors && colors.length > 0
 
-  const baseImages: GalleryImage[] = [
+  const allImages: GalleryImage[] = [
     ...(mainImage ? [{ url: mainImage }] : []),
     ...(gallery ?? []),
   ]
 
-  // Determine which images to show
-  const activeImages: GalleryImage[] =
-    activeVariantIndex !== null && hasVariants
-      ? variants![activeVariantIndex].images
-      : baseImages
-
-  // Determine which sizes to show
-  const activeSizes: string[] =
-    activeVariantIndex !== null && hasVariants
-      ? variants![activeVariantIndex].sizes
-      : sizes ?? []
-
-  const currentImage = activeImages[activeImageIndex] ?? null
-
-  function handleSwatchClick(index: number) {
-    setActiveVariantIndex(index)
-    setActiveImageIndex(0)
-  }
+  const currentImage = allImages[activeImageIndex] ?? null
+  const activeSizes: string[] = sizes ?? []
 
   return (
     <div className="md:grid md:grid-cols-2 md:gap-16 md:items-start">
@@ -111,9 +93,9 @@ export default function ProductInteractive({
         </div>
 
         {/* Thumbnail strip */}
-        {activeImages.length > 1 && (
+        {allImages.length > 1 && (
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-            {activeImages.map((img, i) => (
+            {allImages.map((img, i) => (
               <button
                 key={i}
                 onClick={() => setActiveImageIndex(i)}
@@ -169,29 +151,29 @@ export default function ProductInteractive({
         <div className="border-t border-gray-100" />
 
         {/* Colour swatches */}
-        {hasVariants && (
+        {hasColors && (
           <div data-testid="pdp-colour-swatches">
             <p className="text-xs uppercase tracking-widest mb-3 font-medium" data-testid="pdp-colour-label">
               Colour
-              {activeVariantIndex !== null && (
+              {activeColorIndex !== null && (
                 <span className="text-gray-400 normal-case tracking-normal font-normal ml-1">
-                  — {variants![activeVariantIndex].colorName}
+                  — {colors![activeColorIndex].colorName}
                 </span>
               )}
             </p>
             <div className="flex flex-wrap gap-3 mt-2">
-              {variants!.map((variant, i) => (
+              {colors!.map((color, i) => (
                 <button
                   key={i}
-                  onClick={() => handleSwatchClick(i)}
-                  data-testid={`pdp-colour-swatch-${slugify(variant.colorName)}`}
-                  title={variant.colorName}
+                  onClick={() => setActiveColorIndex(i)}
+                  data-testid={`pdp-colour-swatch-${slugify(color.colorName)}`}
+                  title={color.colorName}
                   className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all duration-150 ${
-                    i === activeVariantIndex
+                    i === activeColorIndex
                       ? 'border-black ring-2 ring-offset-2 ring-black'
                       : 'border-transparent hover:border-gray-400'
                   }`}
-                  style={{ backgroundColor: variant.colorHex ?? '#D1D5DB' }}
+                  style={{ backgroundColor: color.colorHex ?? '#D1D5DB' }}
                 />
               ))}
             </div>
@@ -205,7 +187,7 @@ export default function ProductInteractive({
           name={name}
           price={price}
           image={currentImage?.url ?? mainImage}
-          colorName={activeVariantIndex !== null ? variants![activeVariantIndex].colorName : undefined}
+          colorName={activeColorIndex !== null ? colors![activeColorIndex].colorName : undefined}
           sizes={activeSizes}
           inStock={inStock}
         />
