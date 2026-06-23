@@ -73,11 +73,11 @@ export default function ProductActions({
 
       {/* Size selector */}
       {sizes.length > 0 && (
-        <div data-testid="pdp-size-selector">
+        <div data-testid="pdp-size-selector" className="flex flex-col items-center">
           <p className="text-xs uppercase tracking-widest mb-3 font-medium">
             Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {sizes.map((size) => (
               <button
                 key={size}
