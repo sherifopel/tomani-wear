@@ -34,7 +34,7 @@ test.describe('Homepage mobile menu', { tag: ['@tomanni', '@homepage', '@header'
     await homePage.navigate(page, baseURL!)
   })
 
-  test('Should open the mobile menu when the hamburger is tapped', async ({ page }) => {
+  test('Should open the mobile menu when the hamburger is tapped',async ({ page }) => {
     await headerPage.openMobileMenu(page)
     await headerPage.assertMobileMenuDoesNotCoverHeader(page)
   })
