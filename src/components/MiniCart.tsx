@@ -27,8 +27,10 @@ export default function MiniCart() {
     return () => document.removeEventListener('keydown', onKey)
   }, [closeMiniCart])
 
-  // Lock body scroll while open
+  // Lock body scroll while open — desktop only
   useEffect(() => {
+    const isDesktop = window.innerWidth >= 768
+    if (!isDesktop) return
     document.body.style.overflow = miniCartOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [miniCartOpen])
@@ -38,7 +40,7 @@ export default function MiniCart() {
       {/* Backdrop */}
       <div
         onClick={closeMiniCart}
-        className={`fixed inset-0 z-[200] bg-black transition-opacity duration-300 ${
+        className={`hidden md:block fixed inset-0 z-[200] bg-black transition-opacity duration-300 ${
           miniCartOpen ? 'opacity-40 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         aria-hidden="true"
@@ -49,7 +51,7 @@ export default function MiniCart() {
         role="dialog"
         aria-modal="true"
         aria-label="Your bag"
-        className={`fixed top-0 right-0 z-[201] h-full w-full max-w-[420px] bg-white flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`hidden md:flex flex-col fixed top-0 right-0 z-[201] h-full w-full max-w-[420px] bg-white transition-transform duration-300 ease-in-out ${
           miniCartOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
