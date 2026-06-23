@@ -68,6 +68,9 @@ jobs:
           echo "Timed out waiting for preview"
           exit 1
 
+      - name: Build logr-kit (github package — dist not committed to repo)
+        run: cd node_modules/logr-kit && ../../node_modules/.bin/tsc
+
       - name: Debug — confirm Playwright version and test discovery
         run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome" --list --reporter=line
         env:
