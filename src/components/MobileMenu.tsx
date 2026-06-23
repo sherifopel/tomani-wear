@@ -49,7 +49,7 @@ export default function MobileMenu() {
         data-testid={open ? 'mobile-menu-close-button' : 'mobile-menu-open-button'}
         aria-label={open ? 'Close menu' : 'Open menu'}
         onClick={() => setOpen((current) => !current)}
-        className="md:hidden transition-transform duration-200 hover:scale-110 active:scale-95"
+        className="md:hidden p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
       >
         {open ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
       </button>

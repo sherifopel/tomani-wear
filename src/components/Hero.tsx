@@ -20,9 +20,9 @@ const IconNext = () => (
 
 // Full static strings so Tailwind includes them in the bundle
 const BUTTON_CLASSES: Record<string, string> = {
-  white: 'border-white text-white hover:bg-white hover:text-black',
-  black: 'border-black text-black hover:bg-black hover:text-white',
-  gold:  'border-[var(--brand-yellow)] text-[var(--brand-yellow)] hover:bg-[var(--brand-yellow)] hover:text-black',
+  white: 'border-white text-white btn-wipe-white',
+  black: 'border-black text-black btn-wipe',
+  gold:  'border-[var(--brand-yellow)] text-[var(--brand-yellow)] hover:bg-[var(--brand-yellow)] hover:text-black transition-colors duration-150',
 }
 
 const BUTTON_COLORS: Record<string, string> = {

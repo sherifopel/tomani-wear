@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { useCart } from '@/hooks/useCart'
 
 type Props = {
@@ -20,7 +20,7 @@ const btnClass = (inStock: boolean, justAdded: boolean) =>
       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
       : justAdded
       ? 'bg-[var(--brand-yellow)] text-black'
-      : 'bg-black text-white hover:bg-gray-900'
+      : 'bg-black text-white border border-black btn-wipe'
   }`
 
 const btnLabel = (inStock: boolean, justAdded: boolean) =>
@@ -36,56 +36,38 @@ export default function ProductActions({
   sizes,
   inStock,
 }: Props) {
-  const { addItem } = useCart()
+  const { addItem, openMiniCart } = useCart()
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [quantity, setQuantity] = useState(1)
   const [sizeError, setSizeError] = useState(false)
   const [justAdded, setJustAdded] = useState(false)
-  const [showSticky, setShowSticky] = useState(false)
-  const mainBtnRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    const el = mainBtnRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowSticky(!entry.isIntersecting),
-      { threshold: 0 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+  const sizeRef = useRef<HTMLDivElement>(null)
 
   function handleAddToCart() {
     if (sizes.length > 0 && !selectedSize) {
       setSizeError(true)
+      sizeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
     setSizeError(false)
     addItem({ productId, slug, name, price, image, colorName, size: selectedSize ?? '', quantity })
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 2000)
+    openMiniCart()
   }
 
-  const Stepper = () => (
-    <div className="flex items-center border border-gray-300 h-full shrink-0">
-      <button
-        type="button"
-        aria-label="Decrease quantity"
-        onClick={() => setQuantity(q => Math.max(1, q - 1))}
-        className="px-2 h-full text-base leading-none hover:bg-gray-50 transition-colors"
-      >
-        −
-      </button>
-      <span className="px-2 text-sm font-medium w-6 text-center">{quantity}</span>
-      <button
-        type="button"
-        aria-label="Increase quantity"
-        onClick={() => setQuantity(q => Math.min(10, q + 1))}
-        className="px-2 h-full text-base leading-none hover:bg-gray-50 transition-colors"
-      >
-        +
-      </button>
-    </div>
+  const QtySelect = () => (
+    <select
+      value={quantity}
+      onChange={e => setQuantity(Number(e.target.value))}
+      aria-label="Quantity"
+      className="h-full border border-gray-300 px-3 text-sm bg-white shrink-0 cursor-pointer hover:border-black transition-colors duration-200 appearance-none pr-7"
+      style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center' }}
+    >
+      {[1, 2, 3, 4, 5].map(n => (
+        <option key={n} value={n}>{n}</option>
+      ))}
+    </select>
   )
 
   return (
@@ -93,17 +75,17 @@ export default function ProductActions({
 
       {/* Size selector */}
       {sizes.length > 0 && (
-        <div data-testid="pdp-size-selector">
+        <div data-testid="pdp-size-selector" className="flex flex-col items-center" ref={sizeRef}>
           <p className="text-xs uppercase tracking-widest mb-3 font-medium">
             Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             {sizes.map((size) => (
               <button
                 key={size}
                 onClick={() => { setSelectedSize(size); setSizeError(false) }}
                 data-testid={`pdp-size-${size}`}
-                className={`w-12 h-12 text-xs font-medium border transition-colors duration-200
+                className={`w-12 h-12 text-xs font-medium border rounded-md transition-colors duration-200
                   ${selectedSize === size
                     ? 'bg-black text-white border-black'
                     : 'bg-white text-black border-gray-300 hover:border-black'
@@ -116,11 +98,10 @@ export default function ProductActions({
         </div>
       )}
 
-      {/* Quantity + Add to Cart row */}
-      <div className="flex gap-3 h-14" data-testid="pdp-add-to-cart-row">
-        <Stepper />
+      {/* Inline quantity + Add to Cart — desktop only */}
+      <div className="hidden md:flex gap-3 h-14" data-testid="pdp-add-to-cart-row">
+        <QtySelect />
         <button
-          ref={mainBtnRef}
           onClick={handleAddToCart}
           disabled={!inStock}
           data-testid="pdp-add-to-cart"
@@ -136,25 +117,23 @@ export default function ProductActions({
         </p>
       )}
 
-      {/* Spacer so sticky bar never covers content below */}
-      {showSticky && <div className="h-20 md:hidden" aria-hidden />}
+      {/* Spacer so sticky bar never covers content below — mobile only */}
+      <div className="h-20 md:hidden" aria-hidden />
 
-      {/* Sticky bar — mobile only, appears when main button scrolls out of view */}
-      {showSticky && (
-        <div className="fixed bottom-0 left-0 right-0 z-[99] md:hidden bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
-          <div className="flex gap-3 h-14">
-            <Stepper />
-            <button
-              onClick={handleAddToCart}
-              disabled={!inStock}
-              data-testid="pdp-sticky-add-to-cart"
-              className={btnClass(inStock, justAdded)}
-            >
-              {btnLabel(inStock, justAdded)}
-            </button>
-          </div>
+      {/* Sticky bar — mobile only, always visible */}
+      <div className="fixed bottom-0 left-0 right-0 z-[99] md:hidden bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+        <div className="flex gap-3 h-14">
+          <QtySelect />
+          <button
+            onClick={handleAddToCart}
+            disabled={!inStock}
+            data-testid="pdp-sticky-add-to-cart"
+            className={btnClass(inStock, justAdded)}
+          >
+            {btnLabel(inStock, justAdded)}
+          </button>
         </div>
-      )}
+      </div>
 
     </div>
   )

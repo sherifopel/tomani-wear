@@ -15,7 +15,7 @@
  * a browser cookie but stored as JSON on the client side.
  */
 
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useState, useEffect, type ReactNode } from 'react'
 import type { CartItem, CartState, CartDerived } from '@/types/cart'
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -84,10 +84,13 @@ function cartReducer(state: CartState, action: Action): CartState {
 // ─── Context ─────────────────────────────────────────────────────────────────
 
 type CartContextValue = CartState & CartDerived & {
-  addItem:     (item: CartItem) => void
-  removeItem:  (productId: string, size: string) => void
-  increment:   (productId: string, size: string) => void
-  decrement:   (productId: string, size: string) => void
+  addItem:        (item: CartItem) => void
+  removeItem:     (productId: string, size: string) => void
+  increment:      (productId: string, size: string) => void
+  decrement:      (productId: string, size: string) => void
+  miniCartOpen:   boolean
+  openMiniCart:   () => void
+  closeMiniCart:  () => void
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
@@ -98,6 +101,7 @@ const STORAGE_KEY = 'tomani-cart'
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
+  const [miniCartOpen, setMiniCartOpen] = useState(false)
 
   // On first render, load the saved cart from localStorage
   useEffect(() => {
@@ -128,10 +132,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
     ...state,
     totalItems,
     totalPrice,
-    addItem:    (item)              => dispatch({ type: 'ADD_ITEM',    payload: item }),
-    removeItem: (productId, size)   => dispatch({ type: 'REMOVE_ITEM', payload: { productId, size } }),
-    increment:  (productId, size)   => dispatch({ type: 'INCREMENT',   payload: { productId, size } }),
-    decrement:  (productId, size)   => dispatch({ type: 'DECREMENT',   payload: { productId, size } }),
+    addItem:       (item)            => dispatch({ type: 'ADD_ITEM',    payload: item }),
+    removeItem:    (productId, size) => dispatch({ type: 'REMOVE_ITEM', payload: { productId, size } }),
+    increment:     (productId, size) => dispatch({ type: 'INCREMENT',   payload: { productId, size } }),
+    decrement:     (productId, size) => dispatch({ type: 'DECREMENT',   payload: { productId, size } }),
+    miniCartOpen,
+    openMiniCart:  () => setMiniCartOpen(true),
+    closeMiniCart: () => setMiniCartOpen(false),
   }
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
