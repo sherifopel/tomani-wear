@@ -38,19 +38,18 @@ function cartReducer(state: CartState, action: Action): CartState {
       return { items: action.payload }
 
     case 'ADD_ITEM': {
+      const qty = action.payload.quantity ?? 1
       const existing = state.items.find((i) => isSameItem(i, action.payload))
       if (existing) {
-        // Same product + size already in cart → just bump the quantity
         return {
           items: state.items.map((i) =>
             isSameItem(i, action.payload)
-              ? { ...i, quantity: i.quantity + 1 }
+              ? { ...i, quantity: i.quantity + qty }
               : i
           ),
         }
       }
-      // New item — add to the end of the list
-      return { items: [...state.items, { ...action.payload, quantity: 1 }] }
+      return { items: [...state.items, { ...action.payload, quantity: qty }] }
     }
 
     case 'REMOVE_ITEM':

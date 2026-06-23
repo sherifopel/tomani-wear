@@ -1,20 +1,30 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useCart } from '@/hooks/useCart'
 
 type Props = {
-  // Product identity — needed to build the CartItem
   productId: string
   slug: string
   name: string
   price: number
   image?: string
   colorName?: string
-  // What the current variant/product offers
   sizes: string[]
   inStock: boolean
 }
+
+const btnClass = (inStock: boolean, justAdded: boolean) =>
+  `flex-1 py-4 text-xs uppercase tracking-widest font-medium transition-colors duration-200 ${
+    !inStock
+      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+      : justAdded
+      ? 'bg-[var(--brand-yellow)] text-black'
+      : 'bg-black text-white hover:bg-gray-900'
+  }`
+
+const btnLabel = (inStock: boolean, justAdded: boolean) =>
+  !inStock ? 'Sold Out' : justAdded ? 'Added ✓' : 'Add to Cart'
 
 export default function ProductActions({
   productId,
@@ -28,26 +38,61 @@ export default function ProductActions({
 }: Props) {
   const { addItem } = useCart()
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
+  const [quantity, setQuantity] = useState(1)
   const [sizeError, setSizeError] = useState(false)
   const [justAdded, setJustAdded] = useState(false)
+  const [showSticky, setShowSticky] = useState(false)
+  const mainBtnRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    const el = mainBtnRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   function handleAddToCart() {
-    if (!selectedSize) {
+    if (sizes.length > 0 && !selectedSize) {
       setSizeError(true)
       return
     }
     setSizeError(false)
-    addItem({ productId, slug, name, price, image, colorName, size: selectedSize, quantity: 1 })
-    // Brief "✓ Added" feedback on the button, then reset
+    addItem({ productId, slug, name, price, image, colorName, size: selectedSize ?? '', quantity })
     setJustAdded(true)
-    setTimeout(() => setJustAdded(false), 1500)
+    setTimeout(() => setJustAdded(false), 2000)
   }
+
+  const Stepper = () => (
+    <div className="flex items-center border border-gray-300 h-full">
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={() => setQuantity(q => Math.max(1, q - 1))}
+        className="px-3 h-full text-lg leading-none hover:bg-gray-50 transition-colors"
+      >
+        −
+      </button>
+      <span className="px-3 text-sm font-medium min-w-[2rem] text-center">{quantity}</span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => setQuantity(q => Math.min(10, q + 1))}
+        className="px-3 h-full text-lg leading-none hover:bg-gray-50 transition-colors"
+      >
+        +
+      </button>
+    </div>
+  )
 
   return (
     <div className="space-y-4">
 
       {/* Size selector */}
-      {sizes && sizes.length > 0 && (
+      {sizes.length > 0 && (
         <div data-testid="pdp-size-selector">
           <p className="text-xs uppercase tracking-widest mb-3 font-medium">
             Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
@@ -71,30 +116,44 @@ export default function ProductActions({
         </div>
       )}
 
-      {/* Add to cart */}
-      <button
-        onClick={handleAddToCart}
-        disabled={!inStock}
-        data-testid="pdp-add-to-cart"
-        className={`w-full py-4 text-xs uppercase tracking-widest font-medium transition-colors duration-200
-          ${!inStock
-            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-            : justAdded
-            ? 'bg-[var(--brand-yellow)] text-black'
-            : 'bg-black text-white hover:bg-gray-900'
-          }`}
-      >
-        {!inStock ? 'Sold Out' : justAdded ? '✓ Added' : 'Add to Cart'}
-      </button>
-
-      {/* Inline error when no size selected */}
-      {sizeError && (
-        <p
-          className="text-xs text-red-500 -mt-2"
-          data-testid="pdp-size-error"
+      {/* Quantity + Add to Cart row */}
+      <div className="flex gap-3 h-14" data-testid="pdp-add-to-cart-row">
+        <Stepper />
+        <button
+          ref={mainBtnRef}
+          onClick={handleAddToCart}
+          disabled={!inStock}
+          data-testid="pdp-add-to-cart"
+          className={btnClass(inStock, justAdded)}
         >
+          {btnLabel(inStock, justAdded)}
+        </button>
+      </div>
+
+      {sizeError && (
+        <p className="text-xs text-red-500 -mt-2" data-testid="pdp-size-error">
           Please select a size first
         </p>
+      )}
+
+      {/* Spacer so sticky bar never covers content below */}
+      {showSticky && <div className="h-20 md:hidden" aria-hidden />}
+
+      {/* Sticky bar — mobile only, appears when main button scrolls out of view */}
+      {showSticky && (
+        <div className="fixed bottom-0 left-0 right-0 z-[99] md:hidden bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]">
+          <div className="flex gap-3 h-14">
+            <Stepper />
+            <button
+              onClick={handleAddToCart}
+              disabled={!inStock}
+              data-testid="pdp-sticky-add-to-cart"
+              className={btnClass(inStock, justAdded)}
+            >
+              {btnLabel(inStock, justAdded)}
+            </button>
+          </div>
+        </div>
       )}
 
     </div>

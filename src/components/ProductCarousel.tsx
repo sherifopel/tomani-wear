@@ -100,16 +100,16 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
                   className="object-contain p-2 transition-transform duration-500 md:object-cover md:p-0 md:group-hover:scale-105"
                 />
               </div>
-              <div className="min-h-0 shrink-0">
+              <div className="min-h-0 shrink-0 text-center">
                 <p
                   data-testid={`home-product-name-${product.id}`}
-                  className="text-base font-medium overflow-hidden text-ellipsis whitespace-nowrap"
+                  className="text-base font-light leading-5 text-black overflow-hidden text-ellipsis whitespace-nowrap"
                 >
                   {product.name}
                 </p>
                 <p
                   data-testid={`home-product-price-${product.id}`}
-                  className="mt-1 text-[18px] font-normal leading-[27px] tracking-normal text-gray-400"
+                  className="mt-1 text-[18px] font-normal leading-[27px] text-black"
                 >
                   ₦{product.price.toLocaleString()}
                 </p>
