@@ -13,7 +13,7 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: [
-    ['./e2e/reporters/status-reporter.js'],
+    ['./e2e/reporters/status-reporter.ts'],
     ['playwright-final-summary-reporter', {
       sections: [
         { key: 'header',   label: 'Header',              matchers: ['@header'] },
