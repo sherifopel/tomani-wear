@@ -143,3 +143,46 @@ No password needed — your Mac and GitHub do a cryptographic handshake automati
 **`<input type="color">`** — native HTML input that opens the OS colour picker. No library needed. Returns a hex string like `#c9a227`.
 
 **Logger rule** — this project uses `pw-log` (from the shared test repo). Never use `console.log` — use the logger instead.
+
+---
+
+## Session 3 — Playwright CI Pipeline
+
+### What we built
+- Full Playwright e2e test infrastructure with Page Object Model
+- Smoke test suite covering: Hero carousel, PDP (desktop + mobile), Cart empty state
+- GitHub Actions workflow that runs smoke tests against the Vercel preview on every PR
+- Custom reporters: `playwright-final-summary-reporter` (section summary table) and a live status reporter
+- `pw-log` / `logr-kit` logger integrated into all page objects
+
+### Key problems solved
+
+**logr-kit had no compiled `dist/` in the GitHub repo**
+`pw-log` is installed from `github:sherifopel/pw-log`. GitHub tarballs only include committed files — no `dist/`. Fix: added `"prepare": "tsc"` to pw-log's package.json (runs on install) and added it to `allowBuilds` in `pnpm-workspace.yaml` so pnpm permits the build script.
+
+**CI showing 0 tests discovered**
+Root cause: every spec imports `logr-kit`, which had no `dist/index.js` in CI → all spec files crashed at import → Playwright found 0 tests. Solved by the `prepare` script above.
+
+**Vercel race condition — tests running against stale deployment**
+The old CI wait step polled HTTP 200 on the branch preview URL. That URL already returns 200 from the *previous* deployment while the new one is building. Tests ran against the old code and failed even after fixes were merged.
+
+Fix: poll the GitHub Statuses API (`/repos/{owner}/{repo}/statuses/{sha}`) for Vercel's commit status instead. Vercel posts `context: "Vercel", state: "success"` only once the new deployment is fully live.
+
+Key gotcha: in `pull_request` events, `github.sha` is a **merge commit** GitHub creates internally — Vercel never knows about it. Use `github.event.pull_request.head.sha` (the actual branch HEAD commit) instead.
+
+**PDP selectors broken by dual mobile/desktop rendering**
+`ProductInteractive.tsx` renders the product name and price twice — once above the image (mobile, inside `md:hidden`) and once in the right column (desktop, with `hidden md:block`). This caused:
+- `pdp-name` hidden on desktop (test was finding the mobile copy inside `display:none`)
+- `pdp-price` strict mode violation (two elements with same testid in DOM)
+
+Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` to the selectors in the page object. Playwright's `:visible` pseudo-class filters to whichever copy is actually rendered for the current viewport — exactly one matches at a time.
+
+### Key concepts learned
+
+**pnpm `allowBuilds`** — pnpm v10's supply chain policy: git-hosted packages can't run build scripts unless explicitly listed in `pnpm-workspace.yaml`. This is like CORS but for package builds. Must use the full tarball URL + commit hash as the key.
+
+**`github.sha` vs `github.event.pull_request.head.sha`** — in PR events, GitHub auto-creates a merge commit to preview what would happen if the PR merged. `github.sha` is that merge commit, not your real commit. External services (Vercel, Codecov) post statuses to the real branch HEAD, which is `pull_request.head.sha`.
+
+**GitHub Statuses API vs Check Runs API** — GitHub has two separate systems for posting CI results on commits. Old services use "statuses" (`/statuses/{sha}`), newer ones use "check-runs" (`/commits/{sha}/check-runs`). `gh pr checks` shows both. Vercel uses the old statuses API.
+
+**Playwright `:visible` pseudo-class** — Playwright extends CSS with its own pseudo-classes. `:visible` matches elements that have a real bounding box and aren't hidden by CSS. Useful when a component renders the same testid twice for responsive layouts — scope to `:visible` and only the one shown for the current viewport will match.
