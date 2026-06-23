@@ -62,7 +62,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         data-testid="home-carousel-prev-button"
         onClick={() => emblaApi?.scrollPrev()}
         aria-label="Previous"
-        className="hidden md:flex absolute -left-4 top-1/3 -translate-y-1/2 w-10 h-10 bg-white border border-gray-300 text-gray-800 items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors duration-300"
+        className="hidden md:flex absolute -left-4 top-1/3 -translate-y-1/2 w-10 h-10 z-10 bg-white border border-gray-300 text-gray-800 items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors duration-300"
       >
         <IconPrev />
       </button>
@@ -70,7 +70,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
         data-testid="home-carousel-next-button"
         onClick={() => emblaApi?.scrollNext()}
         aria-label="Next"
-        className="hidden md:flex absolute -right-4 top-1/3 -translate-y-1/2 w-10 h-10 bg-white border border-gray-300 text-gray-800 items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors duration-300"
+        className="hidden md:flex absolute -right-4 top-1/3 -translate-y-1/2 w-10 h-10 z-10 bg-white border border-gray-300 text-gray-800 items-center justify-center hover:bg-black hover:text-white hover:border-black transition-colors duration-300"
       >
         <IconNext />
       </button>
