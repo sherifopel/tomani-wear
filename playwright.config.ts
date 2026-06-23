@@ -13,9 +13,7 @@ export default defineConfig({
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
   reporter: [
-    // status-reporter is a .ts file that needs esbuild to JIT-compile.
-    // esbuild's install script is blocked in CI (allowBuilds), so skip it there.
-    ...(process.env.CI ? [] : [['./e2e/reporters/status-reporter.ts']] as const),
+    ['./e2e/reporters/status-reporter.js'],
     ['playwright-final-summary-reporter', {
       sections: [
         { key: 'header',   label: 'Header',              matchers: ['@header'] },
