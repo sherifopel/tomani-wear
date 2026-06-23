@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { Log } from 'logr-kit'
 
 // ╔════════════════════════════════════════════════════════════════════════════╗
 // ║  LOCATORS                                                                  ║
@@ -33,6 +34,7 @@ export const homeSelectors = (page: Page) => {
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const navigate = async (page: Page, baseURL: string) => {
+  Log.navigate(baseURL + '/')
   await page.goto(baseURL + '/')
   await page.waitForLoadState('domcontentloaded')
 }
@@ -57,28 +59,40 @@ export const clickPrevSlide = async (page: Page) => {
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const assertHeroVisible = async (page: Page) => {
+  Log.section('Hero — visible')
   const { hero } = homeSelectors(page)
   await expect(hero.section).toBeVisible()
+  Log.ok('hero section')
   await expect(hero.heading).toBeVisible()
+  Log.ok('heading')
   await expect(hero.subtitle).toBeVisible()
+  Log.ok('subtitle')
 }
 
 export const assertHeroCTAVisible = async (page: Page) => {
+  Log.section('Hero — CTA')
   const { hero } = homeSelectors(page)
   await expect(hero.ctaButton).toBeVisible()
   await expect(hero.ctaButton).toHaveText('Shop Now')
+  Log.ok('Shop Now CTA')
 }
 
 export const assertHeroDescriptionVisible = async (page: Page) => {
+  Log.section('Hero — description')
   const { hero } = homeSelectors(page)
   await expect(hero.description).toBeVisible()
+  Log.ok('description')
 }
 
 export const assertFeaturedProductsVisible = async (page: Page) => {
+  Log.section('Featured products')
   const { featured } = homeSelectors(page)
   await expect(featured.section).toBeVisible()
+  Log.ok('section')
   await expect(featured.firstProductName).toBeVisible()
+  Log.ok('first product name')
   await expect(featured.firstProductPrice).toBeVisible()
+  Log.ok('first product price')
 }
 
 export const assertHeroHeightForViewport = async (

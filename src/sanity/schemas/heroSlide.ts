@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
-import { FocalYSlider } from '../components/FocalYSlider'
+import { HeroContentPreview } from '../components/HeroContentPreview'
+import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
 
 export const heroSlide = defineType({
   name: 'heroSlide',
@@ -97,6 +98,7 @@ export const heroSlide = defineType({
       title: 'Content & Style',
       type: 'object',
       group: 'content',
+      components: { input: HeroContentPreview },
       fields: [
         defineField({
           name: 'label',
@@ -131,6 +133,14 @@ export const heroSlide = defineType({
           type: 'number',
           initialValue: 85,
           components: { input: FocalYSlider },
+        }),
+        defineField({
+          name: 'textPositionX',
+          title: 'Text Horizontal Position',
+          description: '0 = left edge · 50 = centre · 100 = right edge.',
+          type: 'number',
+          initialValue: 0,
+          components: { input: FocalXSlider },
         }),
         defineField({
           name: 'textColor',

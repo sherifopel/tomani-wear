@@ -24,7 +24,8 @@ type SanityHeroSlide = {
   heading: string
   sub?: string
   href?: string
-  textPosition: number
+  textPosition:  number
+  textPositionX: number
   textColor: 'white' | 'black'
   buttonColor: 'white' | 'black' | 'gold'
 }
@@ -60,7 +61,7 @@ export default async function Home({
   ])
 
   const heroSlides = sanitySlides
-    .filter((slide) => slide.imageMobile)
+    .filter((slide) => slide.imageMobile && slide.heading?.trim())
     .map((slide) => ({
       id:            slide._id,
       imageMobile:   urlForImage(slide.imageMobile).width(800).auto('format').url(),
@@ -80,6 +81,7 @@ export default async function Home({
       sub:           slide.sub,
       href:          slide.href || undefined,
       textPosition:  slide.textPosition,
+      textPositionX: slide.textPositionX,
       textColor:     slide.textColor,
       buttonColor:   slide.buttonColor,
     }))

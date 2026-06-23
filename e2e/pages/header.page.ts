@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test'
+import { Log } from 'logr-kit'
 
 // ╔════════════════════════════════════════════════════════════════════════════╗
 // ║  LOCATORS                                                                  ║
@@ -57,23 +58,34 @@ export const closeMobileMenu = async (page: Page) => {
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const assertMobileHeaderActionsVisible = async (page: Page) => {
+  Log.section('Nav bar actions')
   await page.setViewportSize({ width: 375, height: 667 })
   const { navBar } = headerSelectors(page)
   await expect(navBar.searchButton).toBeVisible()
+  Log.ok('search button')
   await expect(navBar.accountButton).toBeVisible()
+  Log.ok('account button')
   await expect(navBar.cartButton).toBeVisible()
+  Log.ok('cart button')
 }
 
 export const assertMobileMenuContents = async (page: Page) => {
+  Log.section('Mobile menu contents')
   const { mobileMenu } = headerSelectors(page)
   await expect(mobileMenu.closeButton).toBeVisible()
+  Log.ok('close button')
   await expect(mobileMenu.logo).toBeVisible()
+  Log.ok('logo')
   await expect(mobileMenu.searchButton).toBeVisible()
+  Log.ok('search button')
   await expect(mobileMenu.accountButton).toBeVisible()
+  Log.ok('account button')
   await expect(mobileMenu.cartButton).toBeVisible()
+  Log.ok('cart button')
 }
 
 export const assertMobileMenuCoversHeader = async (page: Page) => {
+  Log.section('Mobile menu covers header')
   const { mobileMenu, navBar } = headerSelectors(page)
   await expect(mobileMenu.overlay).toBeVisible()
 
@@ -90,15 +102,23 @@ export const assertMobileMenuCoversHeader = async (page: Page) => {
     })
 
     expect(isMenuOnTop).toBe(true)
+    Log.ok('menu overlays ' + (await locator.getAttribute('data-testid')))
   }
 }
 
 export const assertMobileNavLinksVisible = async (page: Page) => {
+  Log.section('Mobile nav links')
   const { mobileLinks } = headerSelectors(page)
   await expect(mobileLinks.newIn).toBeVisible()
+  Log.ok('New In')
   await expect(mobileLinks.men).toBeVisible()
+  Log.ok('Men')
   await expect(mobileLinks.women).toBeVisible()
+  Log.ok('Women')
   await expect(mobileLinks.accessories).toBeVisible()
+  Log.ok('Accessories')
   await expect(mobileLinks.collections).toBeVisible()
+  Log.ok('Collections')
   await expect(mobileLinks.sale).toBeVisible()
+  Log.ok('Sale')
 }

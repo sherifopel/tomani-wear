@@ -42,7 +42,8 @@ type HeroSlide = {
   heading: string
   sub?: string
   href?: string
-  textPosition: number
+  textPosition:  number
+  textPositionX: number
   textColor: 'white' | 'black'
   buttonColor: 'white' | 'black' | 'gold'
 }
@@ -123,12 +124,13 @@ export default function Hero({
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-              {/* Text overlay — position driven by textPosition (0 = top, 100 = bottom) */}
+              {/* Text overlay — vertical + horizontal position from CMS */}
               <div
-                className="absolute left-0 p-6 md:p-16 max-w-xl z-10"
+                className="absolute p-6 md:p-16 max-w-xl z-10"
                 style={{
-                  top: `${slide.textPosition}%`,
-                  transform: 'translateY(-100%)',
+                  top:       `${slide.textPosition}%`,
+                  left:      `${slide.textPositionX}%`,
+                  transform: `translateY(-100%) translateX(-${slide.textPositionX}%)`,
                 }}
               >
                 {slide.label && (

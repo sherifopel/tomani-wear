@@ -84,4 +84,62 @@ No password needed — your Mac and GitHub do a cryptographic handshake automati
 
 **GROQ filters in webhooks** — Sanity's query language lets you say "only fire on product changes". We left it empty so it fires on everything.
 
-*More notes will be added here as we build...*
+---
+
+## Session 2 — Hero Slides, Studio Tools & Product Schema Overhaul
+
+### What we built
+
+**Hero: per-device images with crop preview (`HeroFocalPreview`)**
+- Each slide can now have up to 4 images: Mobile, Tablet, Desktop, Extra Large
+- If you skip one, the site automatically falls back to the next smaller size (Desktop → Tablet → Mobile)
+- Sanity Studio shows a visual crop preview per device — drag sliders to set where the camera "focuses" on each image
+- The preview shows a yellow warning banner when displaying a fallback image, so Tomiwa knows he hasn't uploaded a dedicated image for that size yet
+
+**Focal point sliders — why X only works for Mobile**
+- The "horizontal crop" slider only makes a visible difference when the image overflows the container horizontally
+- Portrait images on a wide Desktop/XL container fill the width completely — there's no overflow left/right, so horizontal dragging has no effect
+- That's CSS physics (`object-fit: cover`), not a bug — we hide the X slider on Desktop/XL when showing a fallback portrait image, and show a hint explaining why
+
+**HeroContentPreview — live text preview**
+- In the "Content & Style" tab, there's now a live 16:7 preview showing exactly how the text overlay will look on the site
+- Updates in real time as Tomiwa types — heading, subheading, label, button colour, and text position all reflect immediately
+- Built with Sanity's `useFormValue` hook to read the document's images from outside the nested content object
+
+**Text position sliders — vertical AND horizontal**
+- Two sliders control where the text block sits on the image
+- Vertical: 0 = top, 100 = bottom. Default 85 (near bottom)
+- Horizontal: 0 = left, 50 = centre, 100 = right. Default 0 (left-aligned)
+- The same CSS trick is used in both Studio preview and the live site: `top: Y%` + `translateY(-100%)` anchors the text block's bottom at that point; `left: X%` + `translateX(-X%)` centres the block around that point
+- The sliders are built with a `makeSlider()` factory — a function that returns a function. This is like a function that creates a configured version of itself
+
+**Settings "Untitled" fix**
+- Root cause: the `global-settings` Sanity document had never been saved. Studio was always opening a fresh blank draft
+- Fix: added a hidden `title` field with `initialValue: 'Settings'` to the Settings schema. Sanity applies `initialValue` to the form state for new unsaved documents, which is what `useDocumentTitle` reads
+- Manual step required: Tomiwa needs to open Global Settings in Studio and click Publish once to save the document permanently
+
+**Colour variants simplified → `colors[]`**
+- Old: each colour had its own images and size list (complex, rarely needed)
+- New: `colors` is just a name + hex code. Simple. Works like product tags
+- Custom swatch picker UI built in `ProductEditor.tsx` — shows colour circles with × to remove, colour wheel picker + name input + Add button
+- Key concept: the `<input type="color">` HTML element opens the browser's native colour picker — no library needed
+
+**"Preview hero" button removed**
+- This button opened a preview window, but it only works in local development (not in the deployed Studio)
+- Removed to avoid confusion for Tomiwa
+
+### Key concepts learned
+
+**`useFormValue(['path'])`** — a Sanity hook that lets any component read any field in the document, even if the component is deeply nested. Like reaching up to a parent in a DOM tree.
+
+**`makeSlider()` factory pattern** — higher-order function: a function that *returns* a component function with pre-configured settings baked in. The same pattern exists in Express: `express.Router()` creates a pre-configured router instance.
+
+**GROQ `coalesce(a, b, c)`** — returns the first non-null value. Like `??` chaining in JavaScript but in query language. We use it so fields added after the initial build don't break old documents.
+
+**CSS `object-fit: cover` physics** — the image fills the container, overflowing whichever axis has extra space. Crop only works on the axis that overflows. Portrait image in landscape container = only vertical overflow = only Y crop has visible effect.
+
+**Slug vs ID** — slug (`/products/black-tee`) is the human-readable URL used in routes, SEO-friendly. `_id` is an internal UUID Sanity uses to identify the document. Always use slug for links, never `_id`.
+
+**`<input type="color">`** — native HTML input that opens the OS colour picker. No library needed. Returns a hex string like `#c9a227`.
+
+**Logger rule** — this project uses `pw-log` (from the shared test repo). Never use `console.log` — use the logger instead.
