@@ -5,6 +5,7 @@ import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
+import FilterDropdown from '@/components/FilterDropdown'
 
 type Product = {
   _id: string
@@ -59,39 +60,13 @@ export default async function ProductsPage({
 
       {/* Header */}
       <div className="py-6 border-b border-gray-100 mb-8 flex items-center justify-between" data-testid="plp-header">
-        <p className="text-xs text-gray-400" data-testid="plp-count">
-          Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
-        </p>
+        <div className="flex items-center gap-3">
+          <FilterDropdown current={category} sort={sort} />
+          <p className="text-xs text-gray-400" data-testid="plp-count">
+            Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
+          </p>
+        </div>
         <SortDropdown current={sort} category={category} />
-      </div>
-
-      {/* Category filter pills */}
-      <div className="flex flex-wrap gap-2 mb-10" data-testid="plp-filters">
-        <Link
-          href="/products"
-          data-testid="plp-filter-all"
-          className={`px-4 py-2 text-xs uppercase tracking-widest border rounded transition-colors duration-200 ${
-            !category
-              ? 'bg-black text-white border-black'
-              : 'bg-white text-black border-gray-300 hover:border-black'
-          }`}
-        >
-          All
-        </Link>
-        {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
-          <Link
-            key={key}
-            href={`/products?category=${key}`}
-            data-testid={`plp-filter-${key}`}
-            className={`px-4 py-2 text-xs uppercase tracking-widest border rounded transition-colors duration-200 ${
-              category === key
-                ? 'bg-black text-white border-black'
-                : 'bg-white text-black border-gray-300 hover:border-black'
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
       </div>
 
       {/* Empty state */}
