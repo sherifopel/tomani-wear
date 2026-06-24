@@ -46,7 +46,7 @@ export default async function Navbar() {
       <Link
         href="/"
         data-testid="nav-logo-link"
-        className="flex justify-center items-center"
+        className="logo-shine flex justify-center items-center"
       >
         <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
