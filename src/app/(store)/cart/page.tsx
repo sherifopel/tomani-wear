@@ -53,7 +53,7 @@ export default function CartPage() {
               data-testid="cart-item"
             >
               {/* Square thumbnail */}
-              <div className="relative aspect-square w-24 md:w-28 shrink-0 bg-gray-50 overflow-hidden border border-gray-100">
+              <div className="relative aspect-square w-24 md:w-28 shrink-0 bg-gray-50 overflow-hidden border border-gray-100 rounded-md">
                 {item.image ? (
                   <Image
                     src={item.image}

@@ -61,7 +61,7 @@ export default function ProductActions({
       value={quantity}
       onChange={e => setQuantity(Number(e.target.value))}
       aria-label="Quantity"
-      className="h-full border border-gray-300 px-3 text-sm bg-white shrink-0 cursor-pointer hover:border-black transition-colors duration-200 appearance-none pr-7"
+      className="h-full border border-gray-300 px-3 text-sm bg-white shrink-0 cursor-pointer hover:border-black transition-colors duration-200 appearance-none pr-7 rounded"
       style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center' }}
     >
       {[1, 2, 3, 4, 5].map(n => (

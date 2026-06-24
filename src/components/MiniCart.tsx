@@ -91,7 +91,7 @@ export default function MiniCart() {
                 <div className="flex w-full items-start gap-5">
 
                   {/* Square thumbnail */}
-                  <div className="relative aspect-square w-28 shrink-0 overflow-hidden bg-gray-50">
+                  <div className="relative aspect-square w-28 shrink-0 overflow-hidden bg-gray-50 rounded-md">
                     {item.image ? (
                       <Image
                         src={item.image}

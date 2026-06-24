@@ -70,7 +70,7 @@ export default async function ProductsPage({
         <Link
           href="/products"
           data-testid="plp-filter-all"
-          className={`px-4 py-2 text-xs uppercase tracking-widest border transition-colors duration-200 ${
+          className={`px-4 py-2 text-xs uppercase tracking-widest border rounded transition-colors duration-200 ${
             !category
               ? 'bg-black text-white border-black'
               : 'bg-white text-black border-gray-300 hover:border-black'
@@ -83,7 +83,7 @@ export default async function ProductsPage({
             key={key}
             href={`/products?category=${key}`}
             data-testid={`plp-filter-${key}`}
-            className={`px-4 py-2 text-xs uppercase tracking-widest border transition-colors duration-200 ${
+            className={`px-4 py-2 text-xs uppercase tracking-widest border rounded transition-colors duration-200 ${
               category === key
                 ? 'bg-black text-white border-black'
                 : 'bg-white text-black border-gray-300 hover:border-black'
@@ -119,7 +119,7 @@ export default async function ProductsPage({
               <Link href={`/products/${product.slug}`} className="group block" data-testid={`plp-product-link-${product.slug}`}>
 
                 {/* Image */}
-                <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden mb-3" data-testid="plp-product-image-wrapper">
+                <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden mb-3 rounded-md" data-testid="plp-product-image-wrapper">
                   {product.image ? (
                     <Image
                       src={product.image}
@@ -136,12 +136,12 @@ export default async function ProductsPage({
                   {/* Badges */}
                   <div className="absolute top-2 left-2 flex flex-col gap-1">
                     {!product.inStock && (
-                      <span className="text-[10px] uppercase tracking-widest bg-gray-800 text-white px-2 py-0.5" data-testid="plp-badge-sold-out">
+                      <span className="text-[10px] uppercase tracking-widest bg-gray-800 text-white px-2 py-0.5 rounded" data-testid="plp-badge-sold-out">
                         Sold Out
                       </span>
                     )}
                     {product.compareAtPrice && product.compareAtPrice > product.price && (
-                      <span className="text-[10px] uppercase tracking-widest bg-[var(--brand-red)] text-white px-2 py-0.5" data-testid="plp-badge-sale">
+                      <span className="text-[10px] uppercase tracking-widest bg-[var(--brand-red)] text-white px-2 py-0.5 rounded" data-testid="plp-badge-sale">
                         Sale
                       </span>
                     )}

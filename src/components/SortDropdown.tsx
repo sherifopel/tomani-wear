@@ -45,7 +45,7 @@ export default function SortDropdown({
       <button
         onClick={() => setOpen(v => !v)}
         data-testid="plp-sort-trigger"
-        className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-xs uppercase tracking-widest hover:border-black transition-colors duration-200 bg-white"
+        className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-xs uppercase tracking-widest hover:border-black transition-colors duration-200 bg-white rounded"
       >
         <span>Sort by: <span className="font-medium">{currentLabel}</span></span>
         <ChevronDown size={14} strokeWidth={1.5} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
@@ -53,7 +53,7 @@ export default function SortDropdown({
 
       {open && (
         <ul
-          className="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 shadow-md z-50 py-1"
+          className="absolute right-0 top-full mt-1 w-52 bg-white border border-gray-200 shadow-md z-50 py-1 rounded"
           data-testid="plp-sort-menu"
         >
           {SORT_OPTIONS.map(option => (

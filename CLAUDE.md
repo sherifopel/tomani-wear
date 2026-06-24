@@ -110,6 +110,15 @@ Two classes exist in `globals.css` — always use one of these on interactive bu
 
 Example: `className="bg-black text-white border border-black btn-wipe"`
 
+### Border Radius
+**No perfect square corners anywhere.** Every button, input, card, badge, dropdown, and panel must have rounded corners.
+
+- Default: `rounded` (4px) — buttons, inputs, filter pills, dropdowns
+- Cards / image wrappers: `rounded-md` (6px)
+- Badges / tags: `rounded` (4px)
+- Never use zero border-radius on any visible UI element
+- Size selector buttons already use `rounded-md` — keep that as the reference
+
 ### Data Test IDs
 **Every meaningful element must have a `data-testid`** — no exceptions.
 
