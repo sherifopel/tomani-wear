@@ -110,6 +110,21 @@ Two classes exist in `globals.css` — always use one of these on interactive bu
 
 Example: `className="bg-black text-white border border-black btn-wipe"`
 
+### Data Test IDs
+**Every meaningful element must have a `data-testid`** — no exceptions.
+
+Rules:
+- Format: `kebab-case`, scoped to the component. e.g. `cart-checkout-button`, `pdp-size-selector`
+- Cover: headings, images, buttons, links, form inputs, error messages, empty states, loading states
+- Naming pattern: `[page/component]-[element]`. Examples:
+  - `pdp-add-to-cart`, `pdp-size-S`, `pdp-breadcrumb`
+  - `cart-item`, `cart-subtotal`, `cart-checkout-button`
+  - `nav-logo-link`, `nav-cart-button`, `nav-search-button`
+  - `plp-product-card`, `plp-product-name`, `plp-product-price`
+- Never use generic ids like `button-1` or `item` — always describe what it is
+
+Jarvis must add `data-testid` to every element when writing new components, and add missing ones when touching existing components.
+
 ### Carousel
 - All carousels use **Embla Carousel** (`embla-carousel-react`)
 - Use the shared `<CardCarousel>` component (once built) — never write one-off carousel logic
