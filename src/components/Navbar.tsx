@@ -51,7 +51,7 @@ export default async function Navbar() {
         <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-2 md:gap-5">
+      <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
         <button
           data-testid="nav-search-button"
           aria-label="Search"

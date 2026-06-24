@@ -7,7 +7,7 @@ import { useCart } from '@/hooks/useCart'
 export default function NavCartButton() {
   const { totalItems, openMiniCart } = useCart()
 
-  const icon = <ShoppingBag className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
+  const icon = <ShoppingBag className="h-[18px] w-[18px] md:h-5 md:w-5 text-black" strokeWidth={1.5} />
   const badge = totalItems > 0 && (
     <span
       data-testid="nav-cart-count"
