@@ -47,17 +47,16 @@ export default async function ProductPage({
   return (
     <div className="min-h-screen bg-white" data-testid="pdp-page">
 
-      <Breadcrumbs
-        testId="pdp-breadcrumb"
-        crumbs={[
-          { label: 'Home', href: '/' },
-          { label: 'Products', href: '/products' },
-          { label: product.name },
-        ]}
-      />
-
       {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
       <div className="max-w-7xl mx-auto px-6 pb-16">
+        <Breadcrumbs
+          testId="pdp-breadcrumb"
+          crumbs={[
+            { label: 'Home', href: '/' },
+            { label: 'Products', href: '/products' },
+            { label: product.name },
+          ]}
+        />
         <ProductInteractive
           productId={product._id}
           slug={product.slug}
