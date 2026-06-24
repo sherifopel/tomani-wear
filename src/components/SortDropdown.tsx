@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ArrowUpDown } from 'lucide-react'
 
 const SORT_OPTIONS = [
   { value: 'featured',   label: 'Featured items' },
@@ -47,8 +47,11 @@ export default function SortDropdown({
         data-testid="plp-sort-trigger"
         className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-xs uppercase tracking-widest hover:border-black transition-colors duration-200 bg-white rounded"
       >
-        <span>Sort by: <span className="font-medium">{currentLabel}</span></span>
-        <ChevronDown size={14} strokeWidth={1.5} className={`transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <ArrowUpDown size={14} strokeWidth={1.5} className="text-black" />
+        {/* Mobile: just "Sort", Desktop: full label */}
+        <span className="md:hidden">Sort</span>
+        <span className="hidden md:inline">Sort by: <span className="font-medium">{currentLabel}</span></span>
+        <ChevronDown size={14} strokeWidth={1.5} className={`hidden md:block transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {open && (
