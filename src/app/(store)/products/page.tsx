@@ -4,6 +4,7 @@ import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
+import SortDropdown from '@/components/SortDropdown'
 
 type Product = {
   _id: string
@@ -28,15 +29,22 @@ const CATEGORY_LABELS: Record<string, string> = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; sort?: string }>
 }) {
   await connection()
 
-  const { category } = await searchParams
+  const { category, sort = 'featured' } = await searchParams
 
-  const products: Product[] = category
+  const raw: Product[] = category
     ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, { category })
     : await client.fetch(PRODUCTS_QUERY)
+
+  const products = [...raw].sort((a, b) => {
+    if (sort === 'price-asc')  return a.price - b.price
+    if (sort === 'price-desc') return b.price - a.price
+    if (sort === 'newest')     return 0 // Sanity already orders by _createdAt desc via query
+    return 0 // featured — keep Sanity order
+  })
 
   const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
 
@@ -50,10 +58,11 @@ export default async function ProductsPage({
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
       {/* Header */}
-      <div className="py-6 border-b border-gray-100 mb-8" data-testid="plp-header">
+      <div className="py-6 border-b border-gray-100 mb-8 flex items-center justify-between" data-testid="plp-header">
         <p className="text-xs text-gray-400" data-testid="plp-count">
           Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
+        <SortDropdown current={sort} category={category} />
       </div>
 
       {/* Category filter pills */}
