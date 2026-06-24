@@ -50,13 +50,8 @@ export default async function ProductsPage({
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
       {/* Header */}
-      <div className="py-8 border-b border-gray-100 mb-8" data-testid="plp-header">
-        {categoryLabel && (
-          <h1 className="text-2xl font-medium uppercase tracking-widest" data-testid="plp-heading">
-            {categoryLabel}
-          </h1>
-        )}
-        <p className="text-xs text-gray-400 mt-1" data-testid="plp-count">
+      <div className="py-6 border-b border-gray-100 mb-8" data-testid="plp-header">
+        <p className="text-xs text-gray-400" data-testid="plp-count">
           Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
       </div>
