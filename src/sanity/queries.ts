@@ -5,6 +5,25 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
   name,
   "slug": slug.current,
   price,
+  compareAtPrice,
+  inStock,
+  "image": coalesce(
+    productImages[isMain == true][0].image.asset->url,
+    productImages[0].image.asset->url,
+    image.asset->url,
+    gallery[0].asset->url
+  ),
+  description,
+  category
+}`
+
+export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product" && category == $category] | order(_createdAt asc) {
+  _id,
+  name,
+  "slug": slug.current,
+  price,
+  compareAtPrice,
+  inStock,
   "image": coalesce(
     productImages[isMain == true][0].image.asset->url,
     productImages[0].image.asset->url,

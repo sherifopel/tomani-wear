@@ -8,12 +8,12 @@ import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 
 const navLinks = [
-  { label: 'New In',      href: '/new',          underlineColor: 'var(--brand-black)'  },
-  { label: 'Men',         href: '/men',          underlineColor: 'var(--brand-yellow)' },
-  { label: 'Women',       href: '/women',        underlineColor: 'var(--brand-red)'    },
-  { label: 'Accessories', href: '/accessories',  underlineColor: 'var(--brand-black)'  },
-  { label: 'Collections', href: '/collections',  underlineColor: 'var(--brand-yellow)' },
-  { label: 'Sale',        href: '/sale',         underlineColor: 'var(--brand-red)', accent: true },
+  { label: 'New In',      href: '/products?category=new',         underlineColor: 'var(--brand-black)'  },
+  { label: 'Men',         href: '/products?category=men',         underlineColor: 'var(--brand-yellow)' },
+  { label: 'Women',       href: '/products?category=women',       underlineColor: 'var(--brand-red)'    },
+  { label: 'Accessories', href: '/products?category=accessories', underlineColor: 'var(--brand-black)'  },
+  { label: 'Collections', href: '/products?category=collections', underlineColor: 'var(--brand-yellow)' },
+  { label: 'Sale',        href: '/products?category=sale',        underlineColor: 'var(--brand-red)', accent: true },
 ]
 
 type Settings = {
