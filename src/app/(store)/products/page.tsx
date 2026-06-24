@@ -59,15 +59,14 @@ export default async function ProductsPage({
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
       {/* Header */}
-      <div className="py-6 border-b border-gray-100 mb-8 flex items-center justify-between" data-testid="plp-header">
-        <div className="flex items-center gap-3">
-          <FilterDropdown current={category} sort={sort} />
-          <p className="text-xs text-gray-400" data-testid="plp-count">
-            Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
-          </p>
-        </div>
+      <div className="py-6 border-b border-gray-100 mb-4 flex items-center justify-between" data-testid="plp-header">
+        <FilterDropdown current={category} sort={sort} />
         <SortDropdown current={sort} category={category} />
       </div>
+
+      <p className="text-xs text-gray-400 mb-8" data-testid="plp-count">
+        Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
+      </p>
 
       {/* Empty state */}
       {products.length === 0 && (
