@@ -57,7 +57,7 @@ export default async function ProductsPage({
           </h1>
         )}
         <p className="text-xs text-gray-400 mt-1" data-testid="plp-count">
-          {products.length} {products.length === 1 ? 'product' : 'products'}
+          Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
       </div>
 
