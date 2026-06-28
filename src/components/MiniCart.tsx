@@ -168,18 +168,12 @@ export default function MiniCart() {
             </div>
             <p className="text-xs text-gray-400">Shipping calculated at checkout</p>
             <Link
-              href="/checkout"
-              onClick={closeMiniCart}
-              className="block w-full py-4 bg-black text-white border border-black text-xs uppercase tracking-widest font-medium text-center btn-wipe"
-            >
-              Checkout
-            </Link>
-            <Link
               href="/cart"
               onClick={closeMiniCart}
-              className="block text-center text-xs text-gray-400 hover:text-black underline underline-offset-4 transition-colors"
+              data-testid="mini-cart-view-cart"
+              className="block w-full py-4 bg-black text-white border border-black text-xs uppercase tracking-widest font-medium text-center btn-wipe"
             >
-              View Full Cart
+              View Cart
             </Link>
           </div>
         )}
