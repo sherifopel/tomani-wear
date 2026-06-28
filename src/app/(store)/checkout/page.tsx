@@ -329,9 +329,6 @@ export default function CheckoutPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 pb-32 lg:pb-16 pt-4" data-testid="checkout-page">
       <Breadcrumbs crumbs={CRUMBS} testId="checkout-breadcrumb" />
-      <h1 className="text-sm uppercase tracking-widest font-medium mb-10" data-testid="checkout-heading">
-        Checkout
-      </h1>
       <CheckoutForm />
     </div>
   )
