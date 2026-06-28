@@ -1,6 +1,37 @@
 import Link from 'next/link'
 import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
+import FooterAccordion from '@/components/FooterAccordion'
+
+const FOOTER_SECTIONS = [
+  {
+    title: 'Help & Support',
+    links: [
+      { label: 'FAQ',               href: '/faq' },
+      { label: 'Contact Us',        href: '/contact' },
+      { label: 'Returns & Refunds', href: '/returns' },
+      { label: 'Size Guide',        href: '/size-guide' },
+    ],
+  },
+  {
+    title: 'Shop',
+    links: [
+      { label: 'New In',       href: '/products?category=new' },
+      { label: 'Men',          href: '/products?category=men' },
+      { label: 'Women',        href: '/products?category=women' },
+      { label: 'Accessories',  href: '/products?category=accessories' },
+      { label: 'Collections',  href: '/products?category=collections' },
+      { label: 'Sale',         href: '/products?category=sale' },
+    ],
+  },
+  {
+    title: 'Tomanni',
+    links: [
+      { label: 'Our Story',  href: '/about' },
+      { label: 'Instagram',  href: 'https://www.instagram.com/tomanniofficial', external: true },
+    ],
+  },
+]
 
 type FooterLink = {
   label?: string
@@ -96,44 +127,29 @@ export default async function Footer() {
       : []
 
   return (
-    <footer className="bg-white border-t border-gray-200 py-10 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
-        {footerLinks.length > 0 && (
-          <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-            {footerLinks.map((link) => {
-              const href = link.href!
-              const label = link.label!
+    <footer className="bg-white border-t border-gray-200 pt-12 pb-10 px-6" data-testid="footer">
+      <div className="max-w-7xl mx-auto">
 
-              return isInternalLink(href) ? (
-                <Link
-                  key={`${label}-${href}`}
-                  href={href}
-                  className="text-[11px] uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
-                >
-                  {label}
-                </Link>
-              ) : (
-                <a
-                  key={`${label}-${href}`}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[11px] uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
-                >
-                  {label}
-                </a>
-              )
-            })}
-          </nav>
-        )}
+        {/* Nav sections — accordion on mobile, columns on desktop */}
+        <FooterAccordion sections={FOOTER_SECTIONS} />
 
-        {visibleSocialLinks.length > 0 && (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-xs uppercase tracking-widest font-medium text-black">
-              Follow Us
-            </p>
+        {/* Wordmark */}
+        <Link
+          href="/"
+          data-testid="footer-logo"
+          className="block text-4xl md:text-5xl font-bold tracking-[0.35em] uppercase leading-none mt-12 mb-8"
+        >
+          Tomanni
+        </Link>
 
-            <div className="flex flex-wrap items-center justify-center gap-5">
+        {/* Bottom bar — copyright left, social icons right */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-6 border-t border-gray-100">
+          <p className="text-[10px] uppercase tracking-widest text-gray-400" data-testid="footer-copyright">
+            © {new Date().getFullYear()} Tomanni Official. All rights reserved.
+          </p>
+
+          {visibleSocialLinks.length > 0 && (
+            <div className="flex items-center gap-5" data-testid="footer-social">
               {visibleSocialLinks.map((link) => (
                 <a
                   key={`${link.platform}-${link.url}`}
@@ -141,18 +157,16 @@ export default async function Footer() {
                   aria-label={getPlatformLabel(link.platform)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-8 w-8 items-center justify-center text-black hover:opacity-60 transition-opacity duration-200"
+                  data-testid={`footer-social-${link.platform}`}
+                  className="flex h-8 w-8 items-center justify-center text-black hover:opacity-50 transition-opacity duration-200"
                 >
                   <SocialIcon platform={link.platform} />
                 </a>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-2">
-          © {new Date().getFullYear()} Tomanni Wear
-        </p>
       </div>
     </footer>
   )

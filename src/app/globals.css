@@ -26,6 +26,39 @@ body {
   font-family: var(--font-sans), sans-serif;
 }
 
+/* ─── Logo shine sweep ─────────────────────────────────────────────────────
+   A diagonal light streak sweeps left → right across the wordmark on hover.
+   The ::after gradient is clipped by overflow:hidden on the parent link.
+─────────────────────────────────────────────────────────────────────────── */
+
+.logo-shine {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.logo-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -120%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 70%
+  );
+  transform: skewX(-15deg);
+  transition: left 0.55s ease;
+  pointer-events: none;
+}
+
+.logo-shine:hover::after {
+  left: 160%;
+}
+
 /* ─── Nav link underline slide ────────────────────────────────────────────
    A 1px line slides in from the left on hover, then slides back out.
 ─────────────────────────────────────────────────────────────────────────── */

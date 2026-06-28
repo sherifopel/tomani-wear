@@ -46,9 +46,9 @@ export default async function Navbar() {
       <Link
         href="/"
         data-testid="nav-logo-link"
-        className="flex justify-center items-center"
+        className="justify-self-center flex items-center"
       >
-        <span className="text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
+        <span className="logo-shine text-[20px] md:text-[28px] font-bold leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
       <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
@@ -85,7 +85,7 @@ export default async function Navbar() {
           href="/"
           aria-hidden="true"
           tabIndex={-1}
-          className="absolute left-6 text-sm font-light tracking-[0.22em] uppercase
+          className="hidden lg:block absolute left-6 text-sm font-bold tracking-[0.22em] uppercase
                      opacity-0 pointer-events-none
                      group-data-[compact=true]:opacity-100
                      group-data-[compact=true]:pointer-events-auto
