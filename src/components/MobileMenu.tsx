@@ -5,12 +5,12 @@ import Link from 'next/link'
 import { Menu, X, ChevronRight } from 'lucide-react'
 
 const navLinks = [
-  { label: 'New In',       href: '/new',          accent: false },
-  { label: 'Men',          href: '/men',          accent: false },
-  { label: 'Women',        href: '/women',        accent: false },
-  { label: 'Accessories',  href: '/accessories',  accent: false },
-  { label: 'Collections',  href: '/collections',  accent: false },
-  { label: 'Sale',         href: '/sale',         accent: true  },
+  { label: 'New In',       href: '/products?category=new',         accent: false },
+  { label: 'Men',          href: '/products?category=men',         accent: false },
+  { label: 'Women',        href: '/products?category=women',       accent: false },
+  { label: 'Accessories',  href: '/products?category=accessories', accent: false },
+  { label: 'Collections',  href: '/products?category=collections', accent: false },
+  { label: 'Sale',         href: '/products?category=sale',        accent: true  },
 ]
 
 export default function MobileMenu() {
