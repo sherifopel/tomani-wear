@@ -96,18 +96,30 @@ export default async function Footer() {
       : []
 
   return (
-    <footer className="bg-white border-t border-gray-200 py-10 px-6">
-      <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
+    <footer className="bg-white border-t border-gray-200 pt-16 pb-10 px-6" data-testid="footer">
+
+      <div className="max-w-7xl mx-auto flex flex-col items-center gap-12">
+
+        {/* Wordmark */}
+        <Link
+          href="/"
+          data-testid="footer-logo"
+          className="text-[28px] md:text-[40px] font-light tracking-[0.3em] uppercase leading-none"
+        >
+          Tomanni
+        </Link>
+
+        {/* Footer nav links — only shown if Tomiwa adds them in Sanity */}
         {footerLinks.length > 0 && (
-          <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+          <nav aria-label="Footer" data-testid="footer-nav" className="flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
             {footerLinks.map((link) => {
               const href = link.href!
               const label = link.label!
-
               return isInternalLink(href) ? (
                 <Link
                   key={`${label}-${href}`}
                   href={href}
+                  data-testid={`footer-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-[11px] uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
                 >
                   {label}
@@ -118,6 +130,7 @@ export default async function Footer() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-testid={`footer-link-${label.toLowerCase().replace(/\s+/g, '-')}`}
                   className="text-[11px] uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
                 >
                   {label}
@@ -127,13 +140,11 @@ export default async function Footer() {
           </nav>
         )}
 
+        {/* Social icons */}
         {visibleSocialLinks.length > 0 && (
-          <div className="flex flex-col items-center gap-4">
-            <p className="text-xs uppercase tracking-widest font-medium text-black">
-              Follow Us
-            </p>
-
-            <div className="flex flex-wrap items-center justify-center gap-5">
+          <div className="flex flex-col items-center gap-5" data-testid="footer-social">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400">Follow Us</p>
+            <div className="flex items-center gap-6">
               {visibleSocialLinks.map((link) => (
                 <a
                   key={`${link.platform}-${link.url}`}
@@ -141,7 +152,8 @@ export default async function Footer() {
                   aria-label={getPlatformLabel(link.platform)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-8 w-8 items-center justify-center text-black hover:opacity-60 transition-opacity duration-200"
+                  data-testid={`footer-social-${link.platform}`}
+                  className="flex h-9 w-9 items-center justify-center text-black hover:opacity-50 transition-opacity duration-200"
                 >
                   <SocialIcon platform={link.platform} />
                 </a>
@@ -150,9 +162,13 @@ export default async function Footer() {
           </div>
         )}
 
-        <p className="text-[10px] uppercase tracking-widest text-gray-400 mt-2">
-          © {new Date().getFullYear()} Tomanni Wear
+        {/* Divider */}
+        <div className="w-16 border-t border-gray-200" />
+
+        <p className="text-[10px] uppercase tracking-widest text-gray-400" data-testid="footer-copyright">
+          © {new Date().getFullYear()} Tomanni Wear. All rights reserved.
         </p>
+
       </div>
     </footer>
   )
