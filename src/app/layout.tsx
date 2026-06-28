@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tomanni Wear",
+  title: "Tomanni Official",
   description: "Premium clothing from Lagos, Nigeria",
 };
 

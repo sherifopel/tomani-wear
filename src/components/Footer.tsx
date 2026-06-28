@@ -166,7 +166,7 @@ export default async function Footer() {
         <div className="w-16 border-t border-gray-200" />
 
         <p className="text-[10px] uppercase tracking-widest text-gray-400" data-testid="footer-copyright">
-          © {new Date().getFullYear()} Tomanni Wear. All rights reserved.
+          © {new Date().getFullYear()} Tomanni Official. All rights reserved.
         </p>
 
       </div>
