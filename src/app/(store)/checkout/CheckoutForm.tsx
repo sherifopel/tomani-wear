@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { usePaystackPayment } from 'react-paystack'
@@ -34,6 +34,13 @@ export default function CheckoutForm() {
   const [form, setForm]     = useState<FormState>(EMPTY_FORM)
   const [errors, setErrors] = useState<Partial<FormState>>({})
   const [loading, setLoading] = useState(false)
+
+  // Redirect to cart if empty — lives here because page.tsx is a server component
+  useEffect(() => {
+    if (items.length === 0) router.replace('/cart')
+  }, [items, router])
+
+  if (items.length === 0) return null
 
   const deliveryFee: number = 0
   const grandTotal = totalPrice + deliveryFee
