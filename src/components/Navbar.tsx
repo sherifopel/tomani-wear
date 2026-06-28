@@ -48,7 +48,7 @@ export default async function Navbar() {
         data-testid="nav-logo-link"
         className="justify-self-center flex items-center"
       >
-        <span className="logo-shine text-[20px] md:text-[30px] font-light leading-none tracking-[0.22em] uppercase">Tomanni</span>
+        <span className="logo-shine text-[20px] md:text-[28px] font-black leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
       <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
