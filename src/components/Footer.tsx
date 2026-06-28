@@ -104,7 +104,7 @@ export default async function Footer() {
         <Link
           href="/"
           data-testid="footer-logo"
-          className="text-[28px] md:text-[40px] font-light tracking-[0.3em] uppercase leading-none"
+          className="text-[28px] md:text-[48px] font-black tracking-[0.25em] uppercase leading-none"
         >
           Tomanni
         </Link>
