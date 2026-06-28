@@ -31,6 +31,10 @@ export default defineConfig({
                   .documentId('global-settings')
                   .title('Settings')
               ),
+            S.listItem()
+              .title('Orders')
+              .schemaType('order')
+              .child(S.documentTypeList('order').title('Orders')),
           ]),
     }),
     visionTool(),
