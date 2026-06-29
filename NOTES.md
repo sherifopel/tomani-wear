@@ -321,3 +321,21 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 - **Stripe** — great globally but no Nigerian payouts. Not viable for a Lagos-based business.
 
 **Tickets created: TW-29 (Checkout page) and TW-30 (Paystack integration)**
+
+## TW-36 — Hero video support + production release v0.2.0
+
+### What we built
+- Hero slides can now use an optional looping video instead of (or alongside) device images
+- Unified Studio UX: one media section inside the existing device-images component, with a "Still Images / Video" tab toggle — never two separate upload areas
+- Main Heading is optional (text-only headline no longer forced); Mobile Image is no longer required once a video is set; the legacy single-image field was deleted entirely
+- Fixed a white gap under the mobile hero by measuring the real header height with `ResizeObserver` and exposing it as `--header-height`, instead of guessing a fixed rem value
+- Added mobile-only CSS scroll-snap (`snap-section` class + `scroll-snap-type: y mandatory` under 768px) so one swipe from the hero lands cleanly on New Arrivals
+- Merged `feat/TW-36-hero-video-gif` → `dev` → `main`, tagged the result `v0.2.0`
+
+### Why we built it that way
+- Two separate upload areas (one for images, one for video) confused the editing flow in Studio — collapsing them into one tabbed component matches how the live site treats them: mutually exclusive, video takes priority when present
+- Hardcoded header heights break the moment the announcement bar toggles or the header collapses — measuring the actual DOM height keeps every height-dependent calc correct without manual tuning
+- Scroll-snap was scoped to mobile only via a media query so desktop's free-scroll feel is untouched
+
+### Key concept learned
+**Git tagging for production releases** — this repo had no tags before now. Tags are immutable pointers to a specific commit, separate from branches (which move). `git tag -a v0.2.0 -m "..."` + `git push origin v0.2.0` marks "this exact commit is what's live in production." Going forward: every `dev` → `main` merge gets a new tag bump (`v0.2.1`, `v0.3.0`, etc.) so we always have a rollback point and a changelog anchor without digging through commit history.
