@@ -80,6 +80,16 @@ export const heroSlide = defineType({
       components: { input: HeroFocalPreview },
     }),
 
+    // Video / GIF — when set, replaces all device images for this slide
+    defineField({
+      name: 'video',
+      title: 'Hero Video or GIF',
+      description: 'Optional. Upload an MP4 or WebM video clip and it will replace the images on this slide. Plays silently on a loop. GIFs should be uploaded as images above — they are served as-is without compression.',
+      type: 'file',
+      group: 'images',
+      options: { accept: 'video/mp4,video/webm' },
+    }),
+
     // Legacy single-image field — hidden once the new device images are set
     defineField({
       name: 'image',

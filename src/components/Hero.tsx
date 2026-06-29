@@ -59,6 +59,7 @@ type HeroSlide = {
   desktopTextPositionX: number
   xlTextPosition:       number
   xlTextPositionX:      number
+  videoUrl?: string
   textColor: 'white' | 'black'
   buttonColor: 'white' | 'black' | 'gold'
   buttonCustomColor?: string
@@ -113,49 +114,63 @@ export default function Hero({
           return (
             <div key={slide.id} className="flex-none w-full h-full relative">
 
-              {/* Mobile image */}
-              <Image
-                src={slide.imageMobile}
-                alt={slide.heading}
-                fill
-                sizes="100vw"
-                className="block object-cover md:hidden"
-                style={{ objectPosition: `${slide.mobileFocalX}% ${slide.mobileFocalY}%` }}
-                priority={index === 0}
-              />
+              {slide.videoUrl ? (
+                /* Video slide — autoplay, muted, looping, no controls */
+                <video
+                  src={slide.videoUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              ) : (
+                <>
+                  {/* Mobile image */}
+                  <Image
+                    src={slide.imageMobile}
+                    alt={slide.heading}
+                    fill
+                    sizes="100vw"
+                    className="block object-cover md:hidden"
+                    style={{ objectPosition: `${slide.mobileFocalX}% ${slide.mobileFocalY}%` }}
+                    priority={index === 0}
+                  />
 
-              {/* Tablet image */}
-              <Image
-                src={slide.imageTablet}
-                alt={slide.heading}
-                fill
-                sizes="100vw"
-                className="hidden object-cover md:block lg:hidden"
-                style={{ objectPosition: `${slide.tabletFocalX}% ${slide.tabletFocalY}%` }}
-                priority={index === 0}
-              />
+                  {/* Tablet image */}
+                  <Image
+                    src={slide.imageTablet}
+                    alt={slide.heading}
+                    fill
+                    sizes="100vw"
+                    className="hidden object-cover md:block lg:hidden"
+                    style={{ objectPosition: `${slide.tabletFocalX}% ${slide.tabletFocalY}%` }}
+                    priority={index === 0}
+                  />
 
-              {/* Desktop image */}
-              <Image
-                src={slide.imageDesktop}
-                alt={slide.heading}
-                fill
-                sizes="1505px"
-                className="hidden object-cover lg:block xl:hidden"
-                style={{ objectPosition: `${slide.desktopFocalX}% ${slide.desktopFocalY}%` }}
-                priority={index === 0}
-              />
+                  {/* Desktop image */}
+                  <Image
+                    src={slide.imageDesktop}
+                    alt={slide.heading}
+                    fill
+                    sizes="1505px"
+                    className="hidden object-cover lg:block xl:hidden"
+                    style={{ objectPosition: `${slide.desktopFocalX}% ${slide.desktopFocalY}%` }}
+                    priority={index === 0}
+                  />
 
-              {/* Extra Large image */}
-              <Image
-                src={slide.imageXl}
-                alt={slide.heading}
-                fill
-                sizes="1920px"
-                className="hidden object-cover xl:block"
-                style={{ objectPosition: `${slide.xlFocalX}% ${slide.xlFocalY}%` }}
-                priority={index === 0}
-              />
+                  {/* Extra Large image */}
+                  <Image
+                    src={slide.imageXl}
+                    alt={slide.heading}
+                    fill
+                    sizes="1920px"
+                    className="hidden object-cover xl:block"
+                    style={{ objectPosition: `${slide.xlFocalX}% ${slide.xlFocalY}%` }}
+                    priority={index === 0}
+                  />
+                </>
+              )}
 
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

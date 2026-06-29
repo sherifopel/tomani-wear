@@ -40,6 +40,7 @@ export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false
   "heading":  coalesce(content.heading,  heading),
   "sub":      coalesce(content.sub,      sub),
   "href":     coalesce(content.href,     href),
+  "videoUrl":     video.asset->url,
   "imageMobile":  coalesce(focalPoints.imageMobile,  image),
   "imageTablet":  coalesce(focalPoints.imageTablet,  focalPoints.imageMobile,  image),
   "imageDesktop": coalesce(focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile,  image),
