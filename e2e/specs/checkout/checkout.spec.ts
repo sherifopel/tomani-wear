@@ -54,6 +54,9 @@ test.describe('Checkout — form fields', { tag: ['@tomanni', '@checkout', '@des
     await util.setDeviceMode(page, 'desktop')
     await seedCart(page)
     await checkoutPage.navigate(page, baseURL!)
+    // CheckoutForm is lazy-loaded with ssr:false — wait for the first field
+    // before any assertion, otherwise tests are flaky on slow connections.
+    await page.waitForSelector('[data-testid="checkout-full-name"]')
   })
 
   test('Should show the checkout page with form fields', async ({ page }) => {
@@ -87,6 +90,12 @@ test.describe('Checkout — form fields', { tag: ['@tomanni', '@checkout', '@des
     const { summary } = checkoutPage.checkoutSelectors(page)
     await expect(summary.delivery).toContainText('Free')
   })
+
+  // Regression: total must reflect the seeded cart item price (₦55,000)
+  test('Order total should match the cart item price', async ({ page }) => {
+    const { summary } = checkoutPage.checkoutSelectors(page)
+    await expect(summary.total).toContainText('₦55,000')
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -98,6 +107,7 @@ test.describe('Checkout — form validation', { tag: ['@tomanni', '@checkout', '
     await util.setDeviceMode(page, 'desktop')
     await seedCart(page)
     await checkoutPage.navigate(page, baseURL!)
+    await page.waitForSelector('[data-testid="checkout-full-name"]')
   })
 
   test('Should show required field errors when submitting an empty form', async ({ page }) => {
@@ -141,6 +151,7 @@ test.describe('Checkout — mobile', { tag: ['@tomanni', '@checkout', '@mobile']
     await util.setDeviceMode(page, 'mobile')
     await seedCart(page)
     await checkoutPage.navigate(page, baseURL!)
+    await page.waitForSelector('[data-testid="checkout-pay-button-mobile"]')
   })
 
   test('Should show the sticky mobile pay bar', async ({ page }) => {
@@ -167,9 +178,10 @@ test.describe('Checkout smoke', { tag: ['@tomanni-smoke', '@checkout', '@desktop
     await util.setDeviceMode(page, 'desktop')
     await seedCart(page)
     await checkoutPage.navigate(page, baseURL!)
+    await page.waitForSelector('[data-testid="checkout-full-name"]')
     await checkoutPage.assertFormVisible(page)
     const { summary, payButton } = checkoutPage.checkoutSelectors(page)
-    await expect(summary.total).toBeVisible()
+    await expect(summary.total).toContainText('₦55,000')
     await expect(payButton).toBeVisible()
   })
 })

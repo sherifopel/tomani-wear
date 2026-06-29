@@ -60,4 +60,22 @@ test.describe('Homepage mobile menu', { tag: ['@tomanni', '@homepage', '@header'
     await mobileLinks.men.click()
     await expect(mobileMenu.overlay).not.toBeVisible()
   })
+
+  // Regression: mobile menu previously used /men, /women etc. which 404'd.
+  // These tests lock in the correct /products?category= hrefs permanently.
+  test('Men link should navigate to /products?category=men — not a 404', async ({ page, baseURL }) => {
+    await headerPage.openMobileMenu(page)
+    const { mobileLinks } = headerPage.headerSelectors(page)
+    await mobileLinks.men.click()
+    await expect(page).toHaveURL(`${baseURL}/products?category=men`)
+    await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  })
+
+  test('Women link should navigate to /products?category=women — not a 404', async ({ page, baseURL }) => {
+    await headerPage.openMobileMenu(page)
+    const { mobileLinks } = headerPage.headerSelectors(page)
+    await mobileLinks.women.click()
+    await expect(page).toHaveURL(`${baseURL}/products?category=women`)
+    await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  })
 })
