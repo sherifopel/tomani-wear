@@ -234,3 +234,90 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 **GitHub Statuses API vs Check Runs API** — GitHub has two separate systems for posting CI results on commits. Old services use "statuses" (`/statuses/{sha}`), newer ones use "check-runs" (`/commits/{sha}/check-runs`). `gh pr checks` shows both. Vercel uses the old statuses API.
 
 **Playwright `:visible` pseudo-class** — Playwright extends CSS with its own pseudo-classes. `:visible` matches elements that have a real bounding box and aren't hidden by CSS. Useful when a component renders the same testid twice for responsive layouts — scope to `:visible` and only the one shown for the current viewport will match.
+
+---
+
+## Session 5 — PLP, Design Standards & Mobile UX
+
+### What we built
+
+**Product Listing Page (`/products`)**
+- Server component at `src/app/(store)/products/page.tsx`
+- Reads `?category=X&sort=Y` from the URL as query params
+- Fetches Sanity with category-specific query or all-products query depending on the param
+- JS sort for price ascending/descending after the fetch
+- Grid: 2 columns on mobile → 3 on tablet → 4 on desktop
+- Cards: `aspect-[3/4]` image ratio, hover zoom, Sale/Sold Out badges with rounded corners
+- Empty state with "View All" CTA if no products match the filter
+- No page title — the filter + sort header is enough visual context
+- "Showing X of Y products" count above the grid
+
+**Filter & Sort controls**
+- `FilterDropdown` component: desktop shows a dropdown panel; mobile shows a left-side drawer (like MiniCart but from the left) with a backdrop overlay and Escape key support
+- `SortDropdown` component: closes on outside click via `useRef`; mobile shows compact "Sort" + icon, desktop shows "Sort by: [label]"
+- Both components build hrefs that preserve the other param — filter preserves sort, sort preserves category
+- State lives in the URL, not in React state — means shareable/bookmarkable links and no state-out-of-sync bugs
+
+**Nav links updated to `/products?category=X`**
+- Changed from separate `/men`, `/women` etc. routes to query params on the PLP
+- Keeps one page, one component — the category just changes what Sanity returns
+
+**Shared `<Breadcrumbs>` component**
+- Lives at `src/components/Breadcrumbs.tsx`
+- Has `hidden md:flex` baked in — desktop-only, always. Never write inline breadcrumb markup on a page
+- Takes `crumbs` prop: array of `{ label, href? }`. Last crumb has no href (current page)
+- All existing pages updated to use it: PDP, Cart, PLP
+
+**Quantity selector as dropdown**
+- Changed from stepper buttons (`+ / −`) to a `<select>` with options 1–5
+- Simpler, more mobile-friendly, no accidental taps
+
+**Sticky Add to Cart (mobile only)**
+- `md:hidden fixed bottom-0` bar with ATC button always visible on mobile PDP
+- Desktop: inline row in the product info column (unchanged)
+- Scroll-to-error: if the user taps ATC without selecting a size, `sizeRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })` brings the size selector into view
+
+**Mobile header freeze**
+- `StickyHeader` no longer collapses the announcement bar on mobile — only on desktop
+- Guard: `(suppressCompact && isDesktop) ? '0' : '3rem'` — `isDesktop` is `window.innerWidth >= 768`
+- On mobile the full header (announcement bar + logo row) stays locked at the top at all times
+
+**Mini cart removed on mobile**
+- Cart icon on mobile is now a `<Link href="/cart">` — no drawer
+- `NavCartButton` renders two completely separate elements: Link for mobile (`md:hidden`), button for desktop (`hidden md:flex`)
+- MiniCart drawer and backdrop: `hidden md:block` / `hidden md:flex` — never rendered on mobile
+- Body scroll lock guarded: `if (window.innerWidth < 768) return` so it never fires on mobile
+
+**Logo shine animation**
+- `.logo-shine` CSS class on the wordmark link
+- `::after` pseudo-element: diagonal white gradient, starts off-screen left (`left: -120%`), slides right on hover (`left: 160%`) over 0.55s
+- `overflow: hidden` on the parent clips the gradient so it doesn't bleed outside the text bounds
+- Pure CSS — no JavaScript
+
+**Design standards added to CLAUDE.md**
+- Page layout: `max-w-7xl mx-auto px-6` — every page body uses this
+- Breadcrumbs: always use the shared component, always desktop-only
+- Typography: `var(--font-sans)` token, changed in `layout.tsx` only
+- CTA animations: `btn-wipe` (black button) / `btn-wipe-white` (outlined/white button)
+- Border radius: `rounded` (4px) default everywhere, `rounded-md` for cards/images
+- Data test IDs: every element must have one in `[page]-[element]` format
+- No perfect squares — all corners rounded
+
+### Key concepts learned
+
+**URL as state** — instead of `useState` for filter/sort, the value lives in `?category=X&sort=Y`. This means: refresh the page and the state survives; copy the URL and share it with someone; the browser Back button works as expected. Use this pattern for any UI that represents "what are you looking at" rather than "what are you doing".
+
+**`grid-cols-[auto_1fr_auto]` in Tailwind** — custom bracket syntax lets you write any valid CSS grid template. `auto` = the column takes only as much space as its content. `1fr` = take all remaining space. Used in the Navbar: burger/region tag on left (auto), logo in middle (1fr), icons on right (auto).
+
+**`currentColor` in SVGs** — SVG `stroke="currentColor"` inherits the text colour from CSS. If an ancestor has a light colour set, the icon becomes invisible. Fix: add `text-black` to the icons container so the stroke always inherits black regardless of ancestors.
+
+**Two pseudo-elements, same element** — CSS `::before` and `::after` both exist on every element. `btn-wipe` uses both: `::before` expands from the left, `::after` from the right. They meet in the middle. This is why the wipe animation feels like a collision.
+
+**`overflow: hidden` on a link** — when you put a positioned `::after` inside a link element, `overflow: hidden` clips it at the link's boundaries. This is how the logo shine works: the gradient streak sweeps across but can't spill outside the wordmark.
+
+**Payment providers (Nigeria → Pan-Africa)**
+- **Paystack** — Nigeria-first, naira-native, free to set up. Handles NGN well. Used for MVP.
+- **Flutterwave** — built for all of Africa, supports 30+ currencies. When Tomanni Wear expands beyond Nigeria, payment logic is isolated to one component — swap Paystack for Flutterwave there only.
+- **Stripe** — great globally but no Nigerian payouts. Not viable for a Lagos-based business.
+
+**Tickets created: TW-29 (Checkout page) and TW-30 (Paystack integration)**
