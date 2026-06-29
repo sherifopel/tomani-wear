@@ -68,6 +68,15 @@ export const heroSlide = defineType({
           options: { hotspot: true },
         }),
         // Per-device crop position — managed by the sliders in the preview UI
+        // Video — when set, replaces all device images for this slide
+        defineField({
+          name: 'video',
+          title: 'Hero Video',
+          description: 'Optional. Upload an MP4 or WebM. When set, the video plays on loop and replaces all device images. The focal point sliders below still control how the video is cropped.',
+          type: 'file',
+          options: { accept: 'video/mp4,video/webm' },
+        }),
+
         defineField({ name: 'mobile',   title: 'Mobile crop Y',          type: 'number', initialValue: 50 }),
         defineField({ name: 'tablet',   title: 'Tablet crop Y',          type: 'number', initialValue: 50 }),
         defineField({ name: 'desktop',  title: 'Desktop crop Y',         type: 'number', initialValue: 30 }),
@@ -78,16 +87,6 @@ export const heroSlide = defineType({
         defineField({ name: 'xlargeX',  title: 'Extra Large crop X',     type: 'number', initialValue: 50 }),
       ],
       components: { input: HeroFocalPreview },
-    }),
-
-    // Video / GIF — when set, replaces all device images for this slide
-    defineField({
-      name: 'video',
-      title: 'Hero Video or GIF',
-      description: 'Optional. Upload an MP4 or WebM video clip and it will replace the images on this slide. Plays silently on a loop. GIFs should be uploaded as images above — they are served as-is without compression.',
-      type: 'file',
-      group: 'images',
-      options: { accept: 'video/mp4,video/webm' },
     }),
 
     // Legacy single-image field — hidden once the new device images are set

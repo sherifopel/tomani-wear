@@ -19,6 +19,7 @@ type ObjectValue = {
   imageTablet?:  { asset?: { _ref?: string } }
   imageDesktop?: { asset?: { _ref?: string } }
   imageXl?:      { asset?: { _ref?: string } }
+  video?:        { asset?: { _ref?: string; url?: string } }
   mobile?:   number
   tablet?:   number
   desktop?:  number
@@ -79,6 +80,9 @@ export function HeroFocalPreview(props: ObjectInputProps) {
   const fallbackLabel   = isUsingFallback ? DEVICES.find((d) => d.key === effective.source)!.label : null
 
   const imageMember = members.find((m) => m.kind === 'field' && m.name === device.imageField)
+  const videoMember = members.find((m) => m.kind === 'field' && m.name === 'video')
+  const videoRef    = objectValue.video?.asset?._ref
+  const hasVideo    = Boolean(videoRef)
 
   const savedY   = (objectValue[device.focalYField as keyof ObjectValue] as number | undefined) ?? DEFAULT_Y[activeDevice]
   const savedX   = (objectValue[device.focalXField as keyof ObjectValue] as number | undefined) ?? DEFAULT_X[activeDevice]
@@ -120,8 +124,36 @@ export function HeroFocalPreview(props: ObjectInputProps) {
     setLocalX(null)
   }
 
+  // Build video CDN URL from the asset ref so we can preview it inline
+  const videoCdnUrl = videoRef
+    ? `https://cdn.sanity.io/files/tu8h6v2e/production/${videoRef.replace(/^file-/, '').replace(/-([^-]+)$/, '.$1')}`
+    : null
+
   return (
     <div style={{ fontFamily: 'sans-serif', color: '#1a1a1a' }}>
+
+      {/* ── Video upload ── */}
+      {videoMember && videoMember.kind === 'field' && (
+        <div style={{ marginBottom: 24, padding: 16, border: `2px solid ${hasVideo ? BRAND_YELLOW : '#e0e0e0'}`, borderRadius: 8, background: hasVideo ? '#fffdf0' : '#fafafa' }}>
+          <p style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: hasVideo ? BRAND_YELLOW : '#888', marginBottom: 12 }}>
+            {hasVideo ? '▶ Video active — replaces device images' : 'Hero Video (optional)'}
+          </p>
+          <MemberField member={videoMember} {...renderProps} />
+          {videoCdnUrl && (
+            <video
+              src={videoCdnUrl}
+              controls
+              muted
+              style={{ marginTop: 12, width: '100%', maxHeight: 220, borderRadius: 6, background: '#000', objectFit: 'cover', objectPosition: `${displayX}% ${displayY}%` }}
+            />
+          )}
+          {hasVideo && (
+            <p style={{ marginTop: 8, fontSize: 11, color: '#999' }}>
+              Use the focal point sliders below to control how the video is cropped on each device.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* ── Device tabs ── */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 20, flexWrap: 'wrap' }}>
