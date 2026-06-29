@@ -126,8 +126,20 @@ export default function StickyHeader({
   const suppressCompact = compact && !menuOpen
   const collapseMainRow = suppressCompact && isDesktop
 
+  const headerRef = useRef<HTMLElement>(null)
+  useEffect(() => {
+    const el = headerRef.current
+    if (!el) return
+    const ro = new ResizeObserver(() => {
+      document.documentElement.style.setProperty('--header-height', `${el.offsetHeight}px`)
+    })
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
   return (
     <header
+      ref={headerRef}
       data-testid="nav-header"
       data-compact={suppressCompact}
       className="sticky top-0 z-[101] bg-white group"

@@ -8,6 +8,7 @@ import { connection } from 'next/server'
 
 type SanityHeroSlide = {
   _id: string
+  videoUrl?:    string
   imageMobile:  SanityImageSource
   imageTablet:  SanityImageSource
   imageDesktop: SanityImageSource
@@ -21,7 +22,7 @@ type SanityHeroSlide = {
   desktopFocalX: number
   xlFocalX:      number
   label?: string
-  heading: string
+  heading?: string
   sub?: string
   href?: string
   textPosition:         number
@@ -71,13 +72,14 @@ export default async function Home({
   ])
 
   const heroSlides = sanitySlides
-    .filter((slide) => slide.imageMobile && slide.heading?.trim())
+    .filter((slide) => slide.videoUrl || slide.imageMobile)
     .map((slide) => ({
       id:            slide._id,
-      imageMobile:   urlForImage(slide.imageMobile).width(800).auto('format').url(),
-      imageTablet:   urlForImage(slide.imageTablet).width(1024).auto('format').url(),
-      imageDesktop:  urlForImage(slide.imageDesktop).width(1505).auto('format').url(),
-      imageXl:       urlForImage(slide.imageXl).width(1920).auto('format').url(),
+      videoUrl:      slide.videoUrl,
+      imageMobile:   slide.imageMobile ? urlForImage(slide.imageMobile).width(800).auto('format').url()   : '',
+      imageTablet:   slide.imageTablet  ? urlForImage(slide.imageTablet).width(1024).auto('format').url() : '',
+      imageDesktop:  slide.imageDesktop ? urlForImage(slide.imageDesktop).width(1505).auto('format').url(): '',
+      imageXl:       slide.imageXl      ? urlForImage(slide.imageXl).width(1920).auto('format').url()     : '',
       mobileFocalY:  slide.mobileFocalY,
       tabletFocalY:  slide.tabletFocalY,
       desktopFocalY: slide.desktopFocalY,
