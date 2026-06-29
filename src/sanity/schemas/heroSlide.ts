@@ -1,5 +1,5 @@
 import { defineField, defineType } from 'sanity'
-import { Image } from 'lucide-react'
+import { Image, Video } from 'lucide-react'
 import { HeroFocalPreview } from '../components/HeroFocalPreview'
 import { HeroContentPreview } from '../components/HeroContentPreview'
 import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
@@ -44,7 +44,11 @@ export const heroSlide = defineType({
           description: 'Shown on phones (below 768px). Portrait or square. Recommended: 9:16.',
           type: 'image',
           options: { hotspot: true },
-          validation: (Rule) => Rule.required(),
+          validation: (Rule) => Rule.custom((value, ctx) => {
+            const doc = ctx.document as { focalPoints?: { video?: { asset?: { _ref?: string } } } } | undefined
+            if (doc?.focalPoints?.video?.asset?._ref) return true
+            return value ? true : 'Required when no video is set'
+          }),
         }),
         defineField({
           name: 'imageTablet',
@@ -67,6 +71,14 @@ export const heroSlide = defineType({
           type: 'image',
           options: { hotspot: true },
         }),
+        // Video — inside focalPoints so it renders within the HeroFocalPreview container
+        defineField({
+          name: 'video',
+          title: 'Hero Video',
+          description: 'Optional. Upload an MP4 or WebM. When set, the video plays on loop on the live site. The crop sliders below still control how it is framed.',
+          type: 'file',
+          options: { accept: 'video/mp4,video/webm' },
+        }),
         // Per-device crop position — managed by the sliders in the preview UI
         defineField({ name: 'mobile',   title: 'Mobile crop Y',          type: 'number', initialValue: 50 }),
         defineField({ name: 'tablet',   title: 'Tablet crop Y',          type: 'number', initialValue: 50 }),
@@ -78,19 +90,6 @@ export const heroSlide = defineType({
         defineField({ name: 'xlargeX',  title: 'Extra Large crop X',     type: 'number', initialValue: 50 }),
       ],
       components: { input: HeroFocalPreview },
-    }),
-
-    // Legacy single-image field — hidden once the new device images are set
-    defineField({
-      name: 'image',
-      title: 'Hero Image (Legacy)',
-      description: 'Kept for older slides. The Device Images section above takes priority.',
-      type: 'image',
-      options: { hotspot: true },
-      group: 'images',
-      hidden: ({ document }) => Boolean(
-        (document?.focalPoints as Record<string, unknown> | undefined)?.imageMobile
-      ),
     }),
 
     // ── Content & Style tab ───────────────────────────────────────────────────
@@ -112,10 +111,9 @@ export const heroSlide = defineType({
         defineField({
           name: 'heading',
           title: 'Main Heading',
-          description: 'The main slide headline. Press Enter to split across two lines.',
+          description: 'The main slide headline. Press Enter to split across two lines. Leave empty for a clean image/video-only slide.',
           type: 'text',
           rows: 2,
-          validation: (Rule) => Rule.required(),
         }),
         defineField({
           name: 'sub',
@@ -220,15 +218,15 @@ export const heroSlide = defineType({
 
   preview: {
     select: {
-      title:         'title',
-      media:         'focalPoints.imageMobile',
-      mediaFallback: 'image',
-      order:         'order',
+      title:    'title',
+      media:    'focalPoints.imageMobile',
+      hasVideo: 'focalPoints.video.asset._ref',
+      order:    'order',
     },
-    prepare({ title, media, mediaFallback, order }) {
+    prepare({ title, media, hasVideo, order }) {
       return {
         title,
-        media: media ?? mediaFallback,
+        media: media ?? (hasVideo ? Video : undefined),
         subtitle: typeof order === 'number' ? `Slide order: ${order}` : 'Hero slide',
       }
     },

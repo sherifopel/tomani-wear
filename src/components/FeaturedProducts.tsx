@@ -24,7 +24,7 @@ export default async function FeaturedProducts() {
   return (
     <section
       data-testid="home-featured-products"
-      className="pt-3 px-4 pb-10 md:pt-10 md:pb-16 md:px-10 bg-[#f9f9f9] border-t border-gray-200"
+      className="snap-section pt-3 px-4 pb-10 md:pt-10 md:pb-16 md:px-10 bg-[#f9f9f9] border-t border-gray-200"
     >
       <div className="max-w-7xl mx-auto w-full">
 

@@ -76,7 +76,7 @@ export default async function Navbar() {
       {/* Category nav — desktop only; stays visible in compact mode as the sole header */}
       <nav
         data-testid="nav-links"
-        className="hidden md:flex border-b border-gray-100 px-6 py-3 items-center justify-center gap-10"
+        className="hidden md:flex border-b border-gray-100 bg-gray-100 px-6 py-3 items-center justify-center gap-10"
       >
         {/* Logo that lives in the nav but is invisible until compact mode.
             Uses Tailwind's group-data-[compact=true] — reads the data-compact
