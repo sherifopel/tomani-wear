@@ -135,23 +135,15 @@ export function HeroFocalPreview(props: ObjectInputProps) {
       {/* ── Video upload ── */}
       {videoMember && videoMember.kind === 'field' && (
         <div style={{ marginBottom: 24, padding: 16, border: `2px solid ${hasVideo ? BRAND_YELLOW : '#e0e0e0'}`, borderRadius: 8, background: hasVideo ? '#fffdf0' : '#fafafa' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: hasVideo ? BRAND_YELLOW : '#888', marginBottom: 12 }}>
-            {hasVideo ? '▶ Video active — replaces device images' : 'Hero Video (optional)'}
+          <p style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: hasVideo ? BRAND_YELLOW : '#888', marginBottom: 4 }}>
+            {hasVideo ? '▶ Video active' : 'Hero Video (optional)'}
           </p>
-          <MemberField member={videoMember} {...renderProps} />
-          {videoCdnUrl && (
-            <video
-              src={videoCdnUrl}
-              controls
-              muted
-              style={{ marginTop: 12, width: '100%', maxHeight: 220, borderRadius: 6, background: '#000', objectFit: 'cover', objectPosition: `${displayX}% ${displayY}%` }}
-            />
-          )}
           {hasVideo && (
-            <p style={{ marginTop: 8, fontSize: 11, color: '#999' }}>
-              Use the focal point sliders below to control how the video is cropped on each device.
+            <p style={{ fontSize: 11, color: '#b08a00', marginBottom: 12 }}>
+              Video plays on the live site. Your device images are kept — switch to each device tab below to preview how the video is cropped at that screen size.
             </p>
           )}
+          <MemberField member={videoMember} {...renderProps} />
         </div>
       )}
 
@@ -209,12 +201,23 @@ export function HeroFocalPreview(props: ObjectInputProps) {
             <p style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#555', marginBottom: 8 }}>
               Crop Preview — {device.label}
             </p>
-            <div style={{ width: device.previewW, height: device.previewH, overflow: 'hidden', borderRadius: 8, border: `1px solid ${isUsingFallback ? '#f0d060' : '#ddd'}`, background: '#f0f0f0', maxWidth: '100%' }}>
-              <img
-                src={imageUrl}
-                alt={`${device.label} crop preview`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${displayX}% ${displayY}%`, display: 'block' }}
-              />
+            <div style={{ width: device.previewW, height: device.previewH, overflow: 'hidden', borderRadius: 8, border: `1px solid ${hasVideo ? BRAND_YELLOW : isUsingFallback ? '#f0d060' : '#ddd'}`, background: '#000', maxWidth: '100%' }}>
+              {hasVideo && videoCdnUrl ? (
+                <video
+                  src={videoCdnUrl}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${displayX}% ${displayY}%`, display: 'block' }}
+                />
+              ) : (
+                <img
+                  src={imageUrl}
+                  alt={`${device.label} crop preview`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${displayX}% ${displayY}%`, display: 'block' }}
+                />
+              )}
             </div>
           </div>
 
