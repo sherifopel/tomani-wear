@@ -11,7 +11,7 @@ export default function NavCartButton() {
     <ShoppingBag
       className="h-[18px] w-[18px] md:h-5 md:w-5 text-black transition-all duration-200"
       strokeWidth={totalItems > 0 ? 2 : 1.5}
-      fill={totalItems > 0 ? 'rgba(0,0,0,0.12)' : 'none'}
+      fill={totalItems > 0 ? 'rgba(201,162,39,0.35)' : 'none'}
     />
   )
   const badge = totalItems > 0 && (
