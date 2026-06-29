@@ -46,7 +46,7 @@ type HeroSlide = {
   desktopFocalX: number
   xlFocalX:      number
   label?: string
-  heading: string
+  heading?: string
   sub?: string
   href?: string
   textPosition:         number
@@ -84,7 +84,7 @@ export default function Hero({
   return (
     <section
       data-testid="home-hero-section"
-      className="relative w-full overflow-hidden shrink-0 h-[calc(100svh-5.25rem)] lg:h-auto lg:aspect-[1505/600] lg:mx-auto lg:max-w-[1505px]"
+      className="snap-section relative w-full overflow-hidden shrink-0 h-[calc(100svh-var(--header-height,5.25rem))] lg:h-auto lg:aspect-[1505/600] lg:mx-auto lg:max-w-[1505px]"
       ref={emblaRef}
     >
       <div className="flex h-full">
@@ -129,7 +129,7 @@ export default function Hero({
                   {/* Mobile image */}
                   <Image
                     src={slide.imageMobile}
-                    alt={slide.heading}
+                    alt={slide.heading ?? ''}
                     fill
                     sizes="100vw"
                     className="block object-cover md:hidden"
@@ -140,7 +140,7 @@ export default function Hero({
                   {/* Tablet image */}
                   <Image
                     src={slide.imageTablet}
-                    alt={slide.heading}
+                    alt={slide.heading ?? ''}
                     fill
                     sizes="100vw"
                     className="hidden object-cover md:block lg:hidden"
@@ -151,7 +151,7 @@ export default function Hero({
                   {/* Desktop image */}
                   <Image
                     src={slide.imageDesktop}
-                    alt={slide.heading}
+                    alt={slide.heading ?? ''}
                     fill
                     sizes="1505px"
                     className="hidden object-cover lg:block xl:hidden"
@@ -162,7 +162,7 @@ export default function Hero({
                   {/* Extra Large image */}
                   <Image
                     src={slide.imageXl}
-                    alt={slide.heading}
+                    alt={slide.heading ?? ''}
                     fill
                     sizes="1920px"
                     className="hidden object-cover xl:block"
@@ -198,13 +198,15 @@ export default function Hero({
                     {slide.label}
                   </p>
                 )}
-                <h1
-                  data-testid="home-hero-heading"
-                  className="text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-4 whitespace-pre-line"
-                  style={{ color: textColor }}
-                >
-                  {slide.heading}
-                </h1>
+                {slide.heading && (
+                  <h1
+                    data-testid="home-hero-heading"
+                    className="text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-4 whitespace-pre-line"
+                    style={{ color: textColor }}
+                  >
+                    {slide.heading}
+                  </h1>
+                )}
                 {slide.sub && (
                   <p
                     data-testid="home-hero-description"
