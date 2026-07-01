@@ -9,6 +9,7 @@ export const settings = defineType({
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'hero', title: 'Hero' },
+    { name: 'members', title: 'Members' },
     { name: 'footer', title: 'Footer' },
   ],
   fields: [
@@ -81,6 +82,35 @@ export const settings = defineType({
       },
     }),
 defineField({
+      name: 'membersCarouselEnabled',
+      title: 'Show Members Carousel',
+      description: 'Toggle the "Early Access — Members Only" carousel on the homepage.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'members',
+    }),
+    defineField({
+      name: 'membersCarouselTitle',
+      title: 'Carousel Title',
+      type: 'string',
+      initialValue: 'Early Access — Members Only',
+      group: 'members',
+    }),
+    defineField({
+      name: 'membersCarouselProducts',
+      title: 'Products',
+      description: 'Choose which products to feature in the members-only carousel.',
+      type: 'array',
+      group: 'members',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'product' }],
+        },
+      ],
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
       name: 'footerLinks',
       title: 'Footer Site Links',
       description: 'Optional links shown in the footer, such as Contact, Shipping, Returns, or Size Guide.',

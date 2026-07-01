@@ -1,10 +1,12 @@
 import Hero from '@/components/Hero'
 import FeaturedProducts from '@/components/FeaturedProducts'
+import MembersCarousel from '@/components/MembersCarousel'
 import { client } from '@/sanity/client'
 import { urlForImage } from '@/sanity/image'
 import { HERO_SLIDES_QUERY, SETTINGS_QUERY } from '@/sanity/queries'
 import type { SanityImageSource } from '@sanity/image-url'
 import { connection } from 'next/server'
+import { auth } from '@/auth'
 
 type SanityHeroSlide = {
   _id: string
@@ -41,10 +43,23 @@ type SanityHeroSlide = {
   buttonBackgroundColor?: string
 }
 
+type CarouselProduct = {
+  _id: string
+  name: string
+  slug: string
+  price: number
+  compareAtPrice?: number | null
+  inStock?: boolean
+  image?: string | null
+}
+
 type Settings = {
   heroAutoplay?: boolean
   heroShowArrows?: boolean
   heroSlideInterval?: number
+  membersCarouselEnabled?: boolean
+  membersCarouselTitle?: string
+  membersCarouselProducts?: CarouselProduct[]
 }
 
 export default async function Home({
@@ -53,6 +68,8 @@ export default async function Home({
   searchParams?: Promise<{ draft?: string }>
 }) {
   await connection()
+
+  const session = await auth()
 
   const params = await searchParams
   const canReadDrafts =
@@ -109,6 +126,11 @@ export default async function Home({
       buttonBackgroundColor: slide.buttonBackgroundColor,
     }))
 
+  const showMembersCarousel =
+    session?.user &&
+    settings?.membersCarouselEnabled !== false &&
+    (settings?.membersCarouselProducts?.length ?? 0) > 0
+
   return (
     <main className="flex-1">
       <Hero
@@ -118,6 +140,12 @@ export default async function Home({
         slideInterval={settings?.heroSlideInterval ?? 6000}
       />
       <FeaturedProducts />
+      {showMembersCarousel && (
+        <MembersCarousel
+          title={settings?.membersCarouselTitle ?? 'Early Access — Members Only'}
+          products={settings!.membersCarouselProducts!}
+        />
+      )}
     </main>
   )
 }

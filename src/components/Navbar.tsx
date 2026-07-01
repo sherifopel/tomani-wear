@@ -7,15 +7,7 @@ import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
 import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
-
-const navLinks = [
-  { label: 'New In',      href: '/products?category=new',         underlineColor: 'var(--brand-black)'  },
-  { label: 'Men',         href: '/products?category=men',         underlineColor: 'var(--brand-yellow)' },
-  { label: 'Women',       href: '/products?category=women',       underlineColor: 'var(--brand-red)'    },
-  { label: 'Accessories', href: '/products?category=accessories', underlineColor: 'var(--brand-black)'  },
-  { label: 'Collections', href: '/products?category=collections', underlineColor: 'var(--brand-yellow)' },
-  { label: 'Sale',        href: '/products?category=sale',        underlineColor: 'var(--brand-red)', accent: true },
-]
+import { NAV_LINKS } from '@/lib/nav-links'
 
 type Settings = {
   announcementBar?: string
@@ -68,14 +60,12 @@ export default async function Navbar() {
 
   return (
     <StickyHeader announcementBar={announcementBar} mainRow={mainRow}>
-      {/* Category nav — desktop only; stays visible in compact mode as the sole header */}
+      {/* Category nav — desktop only */}
       <nav
         data-testid="nav-links"
         className="hidden md:flex border-b border-gray-100 bg-gray-100 px-6 py-3 items-center justify-center gap-10"
       >
-        {/* Logo that lives in the nav but is invisible until compact mode.
-            Uses Tailwind's group-data-[compact=true] — reads the data-compact
-            attribute set on the parent <header> by StickyHeader. */}
+        {/* Compact-mode logo */}
         <Link
           href="/"
           aria-hidden="true"
@@ -89,20 +79,56 @@ export default async function Navbar() {
           Tomanni
         </Link>
 
-        {navLinks.map((link) => (
-          <Link
+        {NAV_LINKS.map((link) => (
+          <div
             key={link.href}
-            href={link.href}
-            data-testid={`nav-${link.label.toLowerCase().replace(' ', '-')}-link`}
-            style={{ '--link-underline-color': link.underlineColor } as React.CSSProperties}
-            className={`nav-link-underline text-xs uppercase tracking-widest transition-colors whitespace-nowrap ${
-              link.accent
-                ? 'text-[var(--brand-red)] hover:opacity-70'
-                : 'hover:text-gray-400'
-            }`}
+            className="relative group/navitem flex items-center"
           >
-            {link.label}
-          </Link>
+            {/* Main nav link */}
+            <Link
+              href={link.href}
+              data-testid={`nav-${link.label.toLowerCase().replace(/\s+/g, '-')}-link`}
+              style={{ '--link-underline-color': link.underlineColor } as React.CSSProperties}
+              className={`nav-link-underline text-xs uppercase tracking-widest transition-colors whitespace-nowrap ${
+                link.accent
+                  ? 'text-[var(--brand-red)] hover:opacity-70'
+                  : 'hover:text-gray-400'
+              }`}
+            >
+              {link.label}
+            </Link>
+
+            {/* Dropdown — floating bricks, no panel background */}
+            {link.children && (
+              <div
+                className="absolute left-0 top-full z-[200]
+                           invisible opacity-0 translate-y-1 pointer-events-none
+                           group-hover/navitem:visible group-hover/navitem:opacity-100
+                           group-hover/navitem:translate-y-0 group-hover/navitem:pointer-events-auto
+                           transition-all duration-150 delay-75
+                           group-hover/navitem:delay-0"
+              >
+                {/* Invisible bridge keeps hover alive while cursor moves down */}
+                <div className="h-3 w-full" />
+                <div className="flex flex-col gap-1.5 min-w-[180px]">
+                  {link.children.map((child) => (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      data-testid={`nav-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="block px-4 py-2.5 text-xs uppercase tracking-widest
+                                 bg-black rounded
+                                 text-white font-semibold hover:text-white hover:bg-neutral-800
+                                 shadow-sm hover:shadow-md
+                                 transition-all duration-150 whitespace-nowrap"
+                    >
+                      {child.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         ))}
       </nav>
     </StickyHeader>
