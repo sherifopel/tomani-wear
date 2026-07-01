@@ -14,10 +14,15 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
     gallery[0].asset->url
   ),
   description,
-  category
+  category,
+  "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
-export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product" && category == $category] | order(_createdAt asc) {
+export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
+  && ($category == "" || category == $category)
+  && ($type     == "" || menType == $type || womenType == $type || accessoriesType == $type)
+  && ($collection == "" || $collection in collections[]->slug.current)
+] | order(_createdAt asc) {
   _id,
   name,
   "slug": slug.current,
@@ -31,7 +36,8 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product" && category 
     gallery[0].asset->url
   ),
   description,
-  category
+  category,
+  "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
@@ -113,6 +119,7 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
   announcementBarEnabled,
   heroAutoplay,
   heroShowArrows,
+  heroSlideInterval,
   footerLinks[]{
     label,
     href
@@ -120,5 +127,21 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
   socialLinks[]{
     platform,
     url
+  },
+  membersCarouselEnabled,
+  membersCarouselTitle,
+  "membersCarouselProducts": membersCarouselProducts[]->{
+    _id,
+    name,
+    "slug": slug.current,
+    price,
+    compareAtPrice,
+    inStock,
+    "image": coalesce(
+      productImages[isMain == true][0].image.asset->url,
+      productImages[0].image.asset->url,
+      image.asset->url,
+      gallery[0].asset->url
+    )
   }
 }`

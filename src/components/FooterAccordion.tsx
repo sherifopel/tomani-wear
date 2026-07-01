@@ -15,11 +15,11 @@ export default function FooterAccordion({ sections }: { sections: Section[] }) {
       {/* Mobile: accordion with + / − */}
       <div className="md:hidden" data-testid="footer-accordion-mobile">
         {sections.map((section, i) => (
-          <div key={section.title} className="border-b border-gray-100">
+          <div key={section.title} className="border-b border-gray-400">
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
               data-testid={`footer-accordion-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
-              className="flex items-center justify-between w-full py-4 text-xs uppercase tracking-widest font-medium"
+              className="flex items-center justify-between w-full py-4 text-xs uppercase tracking-widest font-medium touch-manipulation"
             >
               {section.title}
               {openIndex === i

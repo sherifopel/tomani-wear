@@ -38,6 +38,60 @@ export const product = defineType({
       },
     }),
     defineField({
+      name: 'menType',
+      title: 'Type',
+      description: 'Pick the sub-category for this Men\'s product.',
+      type: 'string',
+      hidden: ({ document }) => document?.category !== 'men',
+      options: {
+        list: [
+          { title: 'Shirts',             value: 'shirts'   },
+          { title: 'Hoodies',            value: 'hoodies'  },
+          { title: 'Jackets',            value: 'jackets'  },
+          { title: 'Shorts',             value: 'shorts'   },
+          { title: 'Trousers & Joggers', value: 'trousers' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'womenType',
+      title: 'Type',
+      description: 'Pick the sub-category for this Women\'s product.',
+      type: 'string',
+      hidden: ({ document }) => document?.category !== 'women',
+      options: {
+        list: [
+          { title: 'Tops',               value: 'tops'     },
+          { title: 'Dresses',            value: 'dresses'  },
+          { title: 'Jackets',            value: 'jackets'  },
+          { title: 'Shorts',             value: 'shorts'   },
+          { title: 'Trousers & Joggers', value: 'trousers' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'accessoriesType',
+      title: 'Type',
+      description: 'Pick the sub-category for this accessory.',
+      type: 'string',
+      hidden: ({ document }) => document?.category !== 'accessories',
+      options: {
+        list: [
+          { title: 'Bags',  value: 'bags'  },
+          { title: 'Hats',  value: 'hats'  },
+          { title: 'Belts', value: 'belts' },
+        ],
+      },
+    }),
+    defineField({
+      name: 'collections',
+      title: 'Collections',
+      description: 'Add this product to one or more collections e.g. Summer 2025.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'collection' }] }],
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

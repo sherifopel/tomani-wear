@@ -70,14 +70,16 @@ export default function Hero({
   slides = [],
   autoplay = true,
   showArrows = false,
+  slideInterval = 6000,
 }: {
   slides?: HeroSlide[]
   autoplay?: boolean
   showArrows?: boolean
+  slideInterval?: number
 }) {
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, watchDrag: false },
-    autoplay ? [Autoplay({ delay: 4000, stopOnInteraction: false })] : []
+    autoplay ? [Autoplay({ delay: slideInterval, stopOnInteraction: false })] : []
   )
   const canNavigate = showArrows && slides.length > 1
 

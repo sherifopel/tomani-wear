@@ -9,6 +9,7 @@ export const settings = defineType({
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'hero', title: 'Hero' },
+    { name: 'members', title: 'Members' },
     { name: 'footer', title: 'Footer' },
   ],
   fields: [
@@ -63,7 +64,53 @@ export const settings = defineType({
       initialValue: false,
       group: 'hero',
     }),
+    defineField({
+      name: 'heroSlideInterval',
+      title: 'Slide Interval',
+      description: 'How long each slide stays on screen before the next one appears.',
+      type: 'number',
+      initialValue: 6000,
+      group: 'hero',
+      options: {
+        layout: 'radio',
+        list: [
+          { title: 'Fast — 4 seconds',   value: 4000 },
+          { title: 'Normal — 6 seconds', value: 6000 },
+          { title: 'Slow — 8 seconds',   value: 8000 },
+          { title: 'Very slow — 12 seconds', value: 12000 },
+        ],
+      },
+    }),
 defineField({
+      name: 'membersCarouselEnabled',
+      title: 'Show Members Carousel',
+      description: 'Toggle the "Early Access — Members Only" carousel on the homepage.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'members',
+    }),
+    defineField({
+      name: 'membersCarouselTitle',
+      title: 'Carousel Title',
+      type: 'string',
+      initialValue: 'Early Access — Members Only',
+      group: 'members',
+    }),
+    defineField({
+      name: 'membersCarouselProducts',
+      title: 'Products',
+      description: 'Choose which products to feature in the members-only carousel.',
+      type: 'array',
+      group: 'members',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'product' }],
+        },
+      ],
+      validation: (Rule) => Rule.unique(),
+    }),
+    defineField({
       name: 'footerLinks',
       title: 'Footer Site Links',
       description: 'Optional links shown in the footer, such as Contact, Shipping, Returns, or Size Guide.',

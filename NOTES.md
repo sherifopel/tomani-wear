@@ -339,3 +339,29 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 
 ### Key concept learned
 **Git tagging for production releases** — this repo had no tags before now. Tags are immutable pointers to a specific commit, separate from branches (which move). `git tag -a v0.2.0 -m "..."` + `git push origin v0.2.0` marks "this exact commit is what's live in production." Going forward: every `dev` → `main` merge gets a new tag bump (`v0.2.1`, `v0.3.0`, etc.) so we always have a rollback point and a changelog anchor without digging through commit history.
+
+## TW-XX — Sub-nav dropdowns + Members-only carousel
+
+### What we built
+- Shared `src/lib/nav-links.ts` — single source of truth for all nav links, with optional `children` arrays for sub-categories (Men, Women, Accessories, Collections)
+- Desktop dropdown: hovering a nav item reveals floating black bricks, one per sub-link. No panel background — each brick is its own independent element with solid black bg and white text, readable over any hero image
+- Mobile accordion: tapping the chevron expands sub-links inline below the parent; tapping the label still navigates directly to the category page
+- Sanity **Members** group in Settings: toggle on/off, carousel title, and a list of product references
+- `MembersCarousel.tsx` — Embla carousel on a dark background, gold title with lock icons, only rendered when a user is logged in
+- Homepage fetches `auth()` server-side and conditionally renders the carousel — guests see nothing
+
+### Why we built it this way
+- **One shared `NAV_LINKS` constant** prevents Navbar and MobileMenu from drifting out of sync — add a new category once and both update automatically
+- **Floating bricks instead of a panel** — avoids the dropdown feeling like a separate page element. Each brick stands alone, making the nav feel lighter and more editorial
+- **Solid black background on bricks** — transparent/frosted glass looked great on dark hero slides but washed out on light ones. Solid black is consistent regardless of what image is behind it
+- **Server-side auth check on the homepage** — the carousel is never sent to the browser for a logged-out user. There's no client-side toggle that a guest could bypass with DevTools
+
+### Key concepts learned
+
+**Named groups in Tailwind** — `group/navitem` and `group-hover/navitem:` let you scope hover behaviour to a specific ancestor, so nested groups don't interfere with each other. Think of it like giving the hover event a name so only the right parent triggers it.
+
+**The invisible bridge trick** — a `h-3 w-full` empty div sits between the nav link and the dropdown. It's part of the hovered element, so the cursor can cross the visual gap between link and dropdown without the hover state dropping. Without this, moving the cursor diagonally toward the dropdown would close it.
+
+**GROQ `->` dereferencing** — in Sanity's query language, `membersCarouselProducts[]->{ name, price }` follows the reference and pulls fields from the linked document. It's the equivalent of MongoDB's `populate()` or a SQL JOIN.
+
+**`bg-white/[0.02]` in Tailwind** — square bracket syntax lets you use arbitrary values inside utility classes. `bg-white/10` = 10% opacity white, `bg-white/[0.02]` = 2% opacity white. Useful for fine-grained transparency control.

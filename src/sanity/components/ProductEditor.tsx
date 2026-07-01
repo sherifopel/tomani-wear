@@ -180,7 +180,7 @@ export function ProductEditor(props: ObjectInputProps) {
 
   const productImagesMember = member('productImages')
 
-  const identityFields   = ['name', 'slug', 'category', 'description']
+  const identityFields   = ['name', 'slug', 'category', 'menType', 'womenType', 'accessoriesType', 'description']
   const visibilityFields = ['featured', 'inStock']
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -477,6 +477,16 @@ export function ProductEditor(props: ObjectInputProps) {
             <p style={hint}>Customers see this price crossed out next to the sale price.</p>
           </div>
         )}
+      </div>
+
+      {/* ── SECTION 5: COLLECTIONS ── */}
+      <div style={card}>
+        <p style={heading}>Collections</p>
+        <p style={{ fontSize: 13, color: '#555', margin: '0 0 16px 0' }}>
+          Add this product to one or more collections — e.g. Summer 2025, World Cup Range.
+          Create new collections first from the <strong>Collection</strong> section in the sidebar.
+        </p>
+        {(() => { const m = member('collections'); return m?.kind === 'field' && <MemberField member={m} {...renderProps} /> })()}
       </div>
 
       {/* ── Visibility toggles (Featured, In Stock) ── */}
