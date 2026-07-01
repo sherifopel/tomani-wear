@@ -45,7 +45,7 @@ export default function SortDropdown({
       <button
         onClick={() => setOpen(v => !v)}
         data-testid="plp-sort-trigger"
-        className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-xs uppercase tracking-widest hover:border-black transition-colors duration-200 bg-white rounded"
+        className="flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
       >
         <ArrowUpDown size={14} strokeWidth={1.5} className="text-black" />
         {/* Mobile: just "Sort", Desktop: full label */}

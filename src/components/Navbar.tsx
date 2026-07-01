@@ -102,9 +102,9 @@ export default async function Navbar() {
             {link.children && (
               <div
                 className="absolute left-0 top-full z-[200]
-                           invisible opacity-0 translate-y-1 pointer-events-none
+                           invisible opacity-0 translate-y-1
                            group-hover/navitem:visible group-hover/navitem:opacity-100
-                           group-hover/navitem:translate-y-0 group-hover/navitem:pointer-events-auto
+                           group-hover/navitem:translate-y-0
                            transition-all duration-150 delay-75
                            group-hover/navitem:delay-0"
               >
