@@ -14,10 +14,15 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc)
     gallery[0].asset->url
   ),
   description,
-  category
+  category,
+  "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
-export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product" && category == $category] | order(_createdAt asc) {
+export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
+  && ($category == "" || category == $category)
+  && ($type     == "" || menType == $type || womenType == $type || accessoriesType == $type)
+  && ($collection == "" || $collection in collections[]->slug.current)
+] | order(_createdAt asc) {
   _id,
   name,
   "slug": slug.current,
@@ -31,7 +36,8 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product" && category 
     gallery[0].asset->url
   ),
   description,
-  category
+  category,
+  "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {

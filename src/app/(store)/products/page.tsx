@@ -30,14 +30,18 @@ const CATEGORY_LABELS: Record<string, string> = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; sort?: string }>
+  searchParams: Promise<{ category?: string; type?: string; collection?: string; sort?: string }>
 }) {
   await connection()
 
-  const { category, sort = 'featured' } = await searchParams
+  const { category, type, collection, sort = 'featured' } = await searchParams
 
-  const raw: Product[] = category
-    ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, { category })
+  const raw: Product[] = (category || type || collection)
+    ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, {
+        category:   category   ?? '',
+        type:       type       ?? '',
+        collection: collection ?? '',
+      })
     : await client.fetch(PRODUCTS_QUERY)
 
   const products = [...raw].sort((a, b) => {
@@ -47,9 +51,20 @@ export default async function ProductsPage({
     return 0 // featured — keep Sanity order
   })
 
-  const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
+  const TYPE_LABELS: Record<string, string> = {
+    shirts: 'Shirts', hoodies: 'Hoodies', shorts: 'Shorts',
+    trousers: 'Trousers & Joggers', tops: 'Tops', dresses: 'Dresses',
+    bags: 'Bags', hats: 'Hats', belts: 'Belts',
+  }
 
-  const crumbs = categoryLabel
+  const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
+  const typeLabel = type ? TYPE_LABELS[type] ?? type : null
+
+  const crumbs = collection
+    ? [{ label: 'Home', href: '/' }, { label: 'Collections', href: '/products?category=collections' }, { label: collection.replace(/-/g, ' ') }]
+    : typeLabel && categoryLabel
+    ? [{ label: 'Home', href: '/' }, { label: categoryLabel, href: `/products?category=${category}` }, { label: typeLabel }]
+    : categoryLabel
     ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: categoryLabel }]
     : [{ label: 'Home', href: '/' }, { label: 'Products' }]
 
