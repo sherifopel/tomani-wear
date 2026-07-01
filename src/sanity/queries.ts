@@ -113,6 +113,7 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
   announcementBarEnabled,
   heroAutoplay,
   heroShowArrows,
+  heroSlideInterval,
   footerLinks[]{
     label,
     href

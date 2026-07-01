@@ -44,6 +44,7 @@ type SanityHeroSlide = {
 type Settings = {
   heroAutoplay?: boolean
   heroShowArrows?: boolean
+  heroSlideInterval?: number
 }
 
 export default async function Home({
@@ -114,6 +115,7 @@ export default async function Home({
         slides={heroSlides}
         autoplay={settings?.heroAutoplay !== false}
         showArrows={settings?.heroShowArrows === true}
+        slideInterval={settings?.heroSlideInterval ?? 6000}
       />
       <FeaturedProducts />
     </main>

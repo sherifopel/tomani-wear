@@ -35,7 +35,7 @@ export default function NavCartButton() {
         {icon}
       </Link>
 
-      {/* Desktop → open mini cart drawer */}
+      {/* Desktop → open sidebar drawer */}
       <button
         data-testid="nav-cart-button"
         aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}

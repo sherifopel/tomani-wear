@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { Search, User } from 'lucide-react'
+import { Search } from 'lucide-react'
 import MobileMenu from '@/components/MobileMenu'
 import NavCartButton from '@/components/NavCartButton'
+import AccountButton from '@/components/AccountButton'
 import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
 import { client } from '@/sanity/client'
@@ -59,13 +60,7 @@ export default async function Navbar() {
         >
           <Search className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
         </button>
-        <button
-          data-testid="nav-account-button"
-          aria-label="Account"
-          className="p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
-        >
-          <User className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
-        </button>
+        <AccountButton />
         <NavCartButton />
       </div>
     </div>
