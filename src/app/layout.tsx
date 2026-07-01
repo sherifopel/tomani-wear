@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/components/AuthProvider";
 
 // Montserrat: clean, modern fashion font — free Google Fonts alternative to Gotham.
 // We load the weights we actually use; Next.js handles caching + self-hosting.
@@ -31,9 +32,11 @@ export default function RootLayout({
       className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-          <div className="overflow-x-clip flex flex-col flex-1">
-            {children}
-          </div>
+          <AuthProvider>
+            <div className="overflow-x-clip flex flex-col flex-1">
+              {children}
+            </div>
+          </AuthProvider>
         </body>
     </html>
   );

@@ -7,7 +7,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    ...authConfig.callbacks,
     jwt({ token, user }) {
       // On first sign-in, `user` is present — store the DB id in the token
       if (user) token.id = user.id
