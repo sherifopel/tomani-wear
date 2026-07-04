@@ -17,6 +17,7 @@
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@sanity/image-url": "^2.1.1",
+    "@sanity/orderable-document-list": "^2.0.6",
     "@sanity/vision": "^6.1.0",
     "@types/pg": "^8.20.0",
     "embla-carousel-autoplay": "^8.6.0",

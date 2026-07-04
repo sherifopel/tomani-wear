@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Image from 'next/image'
 import { usePaystackPayment } from 'react-paystack'
 import { useCartContext } from '@/context/CartContext'
@@ -114,9 +115,10 @@ export default function CheckoutForm() {
             }),
           })
           const data = await res.json()
-          if (data.success) {
-            router.push(`/order-confirmation?ref=${response.reference}&order=${data.orderNumber}`)
-          }
+          const orderParam = data.orderNumber ? `&order=${data.orderNumber}` : ''
+          const nameParam  = form.fullName ? `&name=${encodeURIComponent(form.fullName)}` : ''
+          const emailParam = form.email    ? `&email=${encodeURIComponent(form.email)}`   : ''
+          router.push(`/order-confirmation?ref=${response.reference}${orderParam}${nameParam}${emailParam}`)
         } catch {
           router.push(`/order-confirmation?ref=${response.reference}`)
         } finally {
@@ -199,16 +201,27 @@ export default function CheckoutForm() {
 
         {/* ── RIGHT: Order summary ── */}
         <div className="mt-12 lg:mt-0">
-          <h2 className="text-xs uppercase tracking-widest font-medium mb-6" data-testid="checkout-section-summary">
-            Order Summary
-          </h2>
+          <div className="flex items-baseline justify-between mb-6">
+            <h2 className="text-xs uppercase tracking-widest font-medium" data-testid="checkout-section-summary">
+              Order Summary
+            </h2>
+            <Link href="/cart" className="text-[11px] text-gray-400 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
+              Edit cart
+            </Link>
+          </div>
 
           <ul className="flex flex-col gap-4 mb-6" data-testid="checkout-items">
             {items.map(item => (
               <li key={`${item.productId}-${item.size}`} className="flex gap-4" data-testid="checkout-item">
                 <div className="relative w-16 h-20 bg-gray-50 rounded-md overflow-hidden flex-shrink-0">
-                  {item.image && (
+                  {item.image ? (
                     <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-300">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z" />
+                      </svg>
+                    </div>
                   )}
                   <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
                     {item.quantity}
