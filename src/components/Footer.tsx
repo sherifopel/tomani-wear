@@ -127,7 +127,7 @@ export default async function Footer() {
       : []
 
   return (
-    <footer className="bg-white border-t border-gray-200 pt-12 pb-24 lg:pb-10 px-6" data-testid="footer">
+    <footer className="bg-white border-t border-gray-200 pt-6 pb-6 px-6" data-testid="footer">
       <div className="max-w-7xl mx-auto">
 
         {/* Nav sections — accordion on mobile, columns on desktop */}
@@ -137,13 +137,13 @@ export default async function Footer() {
         <Link
           href="/"
           data-testid="footer-logo"
-          className="block text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase leading-none mt-12 mb-4"
+          className="block text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase leading-none mt-6 mb-3"
         >
           Tomanni
         </Link>
 
         {/* Bottom bar — social icons above copyright on mobile; side by side on desktop */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pt-2">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 pt-1">
           {visibleSocialLinks.length > 0 && (
             <div className="flex items-center gap-4" data-testid="footer-social">
               {visibleSocialLinks.map((link) => (

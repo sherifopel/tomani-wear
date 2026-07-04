@@ -16,6 +16,7 @@ type Product = {
   inStock: boolean
   image?: string
   category?: string
+  _createdAt: string
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -47,8 +48,8 @@ export default async function ProductsPage({
   const products = [...raw].sort((a, b) => {
     if (sort === 'price-asc')  return a.price - b.price
     if (sort === 'price-desc') return b.price - a.price
-    if (sort === 'newest')     return 0 // Sanity already orders by _createdAt desc via query
-    return 0 // featured — keep Sanity order
+    if (sort === 'newest')     return new Date(b._createdAt).getTime() - new Date(a._createdAt).getTime()
+    return 0 // featured — keep Sanity orderRank
   })
 
   const TYPE_LABELS: Record<string, string> = {
@@ -77,7 +78,7 @@ export default async function ProductsPage({
       <div className="pt-6 mb-4">
         <div className="flex items-center justify-between" data-testid="plp-header">
           <FilterDropdown current={category} sort={sort} />
-          <SortDropdown current={sort} category={category} />
+          <SortDropdown current={sort} category={category} type={type} collection={collection} />
         </div>
         <p className="text-xs text-gray-400 mt-3 pl-[38px]" data-testid="plp-count">
           Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}

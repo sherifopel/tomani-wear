@@ -15,6 +15,7 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
   ),
   description,
   category,
+  _createdAt,
   "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
@@ -128,6 +129,9 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
     platform,
     url
   },
+  midBannerEnabled,
+  "midBannerImage": midBannerImage.asset->url,
+  midBannerHref,
   membersCarouselEnabled,
   membersCarouselTitle,
   "membersCarouselProducts": membersCarouselProducts[]->{

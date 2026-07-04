@@ -14,9 +14,13 @@ const SORT_OPTIONS = [
 export default function SortDropdown({
   current,
   category,
+  type,
+  collection,
 }: {
   current: string
   category?: string
+  type?: string
+  collection?: string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -34,7 +38,9 @@ export default function SortDropdown({
 
   function buildHref(sort: string) {
     const params = new URLSearchParams()
-    if (category) params.set('category', category)
+    if (category)   params.set('category',   category)
+    if (type)       params.set('type',        type)
+    if (collection) params.set('collection',  collection)
     if (sort !== 'featured') params.set('sort', sort)
     const qs = params.toString()
     return qs ? `/products?${qs}` : '/products'

@@ -187,6 +187,13 @@ export const product = defineType({
       initialValue: false,
     }),
     defineField({
+      name: 'newIn',
+      title: 'Show in New In',
+      description: 'Tick to show this product in the New In editorial grid on the homepage.',
+      type: 'boolean',
+      initialValue: false,
+    }),
+    defineField({
       name: 'inStock',
       title: 'In Stock',
       description: 'Untick to mark as sold out.',

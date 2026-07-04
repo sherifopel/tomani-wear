@@ -13,6 +13,12 @@ export default function MobileMenu() {
   useEffect(() => {
     document.dispatchEvent(new CustomEvent('mobilemenu', { detail: { open } }))
 
+    // Lock body scroll while menu is open
+    document.body.style.overflow = open ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
 
     const measure = () => {

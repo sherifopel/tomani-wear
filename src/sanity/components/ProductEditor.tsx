@@ -181,7 +181,7 @@ export function ProductEditor(props: ObjectInputProps) {
   const productImagesMember = member('productImages')
 
   const identityFields   = ['name', 'slug', 'category', 'menType', 'womenType', 'accessoriesType', 'description']
-  const visibilityFields = ['featured', 'inStock']
+  const visibilityFields = ['featured', 'newIn', 'inStock']
 
   // ── Render ────────────────────────────────────────────────────────────────
 

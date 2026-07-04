@@ -9,6 +9,7 @@ export const settings = defineType({
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'hero', title: 'Hero' },
+    { name: 'midBanner', title: 'Mid Banner' },
     { name: 'members', title: 'Members' },
     { name: 'footer', title: 'Footer' },
   ],
@@ -82,6 +83,28 @@ export const settings = defineType({
       },
     }),
 defineField({
+      name: 'midBannerEnabled',
+      title: 'Show Mid Banner',
+      type: 'boolean',
+      initialValue: true,
+      group: 'midBanner',
+    }),
+    defineField({
+      name: 'midBannerImage',
+      title: 'Banner Image',
+      type: 'image',
+      description: 'Full-width editorial image shown between New Arrivals and New In sections.',
+      options: { hotspot: true },
+      group: 'midBanner',
+    }),
+    defineField({
+      name: 'midBannerHref',
+      title: 'Link',
+      type: 'string',
+      description: 'Where to go when the banner is clicked. E.g. /products?category=men',
+      group: 'midBanner',
+    }),
+    defineField({
       name: 'membersCarouselEnabled',
       title: 'Show Members Carousel',
       description: 'Toggle the "Early Access — Members Only" carousel on the homepage.',

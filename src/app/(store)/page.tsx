@@ -1,5 +1,7 @@
 import Hero from '@/components/Hero'
+import NewInGrid from '@/components/NewInGrid'
 import FeaturedProducts from '@/components/FeaturedProducts'
+import MidBanner from '@/components/MidBanner'
 import MembersCarousel from '@/components/MembersCarousel'
 import { client } from '@/sanity/client'
 import { urlForImage } from '@/sanity/image'
@@ -57,6 +59,9 @@ type Settings = {
   heroAutoplay?: boolean
   heroShowArrows?: boolean
   heroSlideInterval?: number
+  midBannerEnabled?: boolean
+  midBannerImage?: string
+  midBannerHref?: string
   membersCarouselEnabled?: boolean
   membersCarouselTitle?: string
   membersCarouselProducts?: CarouselProduct[]
@@ -140,6 +145,10 @@ export default async function Home({
         slideInterval={settings?.heroSlideInterval ?? 6000}
       />
       <FeaturedProducts />
+      {settings?.midBannerEnabled !== false && settings?.midBannerImage && (
+        <MidBanner imageUrl={settings.midBannerImage} href={settings.midBannerHref} />
+      )}
+      <NewInGrid />
       {showMembersCarousel && (
         <MembersCarousel
           title={settings?.membersCarouselTitle ?? 'Early Access — Members Only'}
