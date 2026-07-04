@@ -127,7 +127,7 @@ export default async function Footer() {
       : []
 
   return (
-    <footer className="bg-white border-t border-gray-200 pt-12 pb-10 px-6" data-testid="footer">
+    <footer className="bg-white border-t border-gray-200 pt-12 pb-24 lg:pb-10 px-6" data-testid="footer">
       <div className="max-w-7xl mx-auto">
 
         {/* Nav sections — accordion on mobile, columns on desktop */}

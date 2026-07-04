@@ -1,5 +1,6 @@
 import { defineField, defineType } from 'sanity'
 import { ShoppingBag } from 'lucide-react'
+import { orderRankField } from '@sanity/orderable-document-list'
 import { ProductEditor } from '../components/ProductEditor'
 
 export const product = defineType({
@@ -10,6 +11,7 @@ export const product = defineType({
   // Apply the custom UI at the document level so Tomiwa sees one clean form
   components: { input: ProductEditor },
   fields: [
+    orderRankField({ type: 'product' }),
     // ── Identity ──────────────────────────────────────────────────────────
     defineField({
       name: 'name',
@@ -31,9 +33,10 @@ export const product = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Men',         value: 'men'         },
-          { title: 'Women',       value: 'women'       },
-          { title: 'Accessories', value: 'accessories' },
+          { title: 'Men',               value: 'men'         },
+          { title: 'Women',             value: 'women'       },
+          { title: 'Accessories',       value: 'accessories' },
+          { title: 'Tommani Archives',  value: 'archives'    },
         ],
       },
     }),

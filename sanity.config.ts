@@ -1,6 +1,7 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { schemaTypes } from './src/sanity/schemas'
 
 export default defineConfig({
@@ -11,7 +12,7 @@ export default defineConfig({
   basePath: '/studio',
   plugins: [
     structureTool({
-      structure: (S) =>
+      structure: (S, context) =>
         S.list()
           .title('Content')
           .items([
@@ -19,10 +20,7 @@ export default defineConfig({
               .title('Hero Slide')
               .schemaType('heroSlide')
               .child(S.documentTypeList('heroSlide').title('Hero Slides')),
-            S.listItem()
-              .title('Product')
-              .schemaType('product')
-              .child(S.documentTypeList('product').title('Products')),
+            orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
             S.listItem()
               .title('Global Settings')
               .child(

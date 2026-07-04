@@ -1,6 +1,6 @@
 import { groq } from 'next-sanity'
 
-export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(_createdAt asc) {
+export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) {
   _id,
   name,
   "slug": slug.current,
@@ -22,7 +22,7 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   && ($category == "" || category == $category)
   && ($type     == "" || menType == $type || womenType == $type || accessoriesType == $type)
   && ($collection == "" || $collection in collections[]->slug.current)
-] | order(_createdAt asc) {
+] | order(orderRank asc) {
   _id,
   name,
   "slug": slug.current,

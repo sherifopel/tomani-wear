@@ -117,8 +117,8 @@ export default async function Navbar() {
                       href={child.href}
                       data-testid={`nav-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
                       className="block px-4 py-2.5 text-xs uppercase tracking-widest
-                                 bg-black rounded
-                                 text-white font-semibold hover:text-white hover:bg-neutral-800
+                                 bg-white rounded border border-gray-200
+                                 text-black font-semibold hover:bg-black hover:text-white hover:border-black
                                  shadow-sm hover:shadow-md
                                  transition-all duration-150 whitespace-nowrap"
                     >

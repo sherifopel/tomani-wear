@@ -31,7 +31,7 @@ export default function RootLayout({
       lang="en"
       className={`${montserrat.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
           <AuthProvider>
             <div className="overflow-x-clip flex flex-col flex-1">
               {children}

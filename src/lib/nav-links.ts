@@ -61,6 +61,11 @@ export const NAV_LINKS: NavLink[] = [
     ],
   },
   {
+    label: 'Archives',
+    href: '/products?category=archives',
+    underlineColor: 'var(--brand-black)',
+  },
+  {
     label: 'Sale',
     href: '/products?category=sale',
     underlineColor: 'var(--brand-red)',
