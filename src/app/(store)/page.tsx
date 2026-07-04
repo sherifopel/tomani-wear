@@ -5,7 +5,7 @@ import MidBanner from '@/components/MidBanner'
 import MembersCarousel from '@/components/MembersCarousel'
 import { client } from '@/sanity/client'
 import { urlForImage } from '@/sanity/image'
-import { HERO_SLIDES_QUERY, SETTINGS_QUERY } from '@/sanity/queries'
+import { HERO_SLIDES_QUERY, SETTINGS_QUERY, MID_BANNER_QUERY } from '@/sanity/queries'
 import type { SanityImageSource } from '@sanity/image-url'
 import { connection } from 'next/server'
 import { auth } from '@/auth'
@@ -55,13 +55,47 @@ type CarouselProduct = {
   image?: string | null
 }
 
+type MidBannerData = {
+  videoUrl?: string
+  imageMobile?: SanityImageSource
+  imageTablet?: SanityImageSource
+  imageDesktop?: SanityImageSource
+  imageXl?: SanityImageSource
+  mobileFocalY: number
+  tabletFocalY: number
+  desktopFocalY: number
+  xlFocalY: number
+  mobileFocalX: number
+  tabletFocalX: number
+  desktopFocalX: number
+  xlFocalX: number
+  content?: {
+    label?: string
+    heading?: string
+    sub?: string
+    href?: string
+    textPosition: number
+    textPositionX: number
+    mobileTextPosition: number
+    mobileTextPositionX: number
+    tabletTextPosition: number
+    tabletTextPositionX: number
+    desktopTextPosition: number
+    desktopTextPositionX: number
+    xlTextPosition: number
+    xlTextPositionX: number
+    textColor: string
+    buttonColor: string
+    buttonCustomColor?: string
+    buttonBackgroundColor?: string
+  }
+}
+
 type Settings = {
   heroAutoplay?: boolean
   heroShowArrows?: boolean
   heroSlideInterval?: number
   midBannerEnabled?: boolean
-  midBannerImage?: string
-  midBannerHref?: string
   membersCarouselEnabled?: boolean
   membersCarouselTitle?: string
   membersCarouselProducts?: CarouselProduct[]
@@ -89,9 +123,10 @@ export default async function Home({
       })
     : client
 
-  const [sanitySlides, settings]: [SanityHeroSlide[], Settings | null] = await Promise.all([
+  const [sanitySlides, settings, midBannerData]: [SanityHeroSlide[], Settings | null, MidBannerData | null] = await Promise.all([
     sanityClient.fetch(HERO_SLIDES_QUERY),
     sanityClient.fetch(SETTINGS_QUERY),
+    sanityClient.fetch(MID_BANNER_QUERY),
   ])
 
   const heroSlides = sanitySlides
@@ -131,6 +166,23 @@ export default async function Home({
       buttonBackgroundColor: slide.buttonBackgroundColor,
     }))
 
+  const midBanner = midBannerData && (midBannerData.videoUrl || midBannerData.imageMobile) ? {
+    videoUrl:      midBannerData.videoUrl,
+    imageMobile:   midBannerData.imageMobile  ? urlForImage(midBannerData.imageMobile).width(800).auto('format').url()   : '',
+    imageTablet:   midBannerData.imageTablet  ? urlForImage(midBannerData.imageTablet).width(1024).auto('format').url()  : '',
+    imageDesktop:  midBannerData.imageDesktop ? urlForImage(midBannerData.imageDesktop).width(1505).auto('format').url() : '',
+    imageXl:       midBannerData.imageXl      ? urlForImage(midBannerData.imageXl).width(1920).auto('format').url()      : '',
+    mobileFocalY:  midBannerData.mobileFocalY,
+    tabletFocalY:  midBannerData.tabletFocalY,
+    desktopFocalY: midBannerData.desktopFocalY,
+    xlFocalY:      midBannerData.xlFocalY,
+    mobileFocalX:  midBannerData.mobileFocalX,
+    tabletFocalX:  midBannerData.tabletFocalX,
+    desktopFocalX: midBannerData.desktopFocalX,
+    xlFocalX:      midBannerData.xlFocalX,
+    content:       midBannerData.content,
+  } : null
+
   const showMembersCarousel =
     session?.user &&
     settings?.membersCarouselEnabled !== false &&
@@ -145,8 +197,8 @@ export default async function Home({
         slideInterval={settings?.heroSlideInterval ?? 6000}
       />
       <FeaturedProducts />
-      {settings?.midBannerEnabled !== false && settings?.midBannerImage && (
-        <MidBanner imageUrl={settings.midBannerImage} href={settings.midBannerHref} />
+      {settings?.midBannerEnabled && midBanner && (
+        <MidBanner data={midBanner} />
       )}
       <NewInGrid />
       {showMembersCarousel && (

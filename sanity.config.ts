@@ -22,6 +22,14 @@ export default defineConfig({
               .child(S.documentTypeList('heroSlide').title('Hero Slides')),
             orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
             S.listItem()
+              .title('Mid Banner')
+              .child(
+                S.document()
+                  .schemaType('midBanner')
+                  .documentId('mid-banner-singleton')
+                  .title('Mid Banner')
+              ),
+            S.listItem()
               .title('Global Settings')
               .child(
                 S.document()

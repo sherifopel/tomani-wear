@@ -3,5 +3,6 @@ import { product } from './product'
 import { settings } from './settings'
 import { order } from './order'
 import { collection } from './collection'
+import { midBanner } from './midBanner'
 
-export const schemaTypes = [heroSlide, product, collection, settings, order]
+export const schemaTypes = [heroSlide, product, collection, settings, order, midBanner]

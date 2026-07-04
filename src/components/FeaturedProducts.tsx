@@ -1,6 +1,6 @@
 import ProductCarousel from '@/components/ProductCarousel'
 import { client } from '@/sanity/client'
-import { PRODUCTS_QUERY } from '@/sanity/queries'
+import { FEATURED_PRODUCTS_QUERY } from '@/sanity/queries'
 
 type SanityProduct = {
   _id: string
@@ -11,7 +11,7 @@ type SanityProduct = {
 }
 
 export default async function FeaturedProducts() {
-  const sanityProducts: SanityProduct[] = await client.fetch(PRODUCTS_QUERY)
+  const sanityProducts: SanityProduct[] = await client.fetch(FEATURED_PRODUCTS_QUERY)
 
   const products = sanityProducts.map((p, index) => ({
     id: index + 1,

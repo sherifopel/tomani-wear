@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { connection } from 'next/server'
 import { client } from '@/sanity/client'
-import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY } from '@/sanity/queries'
+import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
 import FilterDropdown from '@/components/FilterDropdown'
@@ -37,7 +37,9 @@ export default async function ProductsPage({
 
   const { category, type, collection, sort = 'featured' } = await searchParams
 
-  const raw: Product[] = (category || type || collection)
+  const raw: Product[] = category === 'new'
+    ? await client.fetch(NEW_IN_PRODUCTS_QUERY)
+    : (category || type || collection)
     ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, {
         category:   category   ?? '',
         type:       type       ?? '',

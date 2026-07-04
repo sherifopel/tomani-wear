@@ -82,26 +82,12 @@ export const settings = defineType({
         ],
       },
     }),
-defineField({
+    defineField({
       name: 'midBannerEnabled',
       title: 'Show Mid Banner',
+      description: 'Toggle the mid-banner section on the homepage. Edit the content in the Mid Banner document.',
       type: 'boolean',
-      initialValue: true,
-      group: 'midBanner',
-    }),
-    defineField({
-      name: 'midBannerImage',
-      title: 'Banner Image',
-      type: 'image',
-      description: 'Full-width editorial image shown between New Arrivals and New In sections.',
-      options: { hotspot: true },
-      group: 'midBanner',
-    }),
-    defineField({
-      name: 'midBannerHref',
-      title: 'Link',
-      type: 'string',
-      description: 'Where to go when the banner is clicked. E.g. /products?category=men',
+      initialValue: false,
       group: 'midBanner',
     }),
     defineField({
