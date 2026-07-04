@@ -4,11 +4,11 @@ import { set, ObjectInputProps, MemberField } from 'sanity'
 const BRAND_YELLOW = '#c9a227'
 
 // ─── Device config — banner aspect ratios ─────────────────────────────────────
-// Mobile:  16/7  ≈ 2.3:1 landscape
-// Tablet+: 21/9  ≈ 2.3:1 landscape (wider)
+// Mobile:  3/5   portrait (375px wide → 625px tall on iPhone — matches Tommy Hilfiger style)
+// Tablet+: 21/9  cinematic landscape
 
 const DEVICES = [
-  { key: 'mobile',  label: 'Mobile',      previewW: 320, previewH: 140, imageField: 'imageMobile',  focalYField: 'mobile',  focalXField: 'mobileX'  },
+  { key: 'mobile',  label: 'Mobile',      previewW: 210, previewH: 350, imageField: 'imageMobile',  focalYField: 'mobile',  focalXField: 'mobileX'  },
   { key: 'tablet',  label: 'Tablet',      previewW: 380, previewH: 163, imageField: 'imageTablet',  focalYField: 'tablet',  focalXField: 'tabletX'  },
   { key: 'desktop', label: 'Desktop',     previewW: 450, previewH: 193, imageField: 'imageDesktop', focalYField: 'desktop', focalXField: 'desktopX' },
   { key: 'xl',      label: 'Extra Large', previewW: 450, previewH: 193, imageField: 'imageXl',      focalYField: 'xlarge',  focalXField: 'xlargeX'  },
@@ -105,23 +105,19 @@ export function MidBannerFocalPreview(props: ObjectInputProps) {
   }
 
   function handleSaveForDevice() {
-    const patches = []
-    if (localY !== null) patches.push(set(localY, [device.focalYField]))
-    if (localX !== null) patches.push(set(localX, [device.focalXField]))
-    onChange(patches)
+    onChange([
+      set(displayY, [device.focalYField]),
+      set(displayX, [device.focalXField]),
+    ])
     setLocalY(null)
     setLocalX(null)
   }
 
   function handleSaveForAll() {
-    const patches = []
-    if (localY !== null) {
-      patches.push(set(localY, ['mobile']), set(localY, ['tablet']), set(localY, ['desktop']), set(localY, ['xlarge']))
-    }
-    if (localX !== null) {
-      patches.push(set(localX, ['mobileX']), set(localX, ['tabletX']), set(localX, ['desktopX']), set(localX, ['xlargeX']))
-    }
-    onChange(patches)
+    onChange([
+      set(displayY, ['mobile']),  set(displayY, ['tablet']),  set(displayY, ['desktop']),  set(displayY, ['xlarge']),
+      set(displayX, ['mobileX']), set(displayX, ['tabletX']), set(displayX, ['desktopX']), set(displayX, ['xlargeX']),
+    ])
     setLocalY(null)
     setLocalX(null)
   }

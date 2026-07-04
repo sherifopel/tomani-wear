@@ -50,7 +50,7 @@ export default async function NewInGrid() {
             key={product._id}
             href={`/products/${product.slug}`}
             data-testid={`home-new-in-tile-${product.slug}`}
-            className={`group relative aspect-[3/4] overflow-hidden bg-gray-100${i >= 2 ? ' hidden md:flex' : ''}`}
+            className="group relative aspect-[3/4] overflow-hidden bg-gray-100"
           >
             {product.image && (
               <Image

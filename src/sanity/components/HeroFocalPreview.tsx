@@ -107,23 +107,19 @@ export function HeroFocalPreview(props: ObjectInputProps) {
   }
 
   function handleSaveForDevice() {
-    const patches = []
-    if (localY !== null) patches.push(set(localY, [device.focalYField]))
-    if (localX !== null) patches.push(set(localX, [device.focalXField]))
-    onChange(patches)
+    onChange([
+      set(displayY, [device.focalYField]),
+      set(displayX, [device.focalXField]),
+    ])
     setLocalY(null)
     setLocalX(null)
   }
 
   function handleSaveForAll() {
-    const patches = []
-    if (localY !== null) {
-      patches.push(set(localY, ['mobile']), set(localY, ['tablet']), set(localY, ['desktop']), set(localY, ['xlarge']))
-    }
-    if (localX !== null) {
-      patches.push(set(localX, ['mobileX']), set(localX, ['tabletX']), set(localX, ['desktopX']), set(localX, ['xlargeX']))
-    }
-    onChange(patches)
+    onChange([
+      set(displayY, ['mobile']),  set(displayY, ['tablet']),  set(displayY, ['desktop']),  set(displayY, ['xlarge']),
+      set(displayX, ['mobileX']), set(displayX, ['tabletX']), set(displayX, ['desktopX']), set(displayX, ['xlargeX']),
+    ])
     setLocalY(null)
     setLocalX(null)
   }

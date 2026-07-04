@@ -91,7 +91,7 @@ export default function MidBanner({ data }: { data: BannerData }) {
 
   return (
     <div
-      className="relative w-full aspect-[16/7] md:aspect-[21/9] overflow-hidden"
+      className="relative w-full aspect-[3/5] md:aspect-[21/9] overflow-hidden"
       style={containerStyle as CSSProperties}
       data-testid="mid-banner"
     >
