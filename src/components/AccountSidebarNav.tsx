@@ -21,11 +21,11 @@ export default function AccountSidebarNav({ orderCount, latestOrderStatus, varia
       : `${orderCount} order${orderCount === 1 ? '' : 's'}`
 
   const links = [
-    { href: '/account/orders',    label: 'My Orders',  meta: ordersLabel },
-    { href: '/account/wishlist',  label: 'Wishlist',   meta: null },
-    { href: '/account/addresses', label: 'Addresses',  meta: null },
-    { href: '/account/returns',   label: 'Returns',    meta: null },
-    { href: '/account/profile',   label: 'Profile',    meta: null },
+    { href: '/account/profile',   label: 'Profile',   meta: null        },
+    { href: '/account/orders',    label: 'My Orders', meta: ordersLabel },
+    { href: '/account/addresses', label: 'Addresses', meta: null        },
+    { href: '/account/wishlist',  label: 'Wishlist',  meta: null        },
+    { href: '/account/returns',   label: 'Returns',   meta: null        },
   ]
 
   // ── Desktop: vertical list ──────────────────────────────────────────────────
