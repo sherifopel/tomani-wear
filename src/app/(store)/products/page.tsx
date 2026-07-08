@@ -5,7 +5,6 @@ import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
-import FilterDropdown from '@/components/FilterDropdown'
 
 type Product = {
   _id: string
@@ -88,14 +87,13 @@ export default async function ProductsPage({
 
       {/* Header */}
       <div className="pt-6 mb-4">
-        <div className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-2" data-testid="plp-header">
-          <h1 className="text-sm uppercase tracking-widest font-medium self-center" data-testid="plp-title">
+        <div className="flex flex-col gap-2" data-testid="plp-header">
+          <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
             {pageTitle}
           </h1>
-          <div className="row-span-2 self-start">
+          <div className="flex justify-end">
             <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
           </div>
-          <FilterDropdown current={category} sort={sort} query={searchQuery} />
         </div>
         <p className="text-xs text-gray-400 mt-3" data-testid="plp-count">
           Showing {products.length} {products.length === 1 ? 'product' : 'products'}
