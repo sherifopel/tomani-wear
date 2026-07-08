@@ -59,9 +59,10 @@ export default async function ProductsPage({
   })
 
   const TYPE_LABELS: Record<string, string> = {
-    shirts: 'Shirts', hoodies: 'Hoodies', shorts: 'Shorts',
-    trousers: 'Trousers & Joggers', tops: 'Tops', dresses: 'Dresses',
-    bags: 'Bags', hats: 'Hats', belts: 'Belts',
+    dresses: 'Dresses', hoodies: 'Hoodies', jackets: 'Jackets',
+    joggers: 'Joggers', shirts: 'Shirts', shorts: 'Shorts',
+    tops: 'Tops', trousers: 'Trousers',
+    bags: 'Bags', belts: 'Belts', boots: 'Boots', hats: 'Hats', shoes: 'Shoes',
   }
 
   const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
