@@ -39,15 +39,35 @@ export const settings = defineType({
       name: 'announcementBarBgColor',
       title: 'Banner Background Colour',
       description: 'Defaults to black if not set.',
-      type: 'color',
+      type: 'string',
       group: 'announcement',
+      options: {
+        layout: 'radio',
+        direction: 'horizontal',
+        list: [
+          { title: 'Black', value: '#000000' },
+          { title: 'White', value: '#ffffff' },
+          { title: 'Grey',  value: '#6b7280' },
+          { title: 'Red',   value: '#E8000D' },
+        ],
+      },
     }),
     defineField({
       name: 'announcementBarTextColor',
       title: 'Banner Text Colour',
       description: 'Defaults to white if not set.',
-      type: 'color',
+      type: 'string',
       group: 'announcement',
+      options: {
+        layout: 'radio',
+        direction: 'horizontal',
+        list: [
+          { title: 'Black', value: '#000000' },
+          { title: 'White', value: '#ffffff' },
+          { title: 'Grey',  value: '#6b7280' },
+          { title: 'Red',   value: '#E8000D' },
+        ],
+      },
     }),
     defineField({
       name: 'announcementBarEnabled',

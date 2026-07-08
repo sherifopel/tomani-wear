@@ -1,11 +1,9 @@
 'use client'
 import { useFormValue } from 'sanity'
 
-type ColorValue = { hex?: string } | undefined
-
 export function AnnouncementPreview() {
-  const bgColor  = (useFormValue(['announcementBarBgColor'])  as ColorValue)?.hex
-  const textColor = (useFormValue(['announcementBarTextColor']) as ColorValue)?.hex
+  const bgColor   = useFormValue(['announcementBarBgColor'])  as string | undefined
+  const textColor = useFormValue(['announcementBarTextColor']) as string | undefined
   const messages  = useFormValue(['announcementBars']) as string[] | undefined
 
   const previewText = messages?.filter(Boolean)[0] ?? 'Free delivery on orders over ₦50,000'
