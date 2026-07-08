@@ -166,16 +166,20 @@ export default async function ProductsPage({
                   <p className="text-sm font-light leading-snug mb-2 line-clamp-2 min-h-[2.5rem]" data-testid="plp-product-name">
                     {product.name}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium" data-testid="plp-product-price">
-                      ₦{product.price.toLocaleString()}
-                    </p>
-                    {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  {product.compareAtPrice && product.compareAtPrice > product.price ? (
+                    <div className="flex items-center gap-2">
                       <p className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price">
                         ₦{product.compareAtPrice.toLocaleString()}
                       </p>
-                    )}
-                  </div>
+                      <p className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">
+                        ₦{product.price.toLocaleString()}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm font-medium" data-testid="plp-product-price">
+                      ₦{product.price.toLocaleString()}
+                    </p>
+                  )}
                 </div>
 
               </Link>
