@@ -1,5 +1,6 @@
 import { defineField, defineType } from 'sanity'
 import { Settings2 } from 'lucide-react'
+import { AnnouncementPreview } from '../components/AnnouncementPreview'
 
 export const settings = defineType({
   name: 'settings',
@@ -53,6 +54,13 @@ export const settings = defineType({
       description: 'Defaults to white if not set.',
       type: 'color',
       group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementPreview',
+      title: 'Banner Preview',
+      type: 'string',
+      group: 'announcement',
+      components: { input: AnnouncementPreview },
     }),
     defineField({
       name: 'membersCarouselEnabled',
