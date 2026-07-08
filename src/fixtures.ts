@@ -1,7 +1,12 @@
 import { test as base, expect } from '@playwright/test'
 
-// Extend here when you need custom fixtures (auth state, DB seeds, etc.)
-// Per-test coloured status lines are handled by e2e/reporters/status-reporter.ts
-// which runs in the main process and is never buffered.
-export const test = base.extend({})
+// Auto-clear the localStorage cart after every test so items never accumulate
+// between runs — especially important when tests share a logged-in account.
+export const test = base.extend({
+  page: async ({ page }, use) => {
+    await use(page)
+    await page.evaluate(() => localStorage.removeItem('tomani-cart'))
+  },
+})
+
 export { expect }
