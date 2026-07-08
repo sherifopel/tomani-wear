@@ -1,5 +1,7 @@
 import { defineField, defineType } from 'sanity'
 import { Settings2 } from 'lucide-react'
+import { AnnouncementPreview } from '../components/AnnouncementPreview'
+import { AnnouncementBannersInput } from '../components/AnnouncementBannersInput'
 
 export const settings = defineType({
   name: 'settings',
@@ -8,7 +10,6 @@ export const settings = defineType({
   icon: Settings2,
   groups: [
     { name: 'announcement', title: 'Announcement' },
-    { name: 'members', title: 'Members' },
     { name: 'footer', title: 'Footer' },
   ],
   fields: [
@@ -21,22 +22,55 @@ export const settings = defineType({
       initialValue: 'Settings',
     }),
     defineField({
-      name: 'announcementBar',
-      title: 'Announcement Bar Text',
+      name: 'announcementPreview',
+      title: 'Banner Preview',
       type: 'string',
-      description: 'Fallback text shown if no rotating messages are added',
       group: 'announcement',
+      components: { input: AnnouncementPreview },
     }),
     defineField({
       name: 'announcementBars',
-      title: 'Rotating Announcement Messages',
+      title: 'Announcement Banners',
       type: 'array',
-      description: 'Add two or more messages to rotate through the black bar',
+      description: 'Each banner rotates in turn. Max 3.',
       group: 'announcement',
+      components: { input: AnnouncementBannersInput },
+      validation: (Rule) => Rule.max(3),
       of: [
         {
-          type: 'string',
-          title: 'Message',
+          type: 'object',
+          title: 'Banner',
+          fields: [
+            defineField({
+              name: 'message',
+              title: 'Message',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'theme',
+              title: 'Colour',
+              type: 'string',
+              initialValue: 'black-white',
+              options: {
+                layout: 'radio',
+                direction: 'horizontal',
+                list: [
+                  { title: 'Black & White', value: 'black-white' },
+                  { title: 'Light Grey & Red', value: 'grey-red' },
+                ],
+              },
+            }),
+          ],
+          preview: {
+            select: { title: 'message', theme: 'theme' },
+            prepare({ title, theme }) {
+              return {
+                title:    title ?? 'Untitled banner',
+                subtitle: theme === 'grey-red' ? 'Grey & Red' : 'Black & White',
+              }
+            },
+          },
         },
       ],
     }),
@@ -46,35 +80,6 @@ export const settings = defineType({
       type: 'boolean',
       initialValue: true,
       group: 'announcement',
-    }),
-    defineField({
-      name: 'membersCarouselEnabled',
-      title: 'Show Members Carousel',
-      description: 'Toggle the "Early Access — Members Only" carousel on the homepage.',
-      type: 'boolean',
-      initialValue: true,
-      group: 'members',
-    }),
-    defineField({
-      name: 'membersCarouselTitle',
-      title: 'Carousel Title',
-      type: 'string',
-      initialValue: 'Early Access — Members Only',
-      group: 'members',
-    }),
-    defineField({
-      name: 'membersCarouselProducts',
-      title: 'Products',
-      description: 'Choose which products to feature in the members-only carousel.',
-      type: 'array',
-      group: 'members',
-      of: [
-        {
-          type: 'reference',
-          to: [{ type: 'product' }],
-        },
-      ],
-      validation: (Rule) => Rule.unique(),
     }),
     defineField({
       name: 'footerLinks',

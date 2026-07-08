@@ -1,13 +1,21 @@
-export default function ProfilePage() {
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
+import { prisma } from '@/lib/prisma'
+import ProfileForm from './ProfileForm'
+
+export default async function ProfilePage() {
+  const session = await auth()
+  if (!session?.user?.id) redirect('/sign-in?callbackUrl=/account/profile')
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { name: true, email: true, phone: true },
+  })
+
   return (
     <div>
-      <h1 className="text-xl font-semibold tracking-tight mb-8">Profile</h1>
-      <div className="border border-dashed border-gray-200 px-6 py-16 text-center">
-        <p className="text-sm text-gray-400 mb-1">Profile editing coming soon.</p>
-        <p className="text-xs text-gray-300">
-          Your name and email are managed through your Google account.
-        </p>
-      </div>
+      <h1 className="text-xl font-semibold tracking-tight mb-8 text-center">My Profile</h1>
+      <ProfileForm user={{ name: user?.name ?? '', email: user?.email ?? '', phone: user?.phone ?? '' }} />
     </div>
   )
 }

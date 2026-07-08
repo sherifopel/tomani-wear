@@ -22,7 +22,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
       {/* ── Mobile: profile + horizontal tab nav ─────────────────────── */}
       <div className="md:hidden mb-8">
         <p className="text-base font-semibold tracking-tight">{session.user.name}</p>
-        <p className="text-xs text-gray-400 mt-0.5">{session.user.email}</p>
         <div className="mt-6 -mx-6 px-6 overflow-x-auto">
           <AccountSidebarNav
             orderCount={orderCount}
@@ -40,7 +39,6 @@ export default async function AccountLayout({ children }: { children: React.Reac
         <aside className="hidden md:flex flex-col w-48 shrink-0 pt-1">
           <div className="mb-8">
             <p className="text-sm font-semibold tracking-tight">{session.user.name}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{session.user.email}</p>
           </div>
 
           <AccountSidebarNav

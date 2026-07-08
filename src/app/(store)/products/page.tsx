@@ -5,7 +5,6 @@ import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
-import FilterDropdown from '@/components/FilterDropdown'
 
 type Product = {
   _id: string
@@ -20,6 +19,16 @@ type Product = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
+  men:         "Tomanni's Men",
+  women:       "Tomanni's Women",
+  new:         "Tomanni's New In",
+  accessories: "Tomanni's Accessories",
+  collections: "Tomanni's Collections",
+  archives:    "Tomanni's Archives",
+  sale:        "Tomanni's Sale",
+}
+
+const BREADCRUMB_LABELS: Record<string, string> = {
   men:         'Men',
   women:       'Women',
   new:         'New In',
@@ -66,6 +75,7 @@ export default async function ProductsPage({
   }
 
   const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
+  const breadcrumbLabel = category ? BREADCRUMB_LABELS[category] ?? category : null
   const typeLabel = type ? TYPE_LABELS[type] ?? type : null
   const pageTitle = searchQuery
     ? `Search results for "${searchQuery}"`
@@ -75,31 +85,29 @@ export default async function ProductsPage({
     ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: 'Search' }]
     : collection
     ? [{ label: 'Home', href: '/' }, { label: 'Collections', href: '/products?category=collections' }, { label: collection.replace(/-/g, ' ') }]
-    : typeLabel && categoryLabel
-    ? [{ label: 'Home', href: '/' }, { label: categoryLabel, href: `/products?category=${category}` }, { label: typeLabel }]
-    : categoryLabel
-    ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: categoryLabel }]
+    : typeLabel && breadcrumbLabel
+    ? [{ label: 'Home', href: '/' }, { label: breadcrumbLabel, href: `/products?category=${category}` }, { label: typeLabel }]
+    : breadcrumbLabel
+    ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: breadcrumbLabel }]
     : [{ label: 'Home', href: '/' }, { label: 'Products' }]
 
   return (
-    <div className="max-w-7xl mx-auto px-6 pb-16" data-testid="plp-page">
+    <div className="bg-[#f9f9f9] min-h-screen" data-testid="plp-page">
+    <div className="max-w-7xl mx-auto px-6 pb-16">
 
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
       {/* Header */}
       <div className="pt-6 mb-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between" data-testid="plp-header">
-          <div className="min-w-0">
-            <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
-              {pageTitle}
-            </h1>
-          </div>
-          <div className="flex items-center justify-between gap-1 md:justify-end">
-            <FilterDropdown current={category} sort={sort} query={searchQuery} />
+        <div className="flex flex-col gap-2" data-testid="plp-header">
+          <h1 className="text-[28px] uppercase tracking-widest font-medium text-center" data-testid="plp-title">
+            {pageTitle}
+          </h1>
+          <div className="flex justify-end">
             <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
           </div>
         </div>
-        <p className="text-xs text-gray-400 mt-3" data-testid="plp-count">
+        <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
           Showing {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
       </div>
@@ -126,15 +134,15 @@ export default async function ProductsPage({
       {/* Product grid */}
       {products.length > 0 && (
         <ul
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
           data-testid="plp-grid"
         >
           {products.map((product) => (
             <li key={product._id} data-testid="plp-product-card">
-              <Link href={`/products/${product.slug}`} className="group block" data-testid={`plp-product-link-${product.slug}`}>
+              <Link href={`/products/${product.slug}`} className="group block bg-white" data-testid={`plp-product-link-${product.slug}`}>
 
                 {/* Image */}
-                <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden mb-3 rounded-md" data-testid="plp-product-image-wrapper">
+                <div className="relative aspect-[3/4] bg-white overflow-hidden mb-3" data-testid="plp-product-image-wrapper">
                   {product.image ? (
                     <Image
                       src={product.image}
@@ -164,26 +172,25 @@ export default async function ProductsPage({
                 </div>
 
                 {/* Info */}
-                <div className="flex flex-col" data-testid="plp-product-info">
-                  {product.category && (
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1" data-testid="plp-product-category">
-                      {CATEGORY_LABELS[product.category] ?? product.category}
-                    </p>
-                  )}
+                <div className="flex flex-col px-3 pb-3" data-testid="plp-product-info">
                   {/* Fixed 2-line height — keeps price aligned across all cards */}
                   <p className="text-sm font-light leading-snug mb-2 line-clamp-2 min-h-[2.5rem]" data-testid="plp-product-name">
                     {product.name}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium" data-testid="plp-product-price">
-                      ₦{product.price.toLocaleString()}
-                    </p>
-                    {product.compareAtPrice && product.compareAtPrice > product.price && (
+                  {product.compareAtPrice && product.compareAtPrice > product.price ? (
+                    <div className="flex items-center gap-2">
                       <p className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price">
                         ₦{product.compareAtPrice.toLocaleString()}
                       </p>
-                    )}
-                  </div>
+                      <p className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">
+                        ₦{product.price.toLocaleString()}
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm font-medium" data-testid="plp-product-price">
+                      ₦{product.price.toLocaleString()}
+                    </p>
+                  )}
                 </div>
 
               </Link>
@@ -192,6 +199,7 @@ export default async function ProductsPage({
         </ul>
       )}
 
+    </div>
     </div>
   )
 }

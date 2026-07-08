@@ -9,31 +9,31 @@ import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
 
+type Banner = { message: string; theme?: string }
+
 type Settings = {
-  announcementBar?: string
-  announcementBars?: string[]
+  announcementBars?: Banner[]
   announcementBarEnabled?: boolean
 }
 
 export default async function Navbar() {
   const settings: Settings = await client.fetch(SETTINGS_QUERY) ?? {}
   const showBanner = settings.announcementBarEnabled !== false
-  const bannerMessages = settings.announcementBars?.filter(Boolean).length
-    ? settings.announcementBars.filter(Boolean)
-    : [settings.announcementBar ?? 'Free shipping on orders over ₦50,000']
+  const banners: Banner[] = settings.announcementBars?.filter(b => b.message) ?? [
+    { message: 'Free delivery on orders over ₦50,000', theme: 'black-white' },
+  ]
 
   const announcementBar = showBanner ? (
-    <RotatingAnnouncementBar messages={bannerMessages} />
+    <RotatingAnnouncementBar banners={banners} />
   ) : undefined
 
   const mainRow = (
     <div
       data-testid="nav-main-row"
-      className="border-b border-gray-100 px-6 py-4 grid grid-cols-[auto_1fr_auto] items-center"
+      className="border-b border-gray-100 px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center"
     >
       <div className="flex items-center">
         <MobileMenu />
-        <span className="hidden md:block text-xs text-gray-400 uppercase tracking-widest">Lagos, NG</span>
       </div>
 
       <Link
@@ -44,7 +44,7 @@ export default async function Navbar() {
         <span className="logo-shine text-[20px] md:text-[28px] font-bold leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
+      <div className="flex items-center justify-end gap-2 md:gap-5 text-black justify-self-end">
         <SearchControl />
         <AccountButton />
         <NavCartButton />

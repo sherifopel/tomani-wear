@@ -58,7 +58,7 @@ export default function AccountButton() {
               <p className="text-[11px] text-gray-400 truncate">{session?.user?.email}</p>
             </div>
           </div>
-          <Link href="/account" onClick={close} data-testid="account-link-my-account"
+          <Link href="/account/profile" onClick={close} data-testid="account-link-my-account"
             className="flex items-center gap-2.5 px-4 py-3 text-xs hover:bg-gray-50 transition-colors">
             <Settings size={13} strokeWidth={1.5} /> My Account
           </Link>
@@ -174,7 +174,7 @@ export default function AccountButton() {
                 <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
               </div>
             </div>
-            <Link href="/account" onClick={close} data-testid="account-sheet-my-account"
+            <Link href="/account/profile" onClick={close} data-testid="account-sheet-my-account"
               className="flex items-center gap-3 px-5 py-4 text-sm border-b border-gray-100 hover:bg-gray-50 active:bg-gray-100">
               <Settings size={16} strokeWidth={1.5} /> My Account
             </Link>
