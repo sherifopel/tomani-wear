@@ -66,7 +66,7 @@ export default function ProfileForm({ user }: Props) {
           type="tel"
           value={phone}
           onChange={e => setPhone(e.target.value)}
-          placeholder="+234 800 000 0000"
+          placeholder=""
           className="border border-gray-200 px-4 py-3 text-sm outline-none focus:border-black transition-colors"
         />
       </div>
