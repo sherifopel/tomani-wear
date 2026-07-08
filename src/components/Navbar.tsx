@@ -20,7 +20,7 @@ export default async function Navbar() {
   const settings: Settings = await client.fetch(SETTINGS_QUERY) ?? {}
   const showBanner = settings.announcementBarEnabled !== false
   const banners: Banner[] = settings.announcementBars?.filter(b => b.message) ?? [
-    { message: 'Free delivery on orders over ₦50,000', bgColor: '#000000', textColor: '#ffffff' },
+    { message: 'Free delivery on orders over ₦50,000', theme: 'black-white' },
   ]
 
   const announcementBar = showBanner ? (
