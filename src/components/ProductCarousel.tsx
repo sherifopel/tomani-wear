@@ -86,7 +86,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
               data-testid={`home-product-card-${product.id}`}
               className="group flex-none w-full sm:w-[50%] md:w-[33%] lg:w-[24%] flex flex-col"
             >
-              <div className="relative aspect-[3/4] bg-white overflow-hidden mb-3">
+              <div className="relative aspect-[3/4] bg-[#f9f9f9] overflow-hidden mb-3">
                 <Image
                   src={product.image}
                   alt={product.name}

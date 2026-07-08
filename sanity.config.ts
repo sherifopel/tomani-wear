@@ -17,18 +17,18 @@ export default defineConfig({
           .title('Content')
           .items([
             S.listItem()
-              .title('Hero Slide')
+              .title('Home Page')
+              .child(
+                S.document()
+                  .schemaType('homePage')
+                  .documentId('home-page-singleton')
+                  .title('Home Page')
+              ),
+            S.listItem()
+              .title('Hero Slides')
               .schemaType('heroSlide')
               .child(S.documentTypeList('heroSlide').title('Hero Slides')),
             orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
-            S.listItem()
-              .title('Mid Banner')
-              .child(
-                S.document()
-                  .schemaType('midBanner')
-                  .documentId('mid-banner-singleton')
-                  .title('Mid Banner')
-              ),
             S.listItem()
               .title('Global Settings')
               .child(

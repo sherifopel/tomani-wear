@@ -9,8 +9,7 @@ export const settings = defineType({
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'hero', title: 'Hero' },
-    { name: 'midBanner', title: 'Mid Banner' },
-    { name: 'members', title: 'Members' },
+{ name: 'members', title: 'Members' },
     { name: 'footer', title: 'Footer' },
   ],
   fields: [
@@ -81,14 +80,6 @@ export const settings = defineType({
           { title: 'Very slow — 12 seconds', value: 12000 },
         ],
       },
-    }),
-    defineField({
-      name: 'midBannerEnabled',
-      title: 'Show Mid Banner',
-      description: 'Toggle the mid-banner section on the homepage. Edit the content in the Mid Banner document.',
-      type: 'boolean',
-      initialValue: false,
-      group: 'midBanner',
     }),
     defineField({
       name: 'membersCarouselEnabled',

@@ -87,6 +87,17 @@ body {
   width: 100%;
 }
 
+@keyframes searchSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Search oval reveals right → left so the icon appears first, then oval grows left */
+@keyframes searchExpand {
+  from { opacity: 0; clip-path: inset(0 0 0 100% round 9999px); }
+  to   { opacity: 1; clip-path: inset(0 0 0 0%   round 9999px); }
+}
+
 @keyframes announcement-slide {
   0% {
     opacity: 0;
@@ -145,24 +156,31 @@ body {
 .btn-wipe:hover       { color: black; }
 .btn-wipe-white:hover { color: white; }
 
-/* ── Mid-banner video: responsive objectPosition via CSS variables ──────────── */
-/* Variables set inline on the parent container from GROQ focal point values.   */
-.mid-banner-video {
-  object-position: var(--banner-img-mobile-x, 50%) var(--banner-img-mobile-y, 50%);
+
+/* ── Home page builder banner ───────────────────────────────────────────────── */
+/* --h and --fit are set inline from Sanity; focal point vars are per-device.  */
+
+.home-section-banner {
+  height: var(--h, 80vh);
+}
+
+.home-section-banner-img {
+  object-fit:      var(--fit, cover);
+  object-position: var(--pos-mobile-x, 50%) var(--pos-mobile-y, 50%);
 }
 @media (min-width: 768px) {
-  .mid-banner-video {
-    object-position: var(--banner-img-tablet-x, 50%) var(--banner-img-tablet-y, 50%);
+  .home-section-banner-img {
+    object-position: var(--pos-tablet-x,  50%) var(--pos-tablet-y,  50%);
   }
 }
 @media (min-width: 1024px) {
-  .mid-banner-video {
-    object-position: var(--banner-img-desktop-x, 50%) var(--banner-img-desktop-y, 50%);
+  .home-section-banner-img {
+    object-position: var(--pos-desktop-x, 50%) var(--pos-desktop-y, 30%);
   }
 }
 @media (min-width: 1280px) {
-  .mid-banner-video {
-    object-position: var(--banner-img-xl-x, 50%) var(--banner-img-xl-y, 50%);
+  .home-section-banner-img {
+    object-position: var(--pos-xl-x, 50%) var(--pos-xl-y, 30%);
   }
 }
 

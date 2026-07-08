@@ -16,11 +16,13 @@ export default function SortDropdown({
   category,
   type,
   collection,
+  query,
 }: {
   current: string
   category?: string
   type?: string
   collection?: string
+  query?: string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -41,6 +43,7 @@ export default function SortDropdown({
     if (category)   params.set('category',   category)
     if (type)       params.set('type',        type)
     if (collection) params.set('collection',  collection)
+    if (query)      params.set('q',           query)
     if (sort !== 'featured') params.set('sort', sort)
     const qs = params.toString()
     return qs ? `/products?${qs}` : '/products'

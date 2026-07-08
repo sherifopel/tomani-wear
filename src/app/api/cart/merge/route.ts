@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
           },
         },
         update: {
-          quantity: { increment: item.quantity },
+          quantity: item.quantity,
         },
         create: {
           userId,

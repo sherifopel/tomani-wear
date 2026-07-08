@@ -25,25 +25,29 @@ const CATEGORY_LABELS: Record<string, string> = {
   new:         'New In',
   accessories: 'Accessories',
   collections: 'Collections',
+  archives:    'Archives',
   sale:        'Sale',
 }
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; type?: string; collection?: string; sort?: string }>
+  searchParams: Promise<{ category?: string; type?: string; collection?: string; sort?: string; q?: string }>
 }) {
   await connection()
 
-  const { category, type, collection, sort = 'featured' } = await searchParams
+  const { category, type, collection, sort = 'featured', q } = await searchParams
+  const searchQuery = q?.trim() ?? ''
+  const sanitySearchQuery = searchQuery ? `${searchQuery}*` : ''
 
-  const raw: Product[] = category === 'new'
+  const raw: Product[] = category === 'new' && !searchQuery
     ? await client.fetch(NEW_IN_PRODUCTS_QUERY)
-    : (category || type || collection)
+    : (category || type || collection || searchQuery)
     ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, {
         category:   category   ?? '',
         type:       type       ?? '',
         collection: collection ?? '',
+        q:          sanitySearchQuery,
       })
     : await client.fetch(PRODUCTS_QUERY)
 
@@ -62,8 +66,13 @@ export default async function ProductsPage({
 
   const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
   const typeLabel = type ? TYPE_LABELS[type] ?? type : null
+  const pageTitle = searchQuery
+    ? `Search results for "${searchQuery}"`
+    : typeLabel ?? categoryLabel ?? 'Products'
 
-  const crumbs = collection
+  const crumbs = searchQuery
+    ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: 'Search' }]
+    : collection
     ? [{ label: 'Home', href: '/' }, { label: 'Collections', href: '/products?category=collections' }, { label: collection.replace(/-/g, ' ') }]
     : typeLabel && categoryLabel
     ? [{ label: 'Home', href: '/' }, { label: categoryLabel, href: `/products?category=${category}` }, { label: typeLabel }]
@@ -78,12 +87,19 @@ export default async function ProductsPage({
 
       {/* Header */}
       <div className="pt-6 mb-4">
-        <div className="flex items-center justify-between" data-testid="plp-header">
-          <FilterDropdown current={category} sort={sort} />
-          <SortDropdown current={sort} category={category} type={type} collection={collection} />
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between" data-testid="plp-header">
+          <div className="min-w-0">
+            <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
+              {pageTitle}
+            </h1>
+          </div>
+          <div className="flex items-center justify-between gap-1 md:justify-end">
+            <FilterDropdown current={category} sort={sort} query={searchQuery} />
+            <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
+          </div>
         </div>
-        <p className="text-xs text-gray-400 mt-3 pl-[38px]" data-testid="plp-count">
-          Showing {products.length} of {products.length} {products.length === 1 ? 'product' : 'products'}
+        <p className="text-xs text-gray-400 mt-3" data-testid="plp-count">
+          Showing {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
       </div>
 
@@ -91,6 +107,11 @@ export default async function ProductsPage({
       {products.length === 0 && (
         <div className="min-h-[40vh] flex flex-col items-center justify-center gap-6" data-testid="plp-empty">
           <p className="text-sm uppercase tracking-widest text-gray-400">No products found</p>
+          {searchQuery && (
+            <p className="max-w-sm text-center text-sm text-gray-500">
+              Try a different search term or browse the full collection.
+            </p>
+          )}
           <Link
             href="/products"
             className="px-8 py-3 bg-black text-white border border-black text-xs uppercase tracking-widest btn-wipe"

@@ -1,10 +1,10 @@
 import Link from 'next/link'
-import { Search } from 'lucide-react'
 import MobileMenu from '@/components/MobileMenu'
 import NavCartButton from '@/components/NavCartButton'
 import AccountButton from '@/components/AccountButton'
 import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
+import SearchControl from '@/components/SearchControl'
 import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
@@ -45,13 +45,7 @@ export default async function Navbar() {
       </Link>
 
       <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
-        <button
-          data-testid="nav-search-button"
-          aria-label="Search"
-          className="p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
-        >
-          <Search className="h-[18px] w-[18px] md:h-5 md:w-5" strokeWidth={1.5} />
-        </button>
+        <SearchControl />
         <AccountButton />
         <NavCartButton />
       </div>

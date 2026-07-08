@@ -133,10 +133,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [state.items])
 
   // When a guest session becomes authenticated, merge the localStorage cart
-  // into the user's saved DB cart. prevStatusRef guards against re-firing on
-  // every render — we only want to merge once, at the moment of sign-in.
+  // into the user's saved DB cart — exactly once per browser session.
+  // sessionStorage survives SPA navigation but clears when the tab closes,
+  // so a fresh sign-in always gets a fresh merge.
   useEffect(() => {
-    if (status === 'authenticated' && prevStatusRef.current !== 'authenticated') {
+    if (status === 'authenticated' && !sessionStorage.getItem('cart-merged')) {
+      sessionStorage.setItem('cart-merged', '1')
       const guestItems = state.items
       fetch('/api/cart/merge', {
         method:  'POST',

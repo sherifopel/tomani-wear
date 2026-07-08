@@ -108,6 +108,9 @@ importers:
       lightningcss-darwin-arm64:
         specifier: ^1.32.0
         version: 1.32.0
+      lightningcss-darwin-x64:
+        specifier: 1.32.0
+        version: 1.32.0
       playwright-final-summary-reporter:
         specifier: github:sherifopel/playwright-final-summary-reporter
         version: https://codeload.github.com/sherifopel/playwright-final-summary-reporter/tar.gz/e3cb2eddc3ceba99ce5f750543a23bafa1178fc6(@playwright/test@1.61.0)
@@ -11855,8 +11858,7 @@ snapshots:
 
   lightningcss-darwin-arm64@1.32.0: {}
 
-  lightningcss-darwin-x64@1.32.0:
-    optional: true
+  lightningcss-darwin-x64@1.32.0: {}
 
   lightningcss-freebsd-x64@1.32.0:
     optional: true

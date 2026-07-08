@@ -28,7 +28,7 @@ export default async function FeaturedProducts() {
     >
       <div className="max-w-7xl mx-auto w-full">
 
-        <div className="mb-3 md:mb-8 relative flex items-center justify-center">
+        <div className="mb-3 md:mb-8 relative flex items-center justify-between">
           <h2 className="text-[28px] font-light tracking-widest uppercase">New Arrivals</h2>
         </div>
 
