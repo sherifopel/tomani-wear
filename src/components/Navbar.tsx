@@ -30,7 +30,7 @@ export default async function Navbar() {
   const mainRow = (
     <div
       data-testid="nav-main-row"
-      className="border-b border-gray-100 px-6 py-4 grid grid-cols-[auto_1fr_auto] items-center"
+      className="border-b border-gray-100 px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center"
     >
       <div className="flex items-center">
         <MobileMenu />
@@ -44,7 +44,7 @@ export default async function Navbar() {
         <span className="logo-shine text-[20px] md:text-[28px] font-bold leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-2 md:gap-5 text-black">
+      <div className="flex items-center justify-end gap-2 md:gap-5 text-black justify-self-end">
         <SearchControl />
         <AccountButton />
         <NavCartButton />
