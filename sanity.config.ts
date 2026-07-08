@@ -1,6 +1,7 @@
 import { defineConfig } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
+import { colorInput } from '@sanity/color-input'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { schemaTypes } from './src/sanity/schemas'
 
@@ -40,6 +41,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    colorInput(),
   ],
   schema: {
     types: schemaTypes,

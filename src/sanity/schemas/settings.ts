@@ -43,15 +43,15 @@ export const settings = defineType({
     defineField({
       name: 'announcementBarBgColor',
       title: 'Banner Background Colour',
-      description: 'Hex code, e.g. #FF5733. Defaults to black.',
-      type: 'string',
+      description: 'Defaults to black if not set.',
+      type: 'color',
       group: 'announcement',
     }),
     defineField({
       name: 'announcementBarTextColor',
       title: 'Banner Text Colour',
-      description: 'Hex code, e.g. #FFFFFF. Defaults to white.',
-      type: 'string',
+      description: 'Defaults to white if not set.',
+      type: 'color',
       group: 'announcement',
     }),
     defineField({
