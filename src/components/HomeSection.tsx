@@ -254,29 +254,32 @@ export default function HomeSection({
 
       {/* ── Product carousel ──────────────────────────────────────────────── */}
       {carouselProducts.length > 0 && (
-        <div className="snap-section pt-3 px-4 pb-10 md:pt-10 md:pb-16 md:px-10 bg-[#f9f9f9] border-t border-gray-200">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="mb-3 md:mb-8 flex items-center justify-between">
-              {carousel?.title && (
-                <h2 className="text-[28px] font-light tracking-widest uppercase">
-                  {carousel.title}
-                </h2>
-              )}
-              {carousel?.viewAllLink && (
-                <Link
-                  href={carousel.viewAllLink}
-                  className="text-xs tracking-widest uppercase underline underline-offset-4 hover:opacity-60 transition-opacity"
-                >
-                  View All
-                </Link>
-              )}
-            </div>
+        <div className="snap-section bg-[#f9f9f9] border-t border-gray-200">
 
-            {carousel?.style === 'grid' ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Heading row — always padded */}
+          <div className="pt-6 pb-4 px-6 md:pt-10 md:pb-6 md:px-10 max-w-7xl mx-auto flex items-center justify-between">
+            {carousel?.title && (
+              <h2 className="text-[28px] font-light tracking-widest uppercase">
+                {carousel.title}
+              </h2>
+            )}
+            {carousel?.viewAllLink && (
+              <Link
+                href={carousel.viewAllLink}
+                className="text-xs tracking-widest uppercase underline underline-offset-4 hover:opacity-60 transition-opacity"
+              >
+                View All
+              </Link>
+            )}
+          </div>
+
+          {carousel?.style === 'grid' ? (
+            /* Edge-to-edge grid — tiles are full-width with hairline gaps */
+            <>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
                 {carouselProducts.map((p) => (
-                  <Link key={p.href} href={p.href} className="group block">
-                    <div className="relative aspect-[3/4] overflow-hidden bg-[#f9f9f9]">
+                  <Link key={p.href} href={p.href} className="group block bg-white">
+                    <div className="relative aspect-[3/4] overflow-hidden">
                       {p.image && (
                         <Image
                           src={p.image}
@@ -287,17 +290,22 @@ export default function HomeSection({
                         />
                       )}
                     </div>
-                    <div className="mt-2 px-1">
+                    <div className="px-3 py-2">
                       <p className="text-sm font-medium truncate">{p.name}</p>
                       <p className="text-sm text-gray-500">₦{p.price.toLocaleString()}</p>
                     </div>
                   </Link>
                 ))}
               </div>
-            ) : (
+              <div className="pb-8 md:pb-12" />
+            </>
+          ) : (
+            /* Scroll carousel — padded container */
+            <div className="px-4 pb-10 md:pb-16 md:px-10 max-w-7xl mx-auto">
               <ProductCarousel products={carouselProducts} />
-            )}
-          </div>
+            </div>
+          )}
+
         </div>
       )}
 
