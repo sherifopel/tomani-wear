@@ -20,14 +20,15 @@ export default function MiniCart() {
 
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // 20-second auto-close — resets on pointer interaction
+  // Auto-close: 2 seconds when empty, 10 seconds when it has items (resets on pointer interaction)
   useEffect(() => {
     if (!miniCartOpen) return
-    autoCloseTimer.current = setTimeout(closeMiniCart, 10_000)
+    const delay = items.length === 0 ? 2_000 : 10_000
+    autoCloseTimer.current = setTimeout(closeMiniCart, delay)
     return () => {
       if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current)
     }
-  }, [miniCartOpen, closeMiniCart])
+  }, [miniCartOpen, items.length, closeMiniCart])
 
   function resetTimer() {
     if (autoCloseTimer.current) clearTimeout(autoCloseTimer.current)

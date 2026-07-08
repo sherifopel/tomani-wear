@@ -24,7 +24,11 @@ export const product = defineType({
       title: 'Slug',
       description: 'Auto-generated from the name. Used in the product URL.',
       type: 'slug',
-      options: { source: 'name' },
+      options: {
+        source: 'name',
+        slugify: (input: string) =>
+          input.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      },
       validation: (Rule) => Rule.required(),
     }),
     defineField({

@@ -14,7 +14,45 @@ const inputClass = `
   focus:outline-none focus:border-black transition-colors duration-200
 `
 
-const labelClass = 'text-[12px] text-gray-500'
+const labelClass = 'text-[12px] text-black'
+
+// ── Delivery zones (shipping from Lagos) ────────────────────────────────────
+// Normalised state names are matched case-insensitively against user input.
+const DELIVERY_ZONES: Array<{ states: string[]; fee: number; label: string }> = [
+  {
+    fee:    2500,
+    label:  'Lagos (same city)',
+    states: ['lagos'],
+  },
+  {
+    fee:    7000,
+    label:  'Remote delivery',
+    states: ['adamawa', 'bauchi', 'borno', 'gombe', 'taraba', 'yobe'],
+  },
+  {
+    fee:    4000,
+    label:  'Interstate delivery',
+    states: [
+      'ogun', 'oyo', 'osun', 'ondo', 'ekiti',
+      'delta', 'edo', 'rivers', 'anambra', 'imo', 'abia',
+      'cross river', 'akwa ibom', 'bayelsa', 'enugu', 'ebonyi',
+      'abuja', 'fct', 'federal capital territory',
+      'kwara', 'kogi', 'niger', 'benue', 'plateau', 'nasarawa',
+      'kano', 'kaduna', 'katsina', 'sokoto', 'kebbi', 'zamfara', 'jigawa',
+    ],
+  },
+]
+
+function getDeliveryFee(state: string): number | null {
+  const s = state.trim().toLowerCase()
+  if (!s) return null
+  for (const zone of DELIVERY_ZONES) {
+    if (zone.states.some(z => s === z || s.startsWith(z) || z.startsWith(s))) {
+      return zone.fee
+    }
+  }
+  return 4000 // default interstate for any unrecognised state
+}
 
 function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
@@ -72,8 +110,8 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   if (items.length === 0) return null
 
-  const deliveryFee: number = 0
-  const grandTotal = totalPrice + deliveryFee
+  const deliveryFee = getDeliveryFee(form.state)
+  const grandTotal  = totalPrice + (deliveryFee ?? 0)
 
   const paystackConfig = {
     reference: `TW-${Date.now()}`,
@@ -197,23 +235,24 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   return (
     <form onSubmit={handleSubmit} noValidate>
-      <div className="lg:grid lg:grid-cols-[1fr_420px] lg:gap-16">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_380px] lg:gap-16">
 
-        {/* ── LEFT: Customer details ── */}
-        <div>
-          <h2 className="text-xs  font-medium mb-6" data-testid="checkout-section-contact">
-            Contact Information
-          </h2>
+        {/* ── LEFT: Customer details ── order-2 on mobile so summary appears first ── */}
+        <div className="order-2 lg:order-1 flex flex-col gap-10">
 
-          <div className="flex flex-col gap-5">
-            <div>
-              <RequiredLabel htmlFor="fullName">Full Name</RequiredLabel>
-              <input id="fullName" name="fullName" type="text" value={form.fullName} onChange={handleChange}
-                className={inputClass} data-testid="checkout-full-name" />
-              {errors.fullName && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-fullName">{errors.fullName}</p>}
-            </div>
+          {/* Contact Information */}
+          <div>
+            <h2 className="text-2xl font-light mb-6" data-testid="checkout-section-contact">
+              Contact Information
+            </h2>
+            <div className="flex flex-col gap-5">
+              <div>
+                <RequiredLabel htmlFor="fullName">Full Name</RequiredLabel>
+                <input id="fullName" name="fullName" type="text" value={form.fullName} onChange={handleChange}
+                  className={inputClass} data-testid="checkout-full-name" />
+                {errors.fullName && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-fullName">{errors.fullName}</p>}
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <RequiredLabel htmlFor="email">Email</RequiredLabel>
                 <input id="email" name="email" type="email" value={form.email} onChange={handleChange}
@@ -229,19 +268,19 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
             </div>
           </div>
 
-          <h2 className="text-xs  font-medium mt-10 mb-6" data-testid="checkout-section-delivery">
-            Delivery Address
-          </h2>
+          {/* Delivery Address */}
+          <div>
+            <h2 className="text-2xl font-light mb-6" data-testid="checkout-section-delivery">
+              Delivery Address
+            </h2>
+            <div className="flex flex-col gap-5">
+              <div>
+                <RequiredLabel htmlFor="address">Street Address</RequiredLabel>
+                <input id="address" name="address" type="text" value={form.address} onChange={handleChange}
+                  className={inputClass} data-testid="checkout-address" />
+                {errors.address && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-address">{errors.address}</p>}
+              </div>
 
-          <div className="flex flex-col gap-5">
-            <div>
-              <RequiredLabel htmlFor="address">Street Address</RequiredLabel>
-              <input id="address" name="address" type="text" value={form.address} onChange={handleChange}
-                className={inputClass} data-testid="checkout-address" />
-              {errors.address && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-address">{errors.address}</p>}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <RequiredLabel htmlFor="city">City</RequiredLabel>
                 <input id="city" name="city" type="text" value={form.city} onChange={handleChange}
@@ -254,21 +293,43 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
                   className={inputClass} data-testid="checkout-state" />
                 {errors.state && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-state">{errors.state}</p>}
               </div>
-            </div>
 
-            <div>
-              <RequiredLabel htmlFor="country">Country</RequiredLabel>
-              <input id="country" name="country" type="text" value={form.country} onChange={handleChange}
-                className={inputClass} data-testid="checkout-country" />
-              {errors.country && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-country">{errors.country}</p>}
+              <div>
+                <RequiredLabel htmlFor="country">Country</RequiredLabel>
+                <input id="country" name="country" type="text" value={form.country} onChange={handleChange}
+                  className={inputClass} data-testid="checkout-country" />
+                {errors.country && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-country">{errors.country}</p>}
+              </div>
             </div>
           </div>
+
+          {/* Payment */}
+          <div data-testid="checkout-section-payment">
+            <h2 className="text-2xl font-light mb-6">Payment</h2>
+            <div className="flex flex-col gap-5">
+              <p className="text-xs text-gray-400 leading-relaxed">
+                You'll be taken to Paystack to complete your payment. Your card details are never stored by Tomanni.
+              </p>
+              <button
+                type="submit"
+                disabled={loading}
+                data-testid="checkout-pay-button"
+                className="w-full flex items-center justify-center bg-black text-white text-xs py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
+              </button>
+              <p className="text-center text-[10px] text-gray-400">
+                Secured by Paystack · 256-bit SSL encryption
+              </p>
+            </div>
+          </div>
+
         </div>
 
-        {/* ── RIGHT: Order summary ── */}
-        <div className="mt-12 lg:mt-0">
-          <div className="flex items-baseline justify-between mb-6">
-            <h2 className="text-xs  font-medium" data-testid="checkout-section-summary">
+        {/* ── RIGHT: Order summary — first on mobile, right column on desktop ── */}
+        <div className="order-1 lg:order-2 mb-8 lg:mb-0 lg:sticky lg:top-24 lg:self-start">
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="text-2xl font-light" data-testid="checkout-section-summary">
               Order Summary
             </h2>
             <Link href="/cart" className="text-[11px] text-gray-400 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
@@ -276,62 +337,51 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
             </Link>
           </div>
 
-          <ul className="flex flex-col gap-4 mb-6" data-testid="checkout-items">
-            {items.map(item => (
-              <li key={`${item.productId}-${item.size}`} className="flex gap-4" data-testid="checkout-item">
-                <div className="relative w-16 h-20 bg-gray-50 rounded-md overflow-hidden flex-shrink-0">
-                  {item.image ? (
-                    <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-300">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z" />
-                      </svg>
+          <div className="border border-gray-200 rounded p-6">
+            <ul className="flex flex-col gap-4 mb-6" data-testid="checkout-items">
+              {items.map(item => (
+                <li key={`${item.productId}-${item.size}`} className="flex items-start gap-4" data-testid="checkout-item">
+                  <div className="relative w-16 h-20 bg-gray-50 rounded-md overflow-hidden flex-shrink-0">
+                    {item.image ? (
+                      <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-light leading-snug truncate" data-testid="checkout-item-name">{item.name}</p>
+                    {item.size && <p className="text-xs text-gray-400 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>}
+                    <div className="flex items-center justify-between mt-0.5">
+                      <p className="text-xs text-gray-400" data-testid="checkout-item-qty">Qty: {item.quantity}</p>
+                      <p className="text-sm font-medium" data-testid="checkout-item-price">₦{(item.price * item.quantity).toLocaleString()}</p>
                     </div>
-                  )}
-                  <span className="absolute -top-1 -right-1 bg-black text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">
-                    {item.quantity}
-                  </span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-light leading-snug truncate" data-testid="checkout-item-name">{item.name}</p>
-                  <p className="text-xs text-gray-400 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>
-                  <p className="text-sm font-medium mt-1" data-testid="checkout-item-price">₦{(item.price * item.quantity).toLocaleString()}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  </div>
+                </li>
+              ))}
+            </ul>
 
-          <div className="border-t border-gray-100 pt-4 flex flex-col gap-3 text-sm">
-            <div className="flex justify-between text-gray-500" data-testid="checkout-subtotal">
-              <span>Subtotal</span><span>₦{totalPrice.toLocaleString()}</span>
+            <div className="border-t border-gray-100 pt-4 flex flex-col gap-3 text-sm">
+              <div className="flex justify-between text-gray-500" data-testid="checkout-subtotal">
+                <span>Subtotal</span><span>₦{totalPrice.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between text-gray-500" data-testid="checkout-delivery">
+                <span>Delivery</span>
+                <span>{deliveryFee === null ? 'Enter your state' : deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}</span>
+              </div>
+              <div className="flex justify-between font-medium text-base border-t border-gray-100 pt-3" data-testid="checkout-total">
+                <span>Total</span><span>₦{grandTotal.toLocaleString()}</span>
+              </div>
             </div>
-            <div className="flex justify-between text-gray-500" data-testid="checkout-delivery">
-              <span>Delivery</span>
-              <span>{deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}</span>
-            </div>
-            <div className="flex justify-between font-medium text-base border-t border-gray-100 pt-3" data-testid="checkout-total">
-              <span>Total</span><span>₦{grandTotal.toLocaleString()}</span>
-            </div>
+
           </div>
-
-          <button type="submit" disabled={loading} data-testid="checkout-pay-button"
-            className="hidden lg:flex w-full mt-6 items-center justify-center bg-black text-white text-xs  py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
-            {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
-          </button>
-          <p className="hidden lg:block text-center text-[10px] text-gray-400 mt-3">
-            Secured by Paystack · 256-bit SSL encryption
-          </p>
         </div>
+
       </div>
 
-      {/* Mobile sticky pay button */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 z-50" data-testid="checkout-mobile-bar">
-        <button type="submit" disabled={loading} data-testid="checkout-pay-button-mobile"
-          className="w-full flex items-center justify-center bg-black text-white text-xs  py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
-          {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()}`}
-        </button>
-      </div>
     </form>
   )
 }
