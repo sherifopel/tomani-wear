@@ -22,11 +22,12 @@ export const NAV_LINKS: NavLink[] = [
     href: '/products?category=men',
     underlineColor: 'var(--brand-yellow)',
     children: [
-      { label: 'Shirts',              href: '/products?category=men&type=shirts' },
-      { label: 'Hoodies',             href: '/products?category=men&type=hoodies' },
-      { label: 'Jackets',             href: '/products?category=men&type=jackets' },
-      { label: 'Shorts',              href: '/products?category=men&type=shorts' },
-      { label: 'Trousers & Joggers',  href: '/products?category=men&type=trousers' },
+      { label: 'Hoodies',  href: '/products?category=men&type=hoodies' },
+      { label: 'Jackets',  href: '/products?category=men&type=jackets' },
+      { label: 'Joggers',  href: '/products?category=men&type=joggers' },
+      { label: 'Shirts',   href: '/products?category=men&type=shirts' },
+      { label: 'Shorts',   href: '/products?category=men&type=shorts' },
+      { label: 'Trousers', href: '/products?category=men&type=trousers' },
     ],
   },
   {
@@ -34,11 +35,12 @@ export const NAV_LINKS: NavLink[] = [
     href: '/products?category=women',
     underlineColor: 'var(--brand-red)',
     children: [
-      { label: 'Tops',               href: '/products?category=women&type=tops' },
-      { label: 'Dresses',            href: '/products?category=women&type=dresses' },
-      { label: 'Jackets',            href: '/products?category=women&type=jackets' },
-      { label: 'Shorts',             href: '/products?category=women&type=shorts' },
-      { label: 'Trousers & Joggers', href: '/products?category=women&type=trousers' },
+      { label: 'Dresses',  href: '/products?category=women&type=dresses' },
+      { label: 'Jackets',  href: '/products?category=women&type=jackets' },
+      { label: 'Joggers',  href: '/products?category=women&type=joggers' },
+      { label: 'Shorts',   href: '/products?category=women&type=shorts' },
+      { label: 'Tops',     href: '/products?category=women&type=tops' },
+      { label: 'Trousers', href: '/products?category=women&type=trousers' },
     ],
   },
   {
@@ -47,8 +49,10 @@ export const NAV_LINKS: NavLink[] = [
     underlineColor: 'var(--brand-black)',
     children: [
       { label: 'Bags',  href: '/products?category=accessories&type=bags' },
-      { label: 'Hats',  href: '/products?category=accessories&type=hats' },
       { label: 'Belts', href: '/products?category=accessories&type=belts' },
+      { label: 'Boots', href: '/products?category=accessories&type=boots' },
+      { label: 'Hats',  href: '/products?category=accessories&type=hats' },
+      { label: 'Shoes', href: '/products?category=accessories&type=shoes' },
     ],
   },
   {
@@ -56,14 +60,10 @@ export const NAV_LINKS: NavLink[] = [
     href: '/products?category=collections',
     underlineColor: 'var(--brand-yellow)',
     children: [
-      { label: 'Summer Collection 2025', href: '/products?collection=summer-2025' },
+      { label: 'Archives',              href: '/products?category=archives' },
       { label: 'Summer Collection 2024', href: '/products?collection=summer-2024' },
+      { label: 'Summer Collection 2025', href: '/products?collection=summer-2025' },
     ],
-  },
-  {
-    label: 'Archives',
-    href: '/products?category=archives',
-    underlineColor: 'var(--brand-black)',
   },
   {
     label: 'Sale',

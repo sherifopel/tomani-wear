@@ -6,17 +6,13 @@ import { Log } from 'logr-kit'
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
 export const homeSelectors = (page: Page) => {
-  // The carousel renders all slides simultaneously — scope to slide 1
-  // so locators don't match the same testid across all 3 slides at once.
-  const firstSlide = page.locator('[data-testid="home-hero-section"] > div > div').first()
-
   return {
     hero: {
       section:     page.locator('[data-testid="home-hero-section"]'),
-      subtitle:    firstSlide.locator('[data-testid="home-hero-subtitle"]'),
-      heading:     firstSlide.locator('[data-testid="home-hero-heading"]'),
-      description: firstSlide.locator('[data-testid="home-hero-description"]'),
-      ctaButton:   firstSlide.locator('[data-testid="home-hero-cta-button"]'),
+      subtitle:    page.locator('[data-testid="home-hero-subtitle"]').first(),
+      heading:     page.locator('[data-testid="home-hero-heading"]').first(),
+      description: page.locator('[data-testid="home-hero-description"]').first(),
+      ctaButton:   page.locator('[data-testid="home-hero-cta-button"]').first(),
       prevButton:  page.locator('[data-testid="home-carousel-prev-button"]'),
       nextButton:  page.locator('[data-testid="home-carousel-next-button"]'),
     },
@@ -98,14 +94,28 @@ export const assertFeaturedProductsVisible = async (page: Page) => {
 export const assertHeroHeightForViewport = async (
   page: Page,
   viewport: { width: number; height: number },
-  expectedHeight: number
 ) => {
   await page.setViewportSize(viewport)
   await page.reload()
   await page.waitForLoadState('domcontentloaded')
   const { hero } = homeSelectors(page)
   const box = await hero.section.boundingBox()
+  const expected = await page.evaluate((vw) => {
+    // lg breakpoint (1024px+): hero uses aspect-ratio 1505/600, not svh
+    if (vw >= 1024) return Math.round(vw * 600 / 1505)
+    // mobile/tablet: hero = 100svh - header-height (set dynamically by StickyHeader)
+    const headerH = parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
+    )
+    const testDiv = document.createElement('div')
+    testDiv.style.cssText = 'height:100svh;position:absolute;visibility:hidden'
+    document.body.appendChild(testDiv)
+    const svh = testDiv.getBoundingClientRect().height
+    document.body.removeChild(testDiv)
+    return Math.round(svh - headerH)
+  }, viewport.width)
   // Allow ±5px tolerance for subpixel rounding across browsers
-  expect(box?.height).toBeGreaterThanOrEqual(expectedHeight - 5)
-  expect(box?.height).toBeLessThanOrEqual(expectedHeight + 5)
+  expect(box?.height).toBeGreaterThanOrEqual(expected - 5)
+  expect(box?.height).toBeLessThanOrEqual(expected + 5)
+  Log.ok(`hero height ${box?.height}px ≈ ${expected}px`)
 }

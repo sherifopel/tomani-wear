@@ -16,9 +16,11 @@ const CATEGORIES = [
 export default function FilterDropdown({
   current,
   sort,
+  query,
 }: {
   current?: string
   sort?: string
+  query?: string
 }) {
   const [open, setOpen] = useState(false)
   const desktopRef = useRef<HTMLDivElement>(null)
@@ -51,6 +53,7 @@ export default function FilterDropdown({
   function buildHref(category?: string) {
     const params = new URLSearchParams()
     if (category) params.set('category', category)
+    if (query) params.set('q', query)
     if (sort && sort !== 'featured') params.set('sort', sort)
     const qs = params.toString()
     return qs ? `/products?${qs}` : '/products'

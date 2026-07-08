@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePaystackPayment } from 'react-paystack'
 import { useCartContext } from '@/context/CartContext'
+import type { SavedDetails } from './page'
 
 const inputClass = `
   w-full px-4 py-3 border border-gray-300 rounded text-sm
@@ -29,12 +31,30 @@ const EMPTY_FORM: FormState = {
   address: '', city: '', state: '', country: 'Nigeria',
 }
 
-export default function CheckoutForm() {
+export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDetails }) {
   const router = useRouter()
+  const { data: session } = useSession()
   const { items, totalPrice } = useCartContext()
   const [form, setForm]     = useState<FormState>(EMPTY_FORM)
   const [errors, setErrors] = useState<Partial<FormState>>({})
   const [loading, setLoading] = useState(false)
+
+  // Pre-fill all fields from session + saved delivery details on first load.
+  // Uses || so that any field the user has already typed into is never overwritten.
+  useEffect(() => {
+    const user = session?.user
+    if (!user) return
+    setForm(prev => ({
+      ...prev,
+      fullName: prev.fullName || user.name  || '',
+      email:    prev.email    || user.email || '',
+      phone:    prev.phone    || savedDetails?.phone   || '',
+      address:  prev.address  || savedDetails?.address || '',
+      city:     prev.city     || savedDetails?.city    || '',
+      state:    prev.state    || savedDetails?.state   || '',
+      country:  prev.country  || savedDetails?.country || 'Nigeria',
+    }))
+  }, [session, savedDetails])
 
   // Redirect to cart if empty — lives here because page.tsx is a server component
   useEffect(() => {
@@ -62,6 +82,71 @@ export default function CheckoutForm() {
 
   const initializePayment = usePaystackPayment(paystackConfig)
 
+  // Test hook — lets Playwright call onSuccess without opening the iframe.
+  // Never runs in production because Next.js removes non-prod env vars at build time.
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') return
+    const w = window as Window & { __paystackSuccess?: (ref: string) => void }
+    w.__paystackSuccess = (ref: string) => {
+      onSuccess({ reference: ref })
+    }
+    return () => { delete w.__paystackSuccess }
+  })
+
+  function onSuccess(response: { reference: string }) {
+    setLoading(true)
+    // Save delivery details back to the user's profile in the background.
+    // Fire-and-forget — we don't block the confirmation redirect on this.
+    if (session?.user) {
+      fetch('/api/user/address', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone:   form.phone,
+          address: form.address,
+          city:    form.city,
+          state:   form.state,
+          country: form.country,
+        }),
+      }).catch(() => {})
+    }
+
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        paystackReference: response.reference,
+        totalAmount:       grandTotal,
+        customerName:      form.fullName,
+        customerEmail:     form.email,
+        customerPhone:     form.phone,
+        address:           form.address,
+        city:              form.city,
+        state:             form.state,
+        country:           form.country,
+        items: items.map(i => ({
+          productId: i.productId,
+          name:      i.name,
+          size:      i.size,
+          quantity:  i.quantity,
+          price:     i.price,
+          image:     i.image ?? '',
+        })),
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const orderParam = data.orderNumber ? `&order=${data.orderNumber}` : ''
+        const nameParam  = form.fullName ? `&name=${encodeURIComponent(form.fullName)}` : ''
+        const emailParam = form.email    ? `&email=${encodeURIComponent(form.email)}`   : ''
+        router.push(`/order-confirmation?ref=${response.reference}${orderParam}${nameParam}${emailParam}`)
+      })
+      .catch(() => {
+        router.push(`/order-confirmation?ref=${response.reference}`)
+      })
+      .finally(() => setLoading(false))
+  }
+
   function validate(): boolean {
     const e: Partial<FormState> = {}
     if (!form.fullName.trim()) e.fullName = 'Required'
@@ -88,43 +173,7 @@ export default function CheckoutForm() {
     if (!validate()) return
 
     initializePayment({
-      onSuccess: async (response: { reference: string }) => {
-        setLoading(true)
-        try {
-          const res = await fetch('/api/orders', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              paystackReference: response.reference,
-              totalAmount:       grandTotal,
-              customerName:      form.fullName,
-              customerEmail:     form.email,
-              customerPhone:     form.phone,
-              address:           form.address,
-              city:              form.city,
-              state:             form.state,
-              country:           form.country,
-              items: items.map(i => ({
-                productId: i.productId,
-                name:      i.name,
-                size:      i.size,
-                quantity:  i.quantity,
-                price:     i.price,
-                image:     i.image ?? '',
-              })),
-            }),
-          })
-          const data = await res.json()
-          const orderParam = data.orderNumber ? `&order=${data.orderNumber}` : ''
-          const nameParam  = form.fullName ? `&name=${encodeURIComponent(form.fullName)}` : ''
-          const emailParam = form.email    ? `&email=${encodeURIComponent(form.email)}`   : ''
-          router.push(`/order-confirmation?ref=${response.reference}${orderParam}${nameParam}${emailParam}`)
-        } catch {
-          router.push(`/order-confirmation?ref=${response.reference}`)
-        } finally {
-          setLoading(false)
-        }
-      },
+      onSuccess,
       onClose: () => {},
     })
   }

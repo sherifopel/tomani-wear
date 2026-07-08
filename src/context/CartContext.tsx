@@ -15,7 +15,8 @@
  * a browser cookie but stored as JSON on the client side.
  */
 
-import { createContext, useContext, useReducer, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useState, useEffect, useRef, type ReactNode } from 'react'
+import { useSession } from 'next-auth/react'
 import type { CartItem, CartState, CartDerived } from '@/types/cart'
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -26,6 +27,7 @@ type Action =
   | { type: 'INCREMENT';      payload: { productId: string; size: string } }
   | { type: 'DECREMENT';      payload: { productId: string; size: string } }
   | { type: 'HYDRATE';        payload: CartItem[] }
+  | { type: 'CLEAR' }
 
 function isSameItem(a: CartItem, b: { productId: string; size: string }) {
   return a.productId === b.productId && a.size === b.size
@@ -76,6 +78,9 @@ function cartReducer(state: CartState, action: Action): CartState {
       }
     }
 
+    case 'CLEAR':
+      return { items: [] }
+
     default:
       return state
   }
@@ -88,6 +93,7 @@ type CartContextValue = CartState & CartDerived & {
   removeItem:     (productId: string, size: string) => void
   increment:      (productId: string, size: string) => void
   decrement:      (productId: string, size: string) => void
+  clearCart:      () => void
   miniCartOpen:   boolean
   openMiniCart:   () => void
   closeMiniCart:  () => void
@@ -102,6 +108,8 @@ const STORAGE_KEY = 'tomani-cart'
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
   const [miniCartOpen, setMiniCartOpen] = useState(false)
+  const { status } = useSession()
+  const prevStatusRef = useRef<string>('')
 
   // On first render, load the saved cart from localStorage
   useEffect(() => {
@@ -124,6 +132,30 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state.items])
 
+  // When a guest session becomes authenticated, merge the localStorage cart
+  // into the user's saved DB cart — exactly once per browser session.
+  // sessionStorage survives SPA navigation but clears when the tab closes,
+  // so a fresh sign-in always gets a fresh merge.
+  useEffect(() => {
+    if (status === 'authenticated' && !sessionStorage.getItem('cart-merged')) {
+      sessionStorage.setItem('cart-merged', '1')
+      const guestItems = state.items
+      fetch('/api/cart/merge', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ items: guestItems }),
+      })
+        .then((res) => res.ok ? res.json() : null)
+        .then((merged: CartItem[] | null) => {
+          if (merged) dispatch({ type: 'HYDRATE', payload: merged })
+        })
+        .catch(() => {
+          // Network error — keep the local cart as-is
+        })
+    }
+    prevStatusRef.current = status
+  }, [status]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Derived totals — computed fresh on every render, not stored
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0)
   const totalPrice = state.items.reduce((sum, i) => sum + i.price * i.quantity, 0)
@@ -136,6 +168,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     removeItem:    (productId, size) => dispatch({ type: 'REMOVE_ITEM', payload: { productId, size } }),
     increment:     (productId, size) => dispatch({ type: 'INCREMENT',   payload: { productId, size } }),
     decrement:     (productId, size) => dispatch({ type: 'DECREMENT',   payload: { productId, size } }),
+    clearCart:     ()                => dispatch({ type: 'CLEAR' }),
     miniCartOpen,
     openMiniCart:  () => setMiniCartOpen(true),
     closeMiniCart: () => setMiniCartOpen(false),

@@ -8,11 +8,12 @@ import { Log } from 'logr-kit'
 export const headerSelectors = (page: Page) => ({
 
   navBar: {
-    mainRow:       page.locator('[data-testid="nav-main-row"]'),
-    logo:          page.locator('[data-testid="nav-logo-link"]'),
+    mainRow:         page.locator('[data-testid="nav-main-row"]'),
+    logo:            page.locator('[data-testid="nav-logo-link"]'),
     searchButton:    page.locator('[data-testid="nav-search-button"]'),
     accountButton:   page.locator('[data-testid="nav-account-button"]'),
-    cartButton:      page.locator('[data-testid="nav-cart-button"]'),
+    cartButton:      page.locator('[data-testid="nav-cart-button"]'),   // desktop drawer button
+    cartLink:        page.locator('[data-testid="nav-cart-link"]'),     // mobile link to /cart
     announcementBar: page.locator('[data-testid="nav-announcement-bar"]'),
   },
 
@@ -54,16 +55,21 @@ export const closeMobileMenu = async (page: Page) => {
 // ║  ASSERTIONS                                                                ║
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
-export const assertMobileHeaderActionsVisible = async (page: Page) => {
+export const assertNavActionsVisible = async (page: Page) => {
   Log.section('Nav bar actions')
-  await page.setViewportSize({ width: 375, height: 667 })
   const { navBar } = headerSelectors(page)
   await expect(navBar.searchButton).toBeVisible()
   Log.ok('search button')
   await expect(navBar.accountButton).toBeVisible()
   Log.ok('account button')
-  await expect(navBar.cartButton).toBeVisible()
-  Log.ok('cart button')
+  // One of cartLink (mobile) or cartButton (desktop) is visible depending on viewport
+  const cartVisible = navBar.cartLink.or(navBar.cartButton).filter({ visible: true })
+  await expect(cartVisible).toBeVisible()
+  Log.ok('cart button/link')
+}
+
+export const assertMobileHeaderActionsVisible = async (page: Page) => {
+  await assertNavActionsVisible(page)
 }
 
 export const assertMobileMenuContents = async (page: Page) => {
@@ -77,8 +83,8 @@ export const assertMobileMenuContents = async (page: Page) => {
   Log.ok('search button')
   await expect(navBar.accountButton).toBeVisible()
   Log.ok('account button')
-  await expect(navBar.cartButton).toBeVisible()
-  Log.ok('cart button')
+  await expect(navBar.cartLink).toBeVisible()
+  Log.ok('cart link (mobile)')
 }
 
 export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
@@ -86,7 +92,13 @@ export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
   const { mobileMenu, navBar } = headerSelectors(page)
   await expect(mobileMenu.overlay).toBeVisible()
 
-  for (const locator of [navBar.announcementBar, navBar.mainRow]) {
+  const elementsToCheck = [navBar.mainRow]
+  // Announcement bar is optional (can be disabled in Sanity settings)
+  if (await navBar.announcementBar.isVisible({ timeout: 2000 }).catch(() => false)) {
+    elementsToCheck.unshift(navBar.announcementBar)
+  }
+
+  for (const locator of elementsToCheck) {
     const box = await locator.boundingBox()
     expect(box).not.toBeNull()
 
@@ -124,4 +136,27 @@ export const assertMobileNavLinksVisible = async (page: Page) => {
   Log.ok('Collections')
   await expect(mobileLinks.sale).toBeVisible()
   Log.ok('Sale')
+}
+
+export const assertMenuClosesOnMenClick = async (page: Page) => {
+  const { mobileLinks, mobileMenu } = headerSelectors(page)
+  await mobileLinks.men.click()
+  await expect(mobileMenu.overlay).not.toBeVisible()
+  Log.ok('menu closed after men link click')
+}
+
+export const assertMenLinkNavigates = async (page: Page, baseURL: string) => {
+  const { mobileLinks } = headerSelectors(page)
+  await mobileLinks.men.click()
+  await expect(page).toHaveURL(`${baseURL}/products?category=men`)
+  await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  Log.ok('men link navigates to /products?category=men')
+}
+
+export const assertWomenLinkNavigates = async (page: Page, baseURL: string) => {
+  const { mobileLinks } = headerSelectors(page)
+  await mobileLinks.women.click()
+  await expect(page).toHaveURL(`${baseURL}/products?category=women`)
+  await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  Log.ok('women link navigates to /products?category=women')
 }

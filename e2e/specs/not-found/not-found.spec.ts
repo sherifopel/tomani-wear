@@ -1,89 +1,58 @@
-/**
- * 404 — Not Found page
- *
- * Regression: the default Next.js 404 had no navbar or footer.
- * root not-found.tsx only gets the root layout (not the store layout),
- * so Navbar/Footer must be imported directly into the page.
- * These tests lock that in — if either disappears, CI fails.
- */
-
-import { test, expect } from '../../fixtures'
-import * as util from '../../utils/utils'
-
-const BROKEN_URL = '/this-page-does-not-exist-at-all'
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 🖥  DESKTOP
-// ─────────────────────────────────────────────────────────────────────────────
+import { test }           from '../../fixtures/fixtures'
+import * as notFoundPage  from '../../page-objects/not-found.page'
+import * as util          from '../../helpers/utils'
 
 test.describe('404 page — desktop', { tag: ['@tomanni', '@not-found', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
-    await page.goto(`${baseURL}${BROKEN_URL}`, { waitUntil: 'domcontentloaded' })
+    await notFoundPage.navigate(page, baseURL!)
   })
 
   test('Should show the 404 page content', async ({ page }) => {
-    await expect(page.locator('[data-testid="not-found-page"]')).toBeVisible()
-    await expect(page.locator('[data-testid="not-found-heading"]')).toBeVisible()
-    await expect(page.locator('[data-testid="not-found-message"]')).toBeVisible()
+    await notFoundPage.assertPageContent(page)
   })
 
-  // Regression: navbar was missing because root not-found.tsx bypasses store layout
   test('Should show the navbar with logo', async ({ page }) => {
-    await expect(page.locator('[data-testid="nav-logo-link"]')).toBeVisible()
+    await notFoundPage.assertNavbarVisible(page)
   })
 
-  // Regression: footer was missing for the same reason
   test('Should show the footer', async ({ page }) => {
-    await expect(page.locator('[data-testid="footer"]')).toBeVisible()
+    await notFoundPage.assertFooterVisible(page)
   })
 
   test('Should show the breadcrumb', async ({ page }) => {
-    await expect(page.locator('[data-testid="not-found-breadcrumb"]')).toBeVisible()
+    await notFoundPage.assertBreadcrumbVisible(page)
   })
 
   test('Back to Home CTA should link to /', async ({ page, baseURL }) => {
-    await page.locator('[data-testid="not-found-home-cta"]').click()
-    await expect(page).toHaveURL(`${baseURL}/`)
+    await notFoundPage.assertHomeCtaNavigates(page, baseURL!)
   })
 
   test('Shop All CTA should link to /products', async ({ page, baseURL }) => {
-    await page.goto(`${baseURL}${BROKEN_URL}`, { waitUntil: 'domcontentloaded' })
-    await page.locator('[data-testid="not-found-shop-cta"]').click()
-    await expect(page).toHaveURL(`${baseURL}/products`)
+    await notFoundPage.assertShopCtaNavigates(page, baseURL!)
   })
 })
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 📱 MOBILE
-// ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('404 page — mobile', { tag: ['@tomanni', '@not-found', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
-    await page.goto(`${baseURL}${BROKEN_URL}`, { waitUntil: 'domcontentloaded' })
+    await notFoundPage.navigate(page, baseURL!)
   })
 
   test('Should show navbar and footer on mobile', async ({ page }) => {
-    await expect(page.locator('[data-testid="nav-logo-link"]')).toBeVisible()
-    await expect(page.locator('[data-testid="footer"]')).toBeVisible()
+    await notFoundPage.assertNavbarVisible(page)
+    await notFoundPage.assertFooterVisible(page)
   })
 
   test('Should show the 404 heading on mobile', async ({ page }) => {
-    await expect(page.locator('[data-testid="not-found-heading"]')).toBeVisible()
+    await notFoundPage.assertPageContent(page)
   })
 })
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 🚀 TOMANNI SMOKE
-// ─────────────────────────────────────────────────────────────────────────────
 
 test.describe('404 smoke', { tag: ['@tomanni-smoke', '@not-found'] }, () => {
   test('Should show navbar, 404 content and footer on an unknown URL', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
-    await page.goto(`${baseURL}${BROKEN_URL}`, { waitUntil: 'domcontentloaded' })
-    await expect(page.locator('[data-testid="nav-logo-link"]')).toBeVisible()
-    await expect(page.locator('[data-testid="not-found-heading"]')).toBeVisible()
-    await expect(page.locator('[data-testid="footer"]')).toBeVisible()
+    await notFoundPage.navigate(page, baseURL!)
+    await notFoundPage.assertSmoke(page)
   })
 })

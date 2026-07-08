@@ -73,19 +73,27 @@ model Address {
   area      String?
   city      String
   state     String
+  country   String   @default("Nigeria")
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String
-  user        User        @relation(fields: [userId], references: [id])
-  totalNgn    Int
-  paystackRef String?
-  status      String      @default("pending")
-  items       OrderItem[]
-  createdAt   DateTime    @default(now())
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  totalNgn      Int
+  paystackRef   String?
+  status        String      @default("pending")
+  customerName  String?
+  customerEmail String?
+  customerPhone String?
+  address       String?
+  city          String?
+  state         String?
+  country       String?
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
 }
 
 model OrderItem {
@@ -97,6 +105,7 @@ model OrderItem {
   priceNgn  Int
   size      String?
   quantity  Int
+  imageUrl  String?
 }
 
 model CartItem {

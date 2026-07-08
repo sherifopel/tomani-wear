@@ -1,0 +1,94 @@
+import { test }          from '../../fixtures/fixtures'
+import * as mergePage    from '../../page-objects/cart-merge.page'
+import * as util         from '../../helpers/utils'
+
+test.describe('Cart — guest cart merge on sign-in', { tag: ['@tomanni', '@cart', '@merge'] }, () => {
+  test.beforeEach(async ({ page }) => {
+    await util.setDeviceMode(page, 'desktop')
+  })
+
+  test('Should call merge API when session becomes authenticated', async ({ page, baseURL }) => {
+    const guest = mergePage.guestCartItem()
+    let mergePayload: { items: unknown[] } | null = null
+
+    await mergePage.seedGuestCart(page, [guest])
+    await mergePage.mockAuthSession(page)
+    await mergePage.mockMergeApi(page, [guest], (body) => { mergePayload = body as { items: unknown[] } })
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(2000)
+    test.expect(mergePayload).not.toBeNull()
+    test.expect((mergePayload as unknown as { items: unknown[] }).items).toHaveLength(1)
+  })
+
+  test('Guest cart items are preserved after sign-in', async ({ page, baseURL }) => {
+    const guest = mergePage.guestCartItem()
+    const merged = [guest]
+
+    await mergePage.seedGuestCart(page, [guest])
+    await mergePage.mockAuthSession(page)
+    await mergePage.mockMergeApi(page, merged)
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(2000)
+    await mergePage.assertLocalStorageCart(page, 1)
+  })
+
+  test('Saved DB items are added to local cart after merge', async ({ page, baseURL }) => {
+    const guest = mergePage.guestCartItem()
+    const saved = mergePage.savedCartItem()
+    const merged = [guest, saved]
+
+    await mergePage.seedGuestCart(page, [guest])
+    await mergePage.mockAuthSession(page)
+    await mergePage.mockMergeApi(page, merged)
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(2000)
+    await mergePage.assertLocalStorageCart(page, 2)
+  })
+
+  test('Duplicate items have quantities combined not duplicated', async ({ page, baseURL }) => {
+    const guest = mergePage.guestCartItem()
+    const serverCopy = { ...guest, quantity: 3 }
+
+    await mergePage.seedGuestCart(page, [guest])
+    await mergePage.mockAuthSession(page)
+    await mergePage.mockMergeApi(page, [serverCopy])
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(2000)
+    await mergePage.assertMergedQuantity(page, guest.productId, 3)
+  })
+
+  test('Cart badge reflects merged item count', async ({ page, baseURL }) => {
+    const guest  = mergePage.guestCartItem()
+    const saved  = mergePage.savedCartItem()
+    const merged = [{ ...guest, quantity: 2 }, { ...saved, quantity: 1 }]
+
+    await mergePage.seedGuestCart(page, [guest])
+    await mergePage.mockAuthSession(page)
+    await mergePage.mockMergeApi(page, merged)
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(2000)
+    await mergePage.assertCartBadgeCount(page, 3)
+  })
+
+  test('Unauthenticated users keep their guest cart untouched', async ({ page, baseURL }) => {
+    const guest = mergePage.guestCartItem()
+
+    await mergePage.seedGuestCart(page, [guest])
+    // No mockAuthSession — user stays as guest
+
+    await mergePage.navigate(page, baseURL!)
+
+    await page.waitForTimeout(1000)
+    await mergePage.assertLocalStorageCart(page, 1)
+  })
+})

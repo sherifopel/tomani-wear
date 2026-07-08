@@ -39,9 +39,10 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
 }`
 
 export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
-  && ($category == "" || category == $category)
+  && ($category == "" || category == $category || ($category == "new" && newIn == true) || ($category == "sale" && compareAtPrice > price))
   && ($type     == "" || menType == $type || womenType == $type || accessoriesType == $type)
   && ($collection == "" || $collection in collections[]->slug.current)
+  && ($q == "" || name match $q || description match $q || category match $q || menType match $q || womenType match $q || accessoriesType match $q)
 ] | order(orderRank asc) {
   _id,
   name,
@@ -57,6 +58,7 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   ),
   description,
   category,
+  _createdAt,
   "productType": coalesce(menType, womenType, accessoriesType)
 }`
 
@@ -75,41 +77,6 @@ export const FEATURED_PRODUCTS_QUERY = groq`*[_type == "product" && featured == 
   )
 }`
 
-export const MID_BANNER_QUERY = groq`*[_type == "midBanner" && _id == "mid-banner-singleton"][0] {
-  "videoUrl":     focalPoints.video.asset->url,
-  "imageMobile":  focalPoints.imageMobile,
-  "imageTablet":  coalesce(focalPoints.imageTablet,  focalPoints.imageMobile),
-  "imageDesktop": coalesce(focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile),
-  "imageXl":      coalesce(focalPoints.imageXl,      focalPoints.imageDesktop, focalPoints.imageTablet, focalPoints.imageMobile),
-  "mobileFocalY":  coalesce(focalPoints.mobile,   50),
-  "tabletFocalY":  coalesce(focalPoints.tablet,   50),
-  "desktopFocalY": coalesce(focalPoints.desktop,  30),
-  "xlFocalY":      coalesce(focalPoints.xlarge,   30),
-  "mobileFocalX":  coalesce(focalPoints.mobileX,  50),
-  "tabletFocalX":  coalesce(focalPoints.tabletX,  50),
-  "desktopFocalX": coalesce(focalPoints.desktopX, 50),
-  "xlFocalX":      coalesce(focalPoints.xlargeX,  50),
-  "content": content {
-    label,
-    heading,
-    sub,
-    href,
-    "textPosition":         coalesce(textPosition, 85),
-    "textPositionX":        coalesce(textPositionX, 0),
-    "mobileTextPosition":   coalesce(mobileTextPosition,   textPosition, 85),
-    "mobileTextPositionX":  coalesce(mobileTextPositionX,  textPositionX, 0),
-    "tabletTextPosition":   coalesce(tabletTextPosition,   textPosition, 85),
-    "tabletTextPositionX":  coalesce(tabletTextPositionX,  textPositionX, 0),
-    "desktopTextPosition":  coalesce(desktopTextPosition,  textPosition, 85),
-    "desktopTextPositionX": coalesce(desktopTextPositionX, textPositionX, 0),
-    "xlTextPosition":       coalesce(xlTextPosition,  textPosition, 85),
-    "xlTextPositionX":      coalesce(xlTextPositionX, textPositionX, 0),
-    "textColor":            coalesce(textColor, "white"),
-    "buttonColor":          coalesce(buttonColor, "white"),
-    buttonCustomColor,
-    buttonBackgroundColor
-  }
-}`
 
 export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
   _id,
@@ -144,6 +111,58 @@ export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false
   "buttonColor":          coalesce(content.buttonColor,          buttonColor,   "white"),
   "buttonCustomColor":    content.buttonCustomColor,
   "buttonBackgroundColor": content.buttonBackgroundColor
+}`
+
+export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
+  sections[enabled != false] {
+    _key,
+    title,
+    "imageMobile":  focalPoints.imageMobile.asset->url,
+    "imageTablet":  coalesce(focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url),
+    "imageDesktop": coalesce(focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url),
+    "imageXl":      coalesce(focalPoints.imageXl.asset->url,      focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url, focalPoints.imageMobile.asset->url),
+    "videoUrl":        focalPoints.video.asset->url,
+    "videoDesktopUrl": focalPoints.videoDesktop.asset->url,
+    "mobileFocalY":  coalesce(focalPoints.mobile,   50),
+    "tabletFocalY":  coalesce(focalPoints.tablet,   50),
+    "desktopFocalY": coalesce(focalPoints.desktop,  30),
+    "xlFocalY":      coalesce(focalPoints.xlarge,   30),
+    "mobileFocalX":  coalesce(focalPoints.mobileX,  50),
+    "tabletFocalX":  coalesce(focalPoints.tabletX,  50),
+    "desktopFocalX": coalesce(focalPoints.desktopX, 50),
+    "xlFocalX":      coalesce(focalPoints.xlargeX,  50),
+    heights,
+    content,
+    "carousel": carousel {
+      title,
+      viewAllLink,
+      style,
+      filter,
+      limit,
+      "products": *[_type == "product" && (
+        ^.filter == "all" ||
+        (^.filter == "new"          && newIn == true) ||
+        (^.filter == "featured"     && featured == true) ||
+        (^.filter == "men"          && category == "men") ||
+        (^.filter == "women"        && category == "women") ||
+        (^.filter == "accessories"  && category == "accessories") ||
+        (^.filter == "sale"         && defined(compareAtPrice) && compareAtPrice > price)
+      )] | order(orderRank asc) [0...20] {
+        _id,
+        name,
+        "slug": slug.current,
+        price,
+        compareAtPrice,
+        inStock,
+        "image": coalesce(
+          productImages[isMain == true][0].image.asset->url,
+          productImages[0].image.asset->url,
+          image.asset->url,
+          gallery[0].asset->url
+        )
+      }
+    }
+  }
 }`
 
 export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current == $slug][0] {
@@ -199,7 +218,6 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
     platform,
     url
   },
-  midBannerEnabled,
   membersCarouselEnabled,
   membersCarouselTitle,
   "membersCarouselProducts": membersCarouselProducts[]->{
