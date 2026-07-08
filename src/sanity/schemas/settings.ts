@@ -57,7 +57,7 @@ export const settings = defineType({
                 direction: 'horizontal',
                 list: [
                   { title: 'Black & White', value: 'black-white' },
-                  { title: 'Grey & Red',    value: 'grey-red'    },
+                  { title: 'Light Grey & Red', value: 'grey-red' },
                 ],
               },
             }),

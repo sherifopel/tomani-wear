@@ -5,7 +5,7 @@ type Banner = { message?: string; theme?: string }
 
 const THEMES: Record<string, { bg: string; text: string }> = {
   'black-white': { bg: '#000000', text: '#ffffff' },
-  'grey-red':    { bg: '#6b7280', text: '#E8000D' },
+  'grey-red':    { bg: '#f0f0f0', text: '#E8000D' },
 }
 
 export function AnnouncementPreview() {

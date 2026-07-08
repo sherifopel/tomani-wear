@@ -4,7 +4,7 @@ import type { ArrayOfObjectsInputProps } from 'sanity'
 
 const THEMES = [
   { label: 'Black & White', value: 'black-white' },
-  { label: 'Grey & Red',    value: 'grey-red'    },
+  { label: 'Light Grey & Red', value: 'grey-red' },
 ]
 
 type Banner = { _key: string; _type: string; message?: string; theme?: string }
