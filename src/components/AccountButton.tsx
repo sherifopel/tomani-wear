@@ -97,10 +97,10 @@ export default function AccountButton() {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => { updatePos(); setIsOpen(prev => !prev) }}
-        className="p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
+        className="p-1 rounded hover:bg-gray-100 transition-colors duration-200"
       >
         <User
-          className={`h-[18px] w-[18px] md:h-5 md:w-5 transition-colors duration-200 ${
+          className={`h-[15px] w-[15px] transition-colors duration-200 ${
             isLoggedIn ? 'text-green-400' : 'text-black'
           }`}
           strokeWidth={1.5}
