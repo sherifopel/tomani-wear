@@ -93,7 +93,7 @@ export default function SearchControl() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               name="q"
-              type="search"
+              type="text"
               enterKeyHint="search"
               autoComplete="off"
               placeholder="Search the store…"
@@ -162,7 +162,7 @@ export default function SearchControl() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 name="q"
-                type="search"
+                type="text"
                 enterKeyHint="search"
                 autoComplete="off"
                 placeholder="Search products…"
