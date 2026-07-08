@@ -161,11 +161,6 @@ export default async function ProductsPage({
 
                 {/* Info */}
                 <div className="flex flex-col" data-testid="plp-product-info">
-                  {product.category && (
-                    <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-1" data-testid="plp-product-category">
-                      {CATEGORY_LABELS[product.category] ?? product.category}
-                    </p>
-                  )}
                   {/* Fixed 2-line height — keeps price aligned across all cards */}
                   <p className="text-sm font-light leading-snug mb-2 line-clamp-2 min-h-[2.5rem]" data-testid="plp-product-name">
                     {product.name}
