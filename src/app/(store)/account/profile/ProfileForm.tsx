@@ -37,7 +37,7 @@ export default function ProfileForm({ user }: Props) {
 
       {/* Name */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs uppercase tracking-widest text-gray-500">Full Name</label>
+        <label className="text-[12px] text-black">Full Name</label>
         <input
           type="text"
           value={name}
@@ -49,7 +49,7 @@ export default function ProfileForm({ user }: Props) {
 
       {/* Email — read only */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs uppercase tracking-widest text-gray-500">Email</label>
+        <label className="text-[12px] text-black">Email</label>
         <input
           type="email"
           value={user.email}
@@ -61,7 +61,7 @@ export default function ProfileForm({ user }: Props) {
 
       {/* Phone */}
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs uppercase tracking-widest text-gray-500">Phone Number</label>
+        <label className="text-[12px] text-black">Phone Number</label>
         <input
           type="tel"
           value={phone}
