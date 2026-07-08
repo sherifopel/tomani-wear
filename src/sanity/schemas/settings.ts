@@ -22,24 +22,19 @@ export const settings = defineType({
       initialValue: 'Settings',
     }),
     defineField({
+      name: 'announcementPreview',
+      title: 'Banner Preview',
+      type: 'string',
+      group: 'announcement',
+      components: { input: AnnouncementPreview },
+    }),
+    defineField({
       name: 'announcementBars',
       title: 'Rotating Announcement Messages',
       type: 'array',
-      description: 'Add two or more messages to rotate through the black bar',
+      description: 'Add two or more messages to rotate through the bar above',
       group: 'announcement',
-      of: [
-        {
-          type: 'string',
-          title: 'Message',
-        },
-      ],
-    }),
-    defineField({
-      name: 'announcementBarEnabled',
-      title: 'Show Announcement Bar',
-      type: 'boolean',
-      initialValue: true,
-      group: 'announcement',
+      of: [{ type: 'string', title: 'Message' }],
     }),
     defineField({
       name: 'announcementBarBgColor',
@@ -56,11 +51,11 @@ export const settings = defineType({
       group: 'announcement',
     }),
     defineField({
-      name: 'announcementPreview',
-      title: 'Banner Preview',
-      type: 'string',
+      name: 'announcementBarEnabled',
+      title: 'Show Announcement Bar',
+      type: 'boolean',
+      initialValue: true,
       group: 'announcement',
-      components: { input: AnnouncementPreview },
     }),
     defineField({
       name: 'membersCarouselEnabled',
