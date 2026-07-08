@@ -27,6 +27,7 @@ type Action =
   | { type: 'INCREMENT';      payload: { productId: string; size: string } }
   | { type: 'DECREMENT';      payload: { productId: string; size: string } }
   | { type: 'HYDRATE';        payload: CartItem[] }
+  | { type: 'CLEAR' }
 
 function isSameItem(a: CartItem, b: { productId: string; size: string }) {
   return a.productId === b.productId && a.size === b.size
@@ -77,6 +78,9 @@ function cartReducer(state: CartState, action: Action): CartState {
       }
     }
 
+    case 'CLEAR':
+      return { items: [] }
+
     default:
       return state
   }
@@ -89,6 +93,7 @@ type CartContextValue = CartState & CartDerived & {
   removeItem:     (productId: string, size: string) => void
   increment:      (productId: string, size: string) => void
   decrement:      (productId: string, size: string) => void
+  clearCart:      () => void
   miniCartOpen:   boolean
   openMiniCart:   () => void
   closeMiniCart:  () => void
@@ -161,6 +166,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     removeItem:    (productId, size) => dispatch({ type: 'REMOVE_ITEM', payload: { productId, size } }),
     increment:     (productId, size) => dispatch({ type: 'INCREMENT',   payload: { productId, size } }),
     decrement:     (productId, size) => dispatch({ type: 'DECREMENT',   payload: { productId, size } }),
+    clearCart:     ()                => dispatch({ type: 'CLEAR' }),
     miniCartOpen,
     openMiniCart:  () => setMiniCartOpen(true),
     closeMiniCart: () => setMiniCartOpen(false),

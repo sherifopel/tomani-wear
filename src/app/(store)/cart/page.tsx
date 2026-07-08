@@ -7,7 +7,7 @@ import { useCart } from '@/hooks/useCart'
 import Breadcrumbs from '@/components/Breadcrumbs'
 
 export default function CartPage() {
-  const { items, totalItems, totalPrice, removeItem, increment, decrement } = useCart()
+  const { items, totalItems, totalPrice, removeItem, increment, decrement, clearCart } = useCart()
 
   // ── Empty state ──────────────────────────────────────────────────────────────
   if (items.length === 0) {
@@ -35,12 +35,21 @@ export default function CartPage() {
       <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
 
       {/* Header */}
-      <h1 className="text-2xl font-medium uppercase tracking-widest mb-8">
-        Shopping Cart{' '}
-        <span className="text-gray-400 text-sm normal-case tracking-normal">
-          ({totalItems} {totalItems === 1 ? 'item' : 'items'})
-        </span>
-      </h1>
+      <div className="flex items-baseline justify-between mb-8">
+        <h1 className="text-2xl font-medium uppercase tracking-widest">
+          Shopping Cart{' '}
+          <span className="text-gray-400 text-sm normal-case tracking-normal">
+            ({totalItems} {totalItems === 1 ? 'item' : 'items'})
+          </span>
+        </h1>
+        <button
+          onClick={clearCart}
+          className="text-xs text-gray-400 hover:text-black transition-colors duration-200 underline underline-offset-2"
+          data-testid="cart-clear-all"
+        >
+          Remove all
+        </button>
+      </div>
 
       <div className="md:grid md:grid-cols-[1fr_300px] md:gap-16 md:items-start">
 
