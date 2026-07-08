@@ -81,7 +81,8 @@ export default async function ProductsPage({
     : [{ label: 'Home', href: '/' }, { label: 'Products' }]
 
   return (
-    <div className="max-w-7xl mx-auto px-6 pb-16" data-testid="plp-page">
+    <div className="bg-[#f9f9f9] min-h-screen" data-testid="plp-page">
+    <div className="max-w-7xl mx-auto px-6 pb-16">
 
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
@@ -122,15 +123,15 @@ export default async function ProductsPage({
       {/* Product grid */}
       {products.length > 0 && (
         <ul
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
           data-testid="plp-grid"
         >
           {products.map((product) => (
             <li key={product._id} data-testid="plp-product-card">
-              <Link href={`/products/${product.slug}`} className="group block" data-testid={`plp-product-link-${product.slug}`}>
+              <Link href={`/products/${product.slug}`} className="group block bg-white" data-testid={`plp-product-link-${product.slug}`}>
 
                 {/* Image */}
-                <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden mb-3 rounded-md" data-testid="plp-product-image-wrapper">
+                <div className="relative aspect-[3/4] bg-white overflow-hidden mb-3" data-testid="plp-product-image-wrapper">
                   {product.image ? (
                     <Image
                       src={product.image}
@@ -160,7 +161,7 @@ export default async function ProductsPage({
                 </div>
 
                 {/* Info */}
-                <div className="flex flex-col" data-testid="plp-product-info">
+                <div className="flex flex-col px-3 pb-3" data-testid="plp-product-info">
                   {/* Fixed 2-line height — keeps price aligned across all cards */}
                   <p className="text-sm font-light leading-snug mb-2 line-clamp-2 min-h-[2.5rem]" data-testid="plp-product-name">
                     {product.name}
@@ -183,6 +184,7 @@ export default async function ProductsPage({
         </ul>
       )}
 
+    </div>
     </div>
   )
 }
