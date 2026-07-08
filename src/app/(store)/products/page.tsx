@@ -88,16 +88,14 @@ export default async function ProductsPage({
 
       {/* Header */}
       <div className="pt-6 mb-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between" data-testid="plp-header">
-          <div className="min-w-0">
-            <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
+        <div className="flex items-center justify-between gap-4" data-testid="plp-header">
+          <div className="flex items-center gap-4 min-w-0">
+            <h1 className="text-sm uppercase tracking-widest font-medium shrink-0" data-testid="plp-title">
               {pageTitle}
             </h1>
-          </div>
-          <div className="flex items-center justify-between gap-1 md:justify-end">
             <FilterDropdown current={category} sort={sort} query={searchQuery} />
-            <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
           </div>
+          <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
         </div>
         <p className="text-xs text-gray-400 mt-3" data-testid="plp-count">
           Showing {products.length} {products.length === 1 ? 'product' : 'products'}
