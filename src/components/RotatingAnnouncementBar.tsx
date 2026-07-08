@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react'
 
 export default function RotatingAnnouncementBar({
   messages,
+  bgColor,
+  textColor,
 }: {
   messages: string[]
+  bgColor?: string
+  textColor?: string
 }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -22,7 +26,11 @@ export default function RotatingAnnouncementBar({
   return (
     <div
       data-testid="nav-announcement-bar"
-      className="bg-black text-white text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden"
+      className="text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden"
+      style={{
+        backgroundColor: bgColor ?? '#000000',
+        color: textColor ?? '#ffffff',
+      }}
     >
       <span
         key={activeIndex}

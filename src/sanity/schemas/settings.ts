@@ -21,13 +21,6 @@ export const settings = defineType({
       initialValue: 'Settings',
     }),
     defineField({
-      name: 'announcementBar',
-      title: 'Announcement Bar Text',
-      type: 'string',
-      description: 'Fallback text shown if no rotating messages are added',
-      group: 'announcement',
-    }),
-    defineField({
       name: 'announcementBars',
       title: 'Rotating Announcement Messages',
       type: 'array',
@@ -45,6 +38,20 @@ export const settings = defineType({
       title: 'Show Announcement Bar',
       type: 'boolean',
       initialValue: true,
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementBarBgColor',
+      title: 'Banner Background Colour',
+      description: 'Hex code, e.g. #FF5733. Defaults to black.',
+      type: 'string',
+      group: 'announcement',
+    }),
+    defineField({
+      name: 'announcementBarTextColor',
+      title: 'Banner Text Colour',
+      description: 'Hex code, e.g. #FFFFFF. Defaults to white.',
+      type: 'string',
       group: 'announcement',
     }),
     defineField({

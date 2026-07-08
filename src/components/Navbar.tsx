@@ -10,9 +10,10 @@ import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
 
 type Settings = {
-  announcementBar?: string
   announcementBars?: string[]
   announcementBarEnabled?: boolean
+  announcementBarBgColor?: string
+  announcementBarTextColor?: string
 }
 
 export default async function Navbar() {
@@ -20,10 +21,14 @@ export default async function Navbar() {
   const showBanner = settings.announcementBarEnabled !== false
   const bannerMessages = settings.announcementBars?.filter(Boolean).length
     ? settings.announcementBars.filter(Boolean)
-    : [settings.announcementBar ?? 'Free shipping on orders over ₦50,000']
+    : ['Free delivery on orders over ₦50,000']
 
   const announcementBar = showBanner ? (
-    <RotatingAnnouncementBar messages={bannerMessages} />
+    <RotatingAnnouncementBar
+      messages={bannerMessages}
+      bgColor={settings.announcementBarBgColor}
+      textColor={settings.announcementBarTextColor}
+    />
   ) : undefined
 
   const mainRow = (
