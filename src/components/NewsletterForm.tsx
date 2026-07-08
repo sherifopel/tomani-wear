@@ -13,7 +13,7 @@ export default function NewsletterForm() {
       />
       <button
         type="submit"
-        className="border border-white text-white px-6 py-3 text-xs uppercase tracking-widest font-medium hover:bg-white hover:text-black transition-colors duration-300 w-full"
+        className="border border-white text-white px-6 py-3 text-xs  font-medium hover:bg-white hover:text-black transition-colors duration-300 w-full"
       >
         Subscribe
       </button>

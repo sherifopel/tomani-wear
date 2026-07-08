@@ -54,7 +54,7 @@ export default function SortDropdown({
       <button
         onClick={() => setOpen(v => !v)}
         data-testid="plp-sort-trigger"
-        className="flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200 border border-gray-300 rounded-full hover:border-orange-500"
+        className="flex items-center gap-2 px-4 py-2 text-xs  text-gray-500 hover:text-black transition-colors duration-200 border border-gray-300 rounded-full hover:border-orange-500"
       >
         <ArrowUpDown size={14} strokeWidth={1.5} className="text-black" />
         {/* Mobile: just "Sort", Desktop: full label */}
@@ -74,7 +74,7 @@ export default function SortDropdown({
                 href={buildHref(option.value)}
                 onClick={() => setOpen(false)}
                 data-testid={`plp-sort-option-${option.value}`}
-                className={`block px-4 py-3 text-xs uppercase tracking-widest transition-colors duration-150 ${
+                className={`block px-4 py-3 text-xs  transition-colors duration-150 ${
                   current === option.value
                     ? 'font-medium text-black bg-gray-50'
                     : 'text-gray-600 hover:text-black hover:bg-gray-50'

@@ -41,7 +41,7 @@ export default async function OrdersPage() {
           </p>
           <Link
             href="/products"
-            className="inline-block px-8 py-3 bg-black text-white text-xs uppercase tracking-widest border border-black btn-wipe"
+            className="inline-block px-8 py-3 bg-black text-white text-xs  border border-black btn-wipe"
           >
             Shop Now
           </Link>
@@ -62,7 +62,7 @@ export default async function OrdersPage() {
                       {orderNumber(order.id)}
                     </span>
                     <span
-                      className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-medium ${statusColour(order.status)}`}
+                      className={`text-[10px]  px-2 py-0.5 rounded-full font-medium ${statusColour(order.status)}`}
                       data-testid="orders-order-status"
                     >
                       {statusLabel(order.status)}

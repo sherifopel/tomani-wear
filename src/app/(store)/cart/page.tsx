@@ -9,16 +9,18 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, increment, decrement, clearCart } = useCart()
 
+  const isPreview = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
+
   // ── Empty state ──────────────────────────────────────────────────────────────
   if (items.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-6 py-10" data-testid="cart-empty">
         <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
         <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
-          <p className="text-sm uppercase tracking-widest text-gray-400">Your cart is empty</p>
+          <p className="text-sm  text-gray-400">Your cart is empty</p>
           <Link
             href="/products"
-            className="px-8 py-3 bg-black text-white border border-black text-xs uppercase tracking-widest btn-wipe"
+            className="px-8 py-3 bg-black text-white border border-black text-xs  btn-wipe"
             data-testid="cart-start-shopping"
           >
             Start Shopping
@@ -35,20 +37,25 @@ export default function CartPage() {
       <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
 
       {/* Header */}
-      <div className="flex items-baseline justify-between mb-8">
-        <h1 className="text-2xl font-medium uppercase tracking-widest">
-          Shopping Cart{' '}
-          <span className="text-gray-400 text-sm normal-case tracking-normal">
-            ({totalItems} {totalItems === 1 ? 'item' : 'items'})
-          </span>
-        </h1>
-        <button
-          onClick={clearCart}
-          className="text-xs text-gray-400 hover:text-black transition-colors duration-200 underline underline-offset-2"
-          data-testid="cart-clear-all"
-        >
-          Remove all
-        </button>
+      <div className="mb-8">
+        <h1 className="text-2xl font-medium ">Shopping Cart</h1>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-xs text-gray-400">
+            {totalItems} {totalItems === 1 ? 'item' : 'items'}
+          </p>
+          {isPreview && (
+            <>
+              <span className="text-gray-300">·</span>
+              <button
+                onClick={clearCart}
+                className="text-xs text-gray-400 hover:text-black transition-colors duration-200 underline underline-offset-2"
+                data-testid="cart-clear-all"
+              >
+                Clear cart
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="md:grid md:grid-cols-[1fr_300px] md:gap-16 md:items-start">
@@ -81,7 +88,7 @@ export default function CartPage() {
 
                 {/* Name + size */}
                 <div>
-                  <p className="text-sm font-light uppercase tracking-wide leading-snug" data-testid="cart-item-name">
+                  <p className="text-sm font-light  leading-snug" data-testid="cart-item-name">
                     {item.name}
                   </p>
                   <p className="text-xs text-gray-400 mt-1" data-testid="cart-item-size">
@@ -130,7 +137,7 @@ export default function CartPage() {
 
         {/* ── Order summary — hidden on mobile (shown in sticky bar instead) ── */}
         <div className="hidden md:block mt-10 md:mt-0 bg-gray-50 p-6 space-y-4" data-testid="cart-order-summary">
-          <p className="text-xs uppercase tracking-widest font-medium" data-testid="cart-summary-heading">Order Summary</p>
+          <p className="text-xs  font-medium" data-testid="cart-summary-heading">Order Summary</p>
 
           <div className="flex justify-between text-xs text-gray-400" data-testid="cart-summary-shipping-row">
             <span>Shipping</span>
@@ -151,7 +158,7 @@ export default function CartPage() {
 
           <Link
             href="/checkout"
-            className="block w-full py-4 bg-black text-white border border-black text-xs uppercase tracking-widest font-medium text-center btn-wipe"
+            className="block w-full py-4 bg-black text-white border border-black text-xs  font-medium text-center btn-wipe"
             data-testid="cart-checkout-button"
           >
             Checkout
@@ -163,12 +170,12 @@ export default function CartPage() {
       {/* ── Sticky checkout bar — mobile only ── */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 px-6 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium uppercase tracking-widest">Total</span>
+          <span className="text-sm font-medium ">Total</span>
           <span className="text-sm font-medium">₦{totalPrice.toLocaleString()}</span>
         </div>
         <Link
           href="/checkout"
-          className="block w-full py-4 bg-black text-white border border-black text-xs uppercase tracking-widest font-medium text-center btn-wipe"
+          className="block w-full py-4 bg-black text-white border border-black text-xs  font-medium text-center btn-wipe"
           data-testid="cart-checkout-button-mobile"
         >
           Checkout

@@ -11,7 +11,7 @@ export default function WishlistPage() {
         </p>
         <Link
           href="/products"
-          className="inline-block px-8 py-3 bg-black text-white text-xs uppercase tracking-widest border border-black btn-wipe"
+          className="inline-block px-8 py-3 bg-black text-white text-xs  border border-black btn-wipe"
         >
           Browse Products
         </Link>

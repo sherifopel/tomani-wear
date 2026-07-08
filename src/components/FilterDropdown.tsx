@@ -66,7 +66,7 @@ export default function FilterDropdown({
           href={buildHref()}
           onClick={() => setOpen(false)}
           data-testid="plp-filter-option-all"
-          className={`flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest transition-colors duration-150 ${
+          className={`flex items-center justify-between px-4 py-3 text-xs  transition-colors duration-150 ${
             !current ? 'font-medium text-black bg-gray-50' : 'text-gray-600 hover:text-black hover:bg-gray-50'
           }`}
         >
@@ -79,7 +79,7 @@ export default function FilterDropdown({
             href={buildHref(cat.value)}
             onClick={() => setOpen(false)}
             data-testid={`plp-filter-option-${cat.value}`}
-            className={`flex items-center justify-between px-4 py-3 text-xs uppercase tracking-widest transition-colors duration-150 ${
+            className={`flex items-center justify-between px-4 py-3 text-xs  transition-colors duration-150 ${
               current === cat.value ? 'font-medium text-black bg-gray-50' : 'text-gray-600 hover:text-black hover:bg-gray-50'
             }`}
           >
@@ -97,7 +97,7 @@ export default function FilterDropdown({
         <button
           onClick={() => setOpen(v => !v)}
           data-testid="plp-filter-trigger"
-          className="flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-widest text-gray-500 hover:text-black transition-colors duration-200"
+          className="flex items-center gap-2 px-4 py-2 text-xs  text-gray-500 hover:text-black transition-colors duration-200"
         >
           <SlidersHorizontal size={14} strokeWidth={1.5} className="text-black" />
           <span>Filter{currentLabel && <span className="font-medium">: {currentLabel}</span>}</span>
@@ -138,7 +138,7 @@ export default function FilterDropdown({
         >
           {/* Drawer header */}
           <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-            <p className="text-xs uppercase tracking-widest font-medium">Filter</p>
+            <p className="text-xs  font-medium">Filter</p>
             <button
               onClick={() => setOpen(false)}
               aria-label="Close filter"
@@ -151,7 +151,7 @@ export default function FilterDropdown({
 
           {/* Category options */}
           <div className="px-2 py-4">
-            <p className="px-4 pb-2 text-[10px] uppercase tracking-widest text-gray-400">Category</p>
+            <p className="px-4 pb-2 text-[10px]  text-gray-400">Category</p>
             <ul>{options}</ul>
           </div>
         </div>

@@ -72,7 +72,7 @@ export default function MobileMenu() {
                           href={link.href}
                           data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setOpen(false)}
-                          className={`flex-1 py-5 text-sm uppercase tracking-widest font-medium transition-colors ${
+                          className={`flex-1 py-5 text-sm  font-medium transition-colors ${
                             link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
                           }`}
                         >
@@ -112,7 +112,7 @@ export default function MobileMenu() {
                       href={link.href}
                       data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                       onClick={() => setOpen(false)}
-                      className={`flex items-center justify-between py-5 text-sm uppercase tracking-widest font-medium transition-colors ${
+                      className={`flex items-center justify-between py-5 text-sm  font-medium transition-colors ${
                         link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
                       }`}
                     >

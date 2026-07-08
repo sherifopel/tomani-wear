@@ -42,7 +42,7 @@ export default function SearchControl() {
         onClick={expand}
         className="p-1 rounded-full hover:bg-gray-100 transition-colors duration-200 flex items-center justify-center"
       >
-        <Search className="h-[15px] w-[15px]" strokeWidth={1.5} />
+        <Search className="h-[15px] w-[15px] md:h-5 md:w-5" strokeWidth={1.5} />
       </button>
 
       {/* Oval — floats over the logo on all screen sizes */}

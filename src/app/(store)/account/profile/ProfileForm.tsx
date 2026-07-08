@@ -76,7 +76,7 @@ export default function ProfileForm({ user }: Props) {
       <button
         type="submit"
         disabled={saving}
-        className="mt-2 px-8 py-3 bg-black text-white text-xs uppercase tracking-widest border border-black btn-wipe disabled:opacity-50"
+        className="mt-2 px-8 py-3 bg-black text-white text-xs  border border-black btn-wipe disabled:opacity-50"
       >
         {saving ? 'Saving…' : saved ? 'Saved' : 'Save Changes'}
       </button>

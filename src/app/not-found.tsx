@@ -23,7 +23,7 @@ export default function NotFound() {
 
           <div className="flex flex-col items-center text-center py-20 md:py-28">
             <h1
-              className="text-2xl md:text-3xl font-bold uppercase tracking-[0.2em]"
+              className="text-2xl md:text-3xl font-bold tracking-[0.2em]"
               data-testid="not-found-heading"
             >
               404 Error — Page Not Found
@@ -40,14 +40,14 @@ export default function NotFound() {
               <Link
                 href="/"
                 data-testid="not-found-home-cta"
-                className="px-10 py-3.5 bg-black text-white text-xs uppercase tracking-widest rounded border border-black btn-wipe"
+                className="px-10 py-3.5 bg-black text-white text-xs  rounded border border-black btn-wipe"
               >
                 Back to Home
               </Link>
               <Link
                 href="/products"
                 data-testid="not-found-shop-cta"
-                className="px-10 py-3.5 bg-white text-black text-xs uppercase tracking-widest rounded border border-black btn-wipe-white"
+                className="px-10 py-3.5 bg-white text-black text-xs  rounded border border-black btn-wipe-white"
               >
                 Shop All
               </Link>

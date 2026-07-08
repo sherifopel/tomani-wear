@@ -31,13 +31,13 @@ export default async function NewInGrid() {
 
       {/* Header sits inside the standard page container */}
       <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
-        <h2 className="text-[28px] font-light tracking-widest uppercase" data-testid="home-new-in-heading">
+        <h2 className="text-[28px] font-light " data-testid="home-new-in-heading">
           New In
         </h2>
         <Link
           href="/products?category=new"
           data-testid="home-new-in-view-all"
-          className="border border-black px-6 py-2.5 text-xs uppercase tracking-widest btn-wipe-white rounded"
+          className="border border-black px-6 py-2.5 text-xs  btn-wipe-white rounded"
         >
           View All
         </Link>
