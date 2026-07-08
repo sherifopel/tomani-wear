@@ -181,20 +181,4 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
     platform,
     url
   },
-  membersCarouselEnabled,
-  membersCarouselTitle,
-  "membersCarouselProducts": membersCarouselProducts[]->{
-    _id,
-    name,
-    "slug": slug.current,
-    price,
-    compareAtPrice,
-    inStock,
-    "image": coalesce(
-      productImages[isMain == true][0].image.asset->url,
-      productImages[0].image.asset->url,
-      image.asset->url,
-      gallery[0].asset->url
-    )
-  }
 }`
