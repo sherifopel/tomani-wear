@@ -44,7 +44,7 @@ export default async function Navbar() {
         <span className="logo-shine text-[20px] md:text-[28px] font-bold leading-none tracking-[0.22em] uppercase">Tomanni</span>
       </Link>
 
-      <div className="flex items-center justify-end gap-2 md:gap-5 text-black justify-self-end">
+      <div className="flex items-center justify-end gap-[0.4rem] text-black justify-self-end">
         <SearchControl />
         <AccountButton />
         <NavCartButton />

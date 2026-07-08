@@ -9,7 +9,7 @@ export default function NavCartButton() {
 
   const icon = (
     <ShoppingBag
-      className="h-[18px] w-[18px] md:h-5 md:w-5 text-black transition-all duration-200"
+      className="h-[15px] w-[15px] text-black transition-all duration-200"
       strokeWidth={totalItems > 0 ? 2 : 1.5}
       fill={totalItems > 0 ? 'rgba(201,162,39,0.35)' : 'none'}
     />
@@ -30,7 +30,7 @@ export default function NavCartButton() {
         href="/cart"
         data-testid="nav-cart-link"
         aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}
-        className="md:hidden p-1.5 rounded hover:bg-gray-100 transition-colors duration-200 flex items-center"
+        className="md:hidden p-1 rounded hover:bg-gray-100 transition-colors duration-200 flex items-center"
       >
         {icon}
       </Link>
@@ -40,7 +40,7 @@ export default function NavCartButton() {
         data-testid="nav-cart-button"
         aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}
         onClick={openMiniCart}
-        className="hidden md:flex p-1.5 rounded hover:bg-gray-100 transition-colors duration-200 items-center"
+        className="hidden md:flex p-1 rounded hover:bg-gray-100 transition-colors duration-200 items-center"
       >
         {icon}
       </button>
