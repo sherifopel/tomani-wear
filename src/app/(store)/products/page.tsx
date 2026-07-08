@@ -88,9 +88,9 @@ export default async function ProductsPage({
 
       {/* Header */}
       <div className="pt-6 mb-4">
-        <div className="flex items-center justify-between gap-4" data-testid="plp-header">
-          <div className="flex items-center gap-4 min-w-0">
-            <h1 className="text-sm uppercase tracking-widest font-medium shrink-0" data-testid="plp-title">
+        <div className="flex items-start justify-between gap-4" data-testid="plp-header">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
               {pageTitle}
             </h1>
             <FilterDropdown current={category} sort={sort} query={searchQuery} />
