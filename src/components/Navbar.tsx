@@ -9,26 +9,22 @@ import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
 
+type Banner = { message: string; bgColor?: string; textColor?: string }
+
 type Settings = {
-  announcementBars?: string[]
+  announcementBars?: Banner[]
   announcementBarEnabled?: boolean
-  announcementBarBgColor?: string
-  announcementBarTextColor?: string
 }
 
 export default async function Navbar() {
   const settings: Settings = await client.fetch(SETTINGS_QUERY) ?? {}
   const showBanner = settings.announcementBarEnabled !== false
-  const bannerMessages = settings.announcementBars?.filter(Boolean).length
-    ? settings.announcementBars.filter(Boolean)
-    : ['Free delivery on orders over ₦50,000']
+  const banners: Banner[] = settings.announcementBars?.filter(b => b.message) ?? [
+    { message: 'Free delivery on orders over ₦50,000', bgColor: '#000000', textColor: '#ffffff' },
+  ]
 
   const announcementBar = showBanner ? (
-    <RotatingAnnouncementBar
-      messages={bannerMessages}
-      bgColor={settings.announcementBarBgColor}
-      textColor={settings.announcementBarTextColor}
-    />
+    <RotatingAnnouncementBar banners={banners} />
   ) : undefined
 
   const mainRow = (

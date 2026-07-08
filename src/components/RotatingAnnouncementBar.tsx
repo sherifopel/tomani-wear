@@ -2,41 +2,35 @@
 
 import { useEffect, useState } from 'react'
 
-export default function RotatingAnnouncementBar({
-  messages,
-  bgColor,
-  textColor,
-}: {
-  messages: string[]
-  bgColor?: string
-  textColor?: string
-}) {
+type Banner = { message: string; bgColor?: string; textColor?: string }
+
+export default function RotatingAnnouncementBar({ banners }: { banners: Banner[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
-    if (messages.length < 2) return
-
-    const intervalId = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % messages.length)
+    if (banners.length < 2) return
+    const id = window.setInterval(() => {
+      setActiveIndex((i) => (i + 1) % banners.length)
     }, 4000)
+    return () => window.clearInterval(id)
+  }, [banners.length])
 
-    return () => window.clearInterval(intervalId)
-  }, [messages.length])
+  const active = banners[activeIndex] ?? banners[0]
 
   return (
     <div
       data-testid="nav-announcement-bar"
-      className="text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden"
+      className="text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden transition-colors duration-500"
       style={{
-        backgroundColor: bgColor ?? '#000000',
-        color: textColor ?? '#ffffff',
+        backgroundColor: active.bgColor  ?? '#000000',
+        color:           active.textColor ?? '#ffffff',
       }}
     >
       <span
         key={activeIndex}
         className="mx-auto block max-w-[34rem] leading-relaxed animate-[announcement-slide_400ms_ease-out]"
       >
-        {messages[activeIndex]}
+        {active.message}
       </span>
     </div>
   )

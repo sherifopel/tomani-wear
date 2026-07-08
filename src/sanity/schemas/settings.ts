@@ -29,45 +29,64 @@ export const settings = defineType({
     }),
     defineField({
       name: 'announcementBars',
-      title: 'Rotating Announcement Messages',
+      title: 'Announcement Banners',
       type: 'array',
-      description: 'Add two or more messages to rotate through the bar above',
+      description: 'Each banner rotates in turn. Set the message and colours individually.',
       group: 'announcement',
-      of: [{ type: 'string', title: 'Message' }],
-    }),
-    defineField({
-      name: 'announcementBarBgColor',
-      title: 'Banner Background Colour',
-      description: 'Defaults to black if not set.',
-      type: 'string',
-      group: 'announcement',
-      options: {
-        layout: 'radio',
-        direction: 'horizontal',
-        list: [
-          { title: 'Black', value: '#000000' },
-          { title: 'White', value: '#ffffff' },
-          { title: 'Grey',  value: '#6b7280' },
-          { title: 'Red',   value: '#E8000D' },
-        ],
-      },
-    }),
-    defineField({
-      name: 'announcementBarTextColor',
-      title: 'Banner Text Colour',
-      description: 'Defaults to white if not set.',
-      type: 'string',
-      group: 'announcement',
-      options: {
-        layout: 'radio',
-        direction: 'horizontal',
-        list: [
-          { title: 'Black', value: '#000000' },
-          { title: 'White', value: '#ffffff' },
-          { title: 'Grey',  value: '#6b7280' },
-          { title: 'Red',   value: '#E8000D' },
-        ],
-      },
+      of: [
+        {
+          type: 'object',
+          title: 'Banner',
+          fields: [
+            defineField({
+              name: 'message',
+              title: 'Message',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'bgColor',
+              title: 'Background',
+              type: 'string',
+              options: {
+                layout: 'radio',
+                direction: 'horizontal',
+                list: [
+                  { title: 'Black', value: '#000000' },
+                  { title: 'White', value: '#ffffff' },
+                  { title: 'Grey',  value: '#6b7280' },
+                  { title: 'Red',   value: '#E8000D' },
+                ],
+              },
+            }),
+            defineField({
+              name: 'textColor',
+              title: 'Text',
+              type: 'string',
+              options: {
+                layout: 'radio',
+                direction: 'horizontal',
+                list: [
+                  { title: 'Black', value: '#000000' },
+                  { title: 'White', value: '#ffffff' },
+                  { title: 'Grey',  value: '#6b7280' },
+                  { title: 'Red',   value: '#E8000D' },
+                ],
+              },
+            }),
+          ],
+          preview: {
+            select: { title: 'message', bg: 'bgColor', text: 'textColor' },
+            prepare({ title, bg, text }) {
+              const bgName = { '#000000': 'Black', '#ffffff': 'White', '#6b7280': 'Grey', '#E8000D': 'Red' }
+              return {
+                title: title ?? 'Untitled banner',
+                subtitle: `${bgName[bg as keyof typeof bgName] ?? 'Black'} bg · ${bgName[text as keyof typeof bgName] ?? 'White'} text`,
+              }
+            },
+          },
+        },
+      ],
     }),
     defineField({
       name: 'announcementBarEnabled',

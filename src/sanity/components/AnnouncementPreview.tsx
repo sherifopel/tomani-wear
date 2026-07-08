@@ -1,22 +1,25 @@
 'use client'
 import { useFormValue } from 'sanity'
 
-export function AnnouncementPreview() {
-  const bgColor   = useFormValue(['announcementBarBgColor'])  as string | undefined
-  const textColor = useFormValue(['announcementBarTextColor']) as string | undefined
-  const messages  = useFormValue(['announcementBars']) as string[] | undefined
+type Banner = { message?: string; bgColor?: string; textColor?: string }
 
-  const previewText = messages?.filter(Boolean)[0] ?? 'Free delivery on orders over ₦50,000'
+export function AnnouncementPreview() {
+  const banners = useFormValue(['announcementBars']) as Banner[] | undefined
+  const first   = banners?.[0]
+
+  const bg   = first?.bgColor   ?? '#000000'
+  const text = first?.textColor ?? '#ffffff'
+  const msg  = first?.message   ?? 'Free delivery on orders over ₦50,000'
 
   return (
     <div style={{ paddingTop: 4 }}>
       <p style={{ fontSize: 11, color: '#9ca3af', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-        Live preview
+        Live preview — Banner 1
       </p>
       <div
         style={{
-          backgroundColor: bgColor  ?? '#000000',
-          color:           textColor ?? '#ffffff',
+          backgroundColor: bg,
+          color:           text,
           textAlign:       'center',
           fontSize:        11,
           padding:         '8px 20px',
@@ -25,7 +28,7 @@ export function AnnouncementPreview() {
           borderRadius:    4,
         }}
       >
-        {previewText}
+        {msg}
       </div>
     </div>
   )

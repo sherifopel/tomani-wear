@@ -169,10 +169,8 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
 }`
 
 export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
-  announcementBars,
+  announcementBars[]{ message, bgColor, textColor },
   announcementBarEnabled,
-  announcementBarBgColor,
-  announcementBarTextColor,
   footerLinks[]{
     label,
     href
