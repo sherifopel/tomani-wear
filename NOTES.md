@@ -365,3 +365,55 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 **GROQ `->` dereferencing** — in Sanity's query language, `membersCarouselProducts[]->{ name, price }` follows the reference and pulls fields from the linked document. It's the equivalent of MongoDB's `populate()` or a SQL JOIN.
 
 **`bg-white/[0.02]` in Tailwind** — square bracket syntax lets you use arbitrary values inside utility classes. `bg-white/10` = 10% opacity white, `bg-white/[0.02]` = 2% opacity white. Useful for fine-grained transparency control.
+
+---
+
+## Session 6 — Home Page Builder, Search, Nav Polish & Mid Banner Removal
+
+### What we built
+
+**Home Page Builder (replaces fixed Hero slides)**
+- Tomiwa can now stack as many "Hero + Carousel" sections as he likes from Sanity Studio, in any order
+- Each section is an object in a `sections[]` array on the `homePage` singleton document — drag to reorder, tick "Show Section" to hide without deleting
+- Each section has: per-device images (Mobile / Tablet / Desktop / XL), two optional portrait/landscape videos, banner height + fit controls, full text overlay (heading, sub, label, button, per-device position sliders), and a product carousel below
+- The GROQ query uses `^.filter` (parent scope reference) to filter products inside a nested sub-query — like referencing a variable from an outer function scope, but in query language
+
+**Per-device media strategy**
+- Mobile: portrait video preferred → mobile image fallback
+- Tablet: tablet image → desktop video → mobile video
+- Desktop: desktop image → desktop video → mobile video
+- XL: XL image → desktop image → desktop video → mobile video
+- Each breakpoint picks independently — so you can have a video on mobile and a still image on desktop in the same section
+- On wide screens, use the "blur letterbox" technique: ffmpeg blurs and darkens the portrait video, centres it on a blurred background fill — full subject visible at any width without cropping
+
+**SearchControl component (Noble Panacea style)**
+- Desktop: search icon button in the navbar — hover reveals an oval pill that expands in from the right via `clip-path` animation (`inset(0 0 0 100% round 9999px)` → `inset(0 0 0 0%)`)
+- The form is `position: absolute` so it floats over the layout — the navbar grid columns don't reflow and the logo never moves
+- Mobile: tapping the icon opens a full-screen overlay with a blurred backdrop
+
+**Nav links updated**
+- Accessories: added Shoes and Boots
+- All dropdowns: alphabetised (Men, Women, Accessories, Collections)
+- Trousers & Joggers split into separate entries for both Men and Women
+
+**Mid Banner removed entirely**
+- Deleted: `MidBanner.tsx`, `midBanner.ts` schema, `MidBannerContentPreview.tsx`, `MID_BANNER_QUERY`, `midBannerEnabled` settings field, Studio structure item
+- Root cause of Studio crash ("Schema type for 'midBanner' not found"): `sanity.config.ts` still had a hardcoded `S.document().schemaType('midBanner')` item even after the schema was deleted. Fix: remove the list item AND register the new `homePage` schema in its place
+
+**Carousel background consistency**
+- Both carousel styles (horizontal scroll strip and 2×4 grid) now have `bg-[#f9f9f9]` on the image container
+- Text is always below the image — never overlaid on it
+
+### Key concepts learned
+
+**Sanity `^.filter` in GROQ** — when you write a sub-query inside a projection, `^` refers to the parent scope. `^.filter` reads the `filter` field of the carousel object that's currently being projected, not the product. It's how you pass a variable into a nested query — like closure variables in JavaScript.
+
+**`position: absolute` in a CSS Grid cell** — when you remove an element from grid flow with `position: absolute`, it no longer takes up space in the grid. Other columns don't expand to fill it. The absolute element positions itself relative to the nearest `position: relative` ancestor. This is how the search form can be 320px wide while its grid cell stays icon-sized — the form grows outside its cell without pushing anything.
+
+**`clip-path: inset()` animation** — `inset(top right bottom left)` clips a rectangle. `inset(0 0 0 100%)` clips everything from the right, hiding the element. Animating the left value from `100%` to `0%` reveals it left-to-right. Adding `round 9999px` keeps the pill shape throughout. This technique works for any shape you want to reveal without a mask image.
+
+**Art direction vs CSS fit** — when you have fundamentally different compositions for different devices (portrait video on mobile, landscape photo on desktop), don't try to use one asset — use separate `<Image>` / `<video>` elements per breakpoint hidden with Tailwind (`block md:hidden`, `hidden md:block`). CSS `object-fit` alone can't fix a composition mismatch.
+
+**ffmpeg blur letterbox** — portrait video on a landscape screen: instead of cropping or adding black bars, scale the video to fill the width (blurred, darkened), then overlay the original centred in the correct aspect ratio. Command: `ffmpeg -i input.mp4 -filter_complex "[0:v]scale=W:H,boxblur=20:5,colorchannelmixer=.3:.3:.3:.3:.3:.3:.3:.3:.3[bg]; [0:v]scale=-1:H[fg]; [bg][fg]overlay=(W-w)/2:(H-h)/2" output.mp4`
+
+**Sanity singleton + Studio structure** — a "singleton" document is a Sanity document with a fixed `_id` (e.g. `home-page-singleton`). In `sanity.config.ts`, you register it as `S.document().schemaType('homePage').documentId('home-page-singleton')` so Studio always opens the same document, not a list of many. Combined with `S.defaultInitialValueTemplateItems()` filtering it out of New Document, it behaves like a settings page.
