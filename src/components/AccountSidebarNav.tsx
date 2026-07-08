@@ -18,8 +18,6 @@ export default function AccountSidebarNav({ orderCount, latestOrderStatus, varia
   const ordersLabel =
     orderCount === 0
       ? 'No orders yet'
-      : latestOrderStatus
-      ? `${orderCount} order${orderCount === 1 ? '' : 's'} · ${statusLabel(latestOrderStatus ?? '')}`
       : `${orderCount} order${orderCount === 1 ? '' : 's'}`
 
   const links = [
