@@ -26,7 +26,7 @@ export default function RotatingAnnouncementBar({ banners }: { banners: Banner[]
   return (
     <div
       data-testid="nav-announcement-bar"
-      className="text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden transition-colors duration-500"
+      className="flex items-center justify-center text-center text-xs px-5 tracking-widest uppercase overflow-hidden transition-colors duration-500 min-h-[3.5rem]"
       style={{ backgroundColor: bg, color: text }}
     >
       <span
