@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from 'react'
 
-type Banner = { message: string; bgColor?: string; textColor?: string }
+type Banner = { message: string; theme?: string }
+
+const THEMES: Record<string, { bg: string; text: string }> = {
+  'black-white': { bg: '#000000', text: '#ffffff' },
+  'grey-red':    { bg: '#6b7280', text: '#E8000D' },
+}
 
 export default function RotatingAnnouncementBar({ banners }: { banners: Banner[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
@@ -16,15 +21,13 @@ export default function RotatingAnnouncementBar({ banners }: { banners: Banner[]
   }, [banners.length])
 
   const active = banners[activeIndex] ?? banners[0]
+  const { bg, text } = THEMES[active.theme ?? 'black-white']
 
   return (
     <div
       data-testid="nav-announcement-bar"
       className="text-center text-xs px-5 py-2 tracking-widest uppercase overflow-hidden transition-colors duration-500"
-      style={{
-        backgroundColor: active.bgColor  ?? '#000000',
-        color:           active.textColor ?? '#ffffff',
-      }}
+      style={{ backgroundColor: bg, color: text }}
     >
       <span
         key={activeIndex}

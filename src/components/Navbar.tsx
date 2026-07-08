@@ -9,7 +9,7 @@ import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
 
-type Banner = { message: string; bgColor?: string; textColor?: string }
+type Banner = { message: string; theme?: string }
 
 type Settings = {
   announcementBars?: Banner[]

@@ -45,43 +45,26 @@ export const settings = defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
-              name: 'bgColor',
-              title: 'Background',
+              name: 'theme',
+              title: 'Colour',
               type: 'string',
+              initialValue: 'black-white',
               options: {
                 layout: 'radio',
                 direction: 'horizontal',
                 list: [
-                  { title: 'Black', value: '#000000' },
-                  { title: 'White', value: '#ffffff' },
-                  { title: 'Grey',  value: '#6b7280' },
-                  { title: 'Red',   value: '#E8000D' },
-                ],
-              },
-            }),
-            defineField({
-              name: 'textColor',
-              title: 'Text',
-              type: 'string',
-              options: {
-                layout: 'radio',
-                direction: 'horizontal',
-                list: [
-                  { title: 'Black', value: '#000000' },
-                  { title: 'White', value: '#ffffff' },
-                  { title: 'Grey',  value: '#6b7280' },
-                  { title: 'Red',   value: '#E8000D' },
+                  { title: 'Black & White', value: 'black-white' },
+                  { title: 'Grey & Red',    value: 'grey-red'    },
                 ],
               },
             }),
           ],
           preview: {
-            select: { title: 'message', bg: 'bgColor', text: 'textColor' },
-            prepare({ title, bg, text }) {
-              const bgName = { '#000000': 'Black', '#ffffff': 'White', '#6b7280': 'Grey', '#E8000D': 'Red' }
+            select: { title: 'message', theme: 'theme' },
+            prepare({ title, theme }) {
               return {
-                title: title ?? 'Untitled banner',
-                subtitle: `${bgName[bg as keyof typeof bgName] ?? 'Black'} bg · ${bgName[text as keyof typeof bgName] ?? 'White'} text`,
+                title:    title ?? 'Untitled banner',
+                subtitle: theme === 'grey-red' ? 'Grey & Red' : 'Black & White',
               }
             },
           },
