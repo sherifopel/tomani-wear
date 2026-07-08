@@ -29,6 +29,8 @@ const FOOTER_SECTIONS = [
     links: [
       { label: 'Our Story',  href: '/about' },
       { label: 'Instagram',  href: 'https://www.instagram.com/tomanniofficial', external: true },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms & Conditions', href: '/terms' },
     ],
   },
 ]

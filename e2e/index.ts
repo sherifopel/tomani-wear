@@ -1,6 +1,7 @@
 // Page object barrel — KEEP IN ALPHABETICAL ORDER
-export * as accountPage   from './page-objects/account.page'
-export * as cartPage      from './page-objects/cart.page'
+export * as accountPage    from './page-objects/account.page'
+export * as cartPage       from './page-objects/cart.page'
+export * as cartMergePage  from './page-objects/cart-merge.page'
 export * as checkoutPage  from './page-objects/checkout.page'
 export * as headerPage    from './page-objects/header.page'
 export * as homePage      from './page-objects/home.page'

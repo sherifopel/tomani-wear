@@ -11,6 +11,13 @@ export async function POST(req: NextRequest) {
       paystackReference,
       totalAmount,
       items,
+      customerName,
+      customerEmail,
+      customerPhone,
+      address,
+      city,
+      state,
+      country,
     } = body
 
     if (!paystackReference || !items?.length) {
@@ -26,10 +33,17 @@ export async function POST(req: NextRequest) {
 
     const order = await prisma.order.create({
       data: {
-        userId:      session.user.id,
-        totalNgn:    Math.round(totalAmount),
-        paystackRef: paystackReference,
-        status:      'paid',
+        userId:        session.user.id,
+        totalNgn:      Math.round(totalAmount),
+        paystackRef:   paystackReference,
+        status:        'processing',
+        customerName:  customerName  ?? null,
+        customerEmail: customerEmail ?? null,
+        customerPhone: customerPhone ?? null,
+        address:       address       ?? null,
+        city:          city          ?? null,
+        state:         state         ?? null,
+        country:       country       ?? null,
         items: {
           create: items.map((i: {
             productId: string
@@ -37,12 +51,14 @@ export async function POST(req: NextRequest) {
             price: number
             size?: string
             quantity: number
+            image?: string
           }) => ({
             productId: i.productId,
             name:      i.name,
             priceNgn:  Math.round(i.price),
             size:      i.size ?? null,
             quantity:  i.quantity,
+            imageUrl:  i.image ?? null,
           })),
         },
       },

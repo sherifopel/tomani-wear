@@ -15,7 +15,8 @@
  * a browser cookie but stored as JSON on the client side.
  */
 
-import { createContext, useContext, useReducer, useState, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useState, useEffect, useRef, type ReactNode } from 'react'
+import { useSession } from 'next-auth/react'
 import type { CartItem, CartState, CartDerived } from '@/types/cart'
 
 // ─── Reducer ─────────────────────────────────────────────────────────────────
@@ -102,6 +103,8 @@ const STORAGE_KEY = 'tomani-cart'
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
   const [miniCartOpen, setMiniCartOpen] = useState(false)
+  const { status } = useSession()
+  const prevStatusRef = useRef<string>('')
 
   // On first render, load the saved cart from localStorage
   useEffect(() => {
@@ -123,6 +126,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
       // ignore write errors (e.g. private browsing with storage disabled)
     }
   }, [state.items])
+
+  // When a guest session becomes authenticated, merge the localStorage cart
+  // into the user's saved DB cart. prevStatusRef guards against re-firing on
+  // every render — we only want to merge once, at the moment of sign-in.
+  useEffect(() => {
+    if (status === 'authenticated' && prevStatusRef.current !== 'authenticated') {
+      const guestItems = state.items
+      fetch('/api/cart/merge', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ items: guestItems }),
+      })
+        .then((res) => res.ok ? res.json() : null)
+        .then((merged: CartItem[] | null) => {
+          if (merged) dispatch({ type: 'HYDRATE', payload: merged })
+        })
+        .catch(() => {
+          // Network error — keep the local cart as-is
+        })
+    }
+    prevStatusRef.current = status
+  }, [status]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Derived totals — computed fresh on every render, not stored
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0)

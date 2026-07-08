@@ -31,7 +31,7 @@ test.describe('Homepage hero — Desktop', { tag: ['@tomanni', '@homepage', '@he
 test.describe('Homepage hero responsive images — Desktop', { tag: ['@tomanni', '@homepage', '@hero', '@desktop'] }, () => {
   test('Should use aspect-ratio height (1505/600) on desktop', async ({ page, baseURL }) => {
     await homePage.navigate(page, baseURL!)
-    await homePage.assertHeroHeightForViewport(page, { width: 1280, height: 900 }, Math.round(1280 * 600 / 1505))
+    await homePage.assertHeroHeightForViewport(page, { width: 1280, height: 900 })
   })
 })
 
@@ -64,12 +64,12 @@ test.describe('Homepage hero — Mobile', { tag: ['@tomanni', '@homepage', '@her
 test.describe('Homepage hero responsive images — Mobile', { tag: ['@tomanni', '@homepage', '@hero', '@mobile'] }, () => {
   test('Should fill the full viewport height on mobile', async ({ page, baseURL }) => {
     await homePage.navigate(page, baseURL!)
-    await homePage.assertHeroHeightForViewport(page, { width: 375, height: 667 }, 667 - 84)
+    await homePage.assertHeroHeightForViewport(page, { width: 375, height: 667 })
   })
 
   test('Should fill the full viewport height on tablet', async ({ page, baseURL }) => {
     await homePage.navigate(page, baseURL!)
-    await homePage.assertHeroHeightForViewport(page, { width: 768, height: 900 }, 900 - 84)
+    await homePage.assertHeroHeightForViewport(page, { width: 768, height: 900 })
   })
 })
 

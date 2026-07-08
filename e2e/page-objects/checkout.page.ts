@@ -116,55 +116,38 @@ export const fillForm = async (page: Page, overrides: Partial<{
 }
 
 export const submitForm = async (page: Page) => {
-  // Wait for Paystack inline script to be ready before triggering payment
-  await page.waitForFunction(() => typeof (window as unknown as Record<string, unknown>).PaystackPop !== 'undefined', { timeout: 15_000 })
   const { payButton } = checkoutSelectors(page)
   await payButton.click()
   Log.info('submitted checkout form')
 }
 
 // ╔════════════════════════════════════════════════════════════════════════════╗
-// ║  PAYSTACK POPUP (cross-origin iframe)                                      ║
+// ║  PAYSTACK MOCK (bypasses cross-origin iframe via window hook)              ║
 // ╚════════════════════════════════════════════════════════════════════════════╝
 
-const PAYSTACK_CONTAINER = '.paystack-embed-container iframe'
-
-export const paystackSelectors = (page: Page) => {
-  const frame = page.frameLocator(PAYSTACK_CONTAINER)
-  return {
-    cardTab:    frame.locator('li').filter({ hasText: /^Card$/ }),
-    cardNumber: frame.locator('[placeholder*="0000"]'),
-    expiry:     frame.locator('[placeholder*="MM"]'),
-    cvv:        frame.locator('[placeholder="CVV"], [placeholder="123"]').first(),
-    payBtn:     frame.locator('button').filter({ hasText: /^Pay/ }).first(),
-    pinInputs:  frame.locator('input[type="password"], input[maxlength="1"]'),
-    otpInput:   frame.locator('input').filter({ hasText: '' }).last(),
-    confirmBtn: frame.locator('button').filter({ hasText: /Confirm|Submit/ }).first(),
-  }
+export const mockOrdersApi = async (page: Page, orderNumber = 'TW-TEST-001') => {
+  await page.route('**/api/orders', (route) =>
+    route.fulfill({
+      status:      200,
+      contentType: 'application/json',
+      body:        JSON.stringify({ orderNumber }),
+    })
+  )
+  Log.info(`mocked /api/orders → orderNumber: ${orderNumber}`)
 }
 
-export const TEST_CARD = {
-  number: '4084084084084081',
-  expiry: '12/30',
-  cvv:    '408',
-  pin:    '0000',
-  otp:    '123456',
-}
-
-export const completePaystackCardPayment = async (page: Page) => {
-  // Wait for the Paystack iframe container to appear
-  await page.waitForSelector(PAYSTACK_CONTAINER, { timeout: 30_000 })
-  const paystack = paystackSelectors(page)
-  Log.section('Paystack — complete card payment')
-  await paystack.cardTab.click();              Log.ok('selected Card tab')
-  await paystack.cardNumber.fill(TEST_CARD.number); Log.ok('card number entered')
-  await paystack.expiry.fill(TEST_CARD.expiry);     Log.ok('expiry entered')
-  await paystack.cvv.fill(TEST_CARD.cvv);           Log.ok('CVV entered')
-  await paystack.payBtn.click();               Log.ok('Pay clicked — waiting for PIN screen')
-  await paystack.pinInputs.first().fill(TEST_CARD.pin); Log.ok('PIN entered')
-  await paystack.confirmBtn.click();           Log.ok('PIN confirmed — waiting for OTP screen')
-  await paystack.otpInput.fill(TEST_CARD.otp);      Log.ok('OTP entered')
-  await paystack.confirmBtn.click();           Log.ok('OTP confirmed')
+export const triggerPaystackSuccess = async (page: Page, ref = `TW-TEST-${Date.now()}`) => {
+  // CheckoutForm exposes window.__paystackSuccess for non-production testing.
+  // We wait for the hook to be registered (it mounts after React hydration).
+  await page.waitForFunction(
+    () => typeof (window as Window & { __paystackSuccess?: unknown }).__paystackSuccess === 'function',
+    { timeout: 10_000 }
+  )
+  await page.evaluate(
+    (r) => (window as Window & { __paystackSuccess: (ref: string) => void }).__paystackSuccess(r),
+    ref
+  )
+  Log.ok(`triggered Paystack success with ref: ${ref}`)
 }
 
 // ╔════════════════════════════════════════════════════════════════════════════╗

@@ -34,6 +34,16 @@ export const navigate = async (page: Page, baseURL: string) => {
   await page.goto(`${baseURL}/account`, { waitUntil: 'domcontentloaded' })
 }
 
+export const navigateToOrders = async (page: Page, baseURL: string) => {
+  Log.navigate(`${baseURL}/account/orders`)
+  await page.goto(`${baseURL}/account/orders`, { waitUntil: 'domcontentloaded' })
+}
+
+export const navigateToOrderDetail = async (page: Page, baseURL: string, orderId: string) => {
+  Log.navigate(`${baseURL}/account/orders/${orderId}`)
+  await page.goto(`${baseURL}/account/orders/${orderId}`, { waitUntil: 'domcontentloaded' })
+}
+
 export const assertProfileVisible = async (page: Page) => {
   Log.section('Account — profile header')
   const { header } = accountSelectors(page)
@@ -60,4 +70,37 @@ export const assertSignOutVisible = async (page: Page) => {
   const { signOutButton } = accountSelectors(page)
   await expect(signOutButton).toBeVisible()
   Log.ok('sign out button visible')
+}
+
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║  ORDER HISTORY SELECTORS + ASSERTIONS                                      ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+export const ordersSelectors = (page: Page) => ({
+  page:       page.locator('[data-testid="orders-page"]'),
+  heading:    page.locator('[data-testid="orders-heading"]'),
+  list:       page.locator('[data-testid="orders-list"]'),
+  items:      page.locator('[data-testid="orders-list-item"]'),
+  empty:      page.locator('[data-testid="orders-empty"]'),
+})
+
+export const orderDetailSelectors = (page: Page) => ({
+  page:       page.locator('[data-testid="order-detail-page"]'),
+  heading:    page.locator('[data-testid="order-detail-heading"]'),
+  status:     page.locator('[data-testid="order-detail-status"]'),
+  items:      page.locator('[data-testid="order-detail-item"]'),
+  total:      page.locator('[data-testid="order-detail-total"]'),
+  address:    page.locator('[data-testid="order-detail-address"]'),
+  back:       page.locator('[data-testid="order-detail-back"]'),
+})
+
+export const assertOrdersRedirect = async (page: Page) => {
+  await expect(page).toHaveURL(/\/sign-in/)
+  await expect(page).toHaveURL(/callbackUrl=.*orders/)
+  Log.ok('redirected to sign-in with orders callbackUrl')
+}
+
+export const assertOrderDetailRedirect = async (page: Page) => {
+  await expect(page).toHaveURL(/\/sign-in/)
+  Log.ok('redirected to sign-in from order detail')
 }

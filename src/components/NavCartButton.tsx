@@ -28,7 +28,7 @@ export default function NavCartButton() {
       {/* Mobile → go to cart page */}
       <Link
         href="/cart"
-        data-testid="nav-cart-button"
+        data-testid="nav-cart-link"
         aria-label={`Cart${totalItems > 0 ? ` (${totalItems} items)` : ''}`}
         className="md:hidden p-1.5 rounded hover:bg-gray-100 transition-colors duration-200 flex items-center"
       >
