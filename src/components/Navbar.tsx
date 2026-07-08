@@ -34,7 +34,6 @@ export default async function Navbar() {
     >
       <div className="flex items-center">
         <MobileMenu />
-        <span className="hidden md:block text-xs text-gray-400 uppercase tracking-widest">Lagos, NG</span>
       </div>
 
       <Link
