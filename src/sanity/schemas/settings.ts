@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity'
 import { Settings2 } from 'lucide-react'
 import { AnnouncementPreview } from '../components/AnnouncementPreview'
+import { AnnouncementBannersInput } from '../components/AnnouncementBannersInput'
 
 export const settings = defineType({
   name: 'settings',
@@ -31,8 +32,10 @@ export const settings = defineType({
       name: 'announcementBars',
       title: 'Announcement Banners',
       type: 'array',
-      description: 'Each banner rotates in turn. Set the message and colours individually.',
+      description: 'Each banner rotates in turn. Max 3.',
       group: 'announcement',
+      components: { input: AnnouncementBannersInput },
+      validation: (Rule) => Rule.max(3),
       of: [
         {
           type: 'object',
