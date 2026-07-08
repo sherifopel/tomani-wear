@@ -28,6 +28,16 @@ const CATEGORY_LABELS: Record<string, string> = {
   sale:        "Tomanni's Sale",
 }
 
+const BREADCRUMB_LABELS: Record<string, string> = {
+  men:         'Men',
+  women:       'Women',
+  new:         'New In',
+  accessories: 'Accessories',
+  collections: 'Collections',
+  archives:    'Archives',
+  sale:        'Sale',
+}
+
 export default async function ProductsPage({
   searchParams,
 }: {
@@ -65,6 +75,7 @@ export default async function ProductsPage({
   }
 
   const categoryLabel = category ? CATEGORY_LABELS[category] ?? category : null
+  const breadcrumbLabel = category ? BREADCRUMB_LABELS[category] ?? category : null
   const typeLabel = type ? TYPE_LABELS[type] ?? type : null
   const pageTitle = searchQuery
     ? `Search results for "${searchQuery}"`
@@ -74,10 +85,10 @@ export default async function ProductsPage({
     ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: 'Search' }]
     : collection
     ? [{ label: 'Home', href: '/' }, { label: 'Collections', href: '/products?category=collections' }, { label: collection.replace(/-/g, ' ') }]
-    : typeLabel && categoryLabel
-    ? [{ label: 'Home', href: '/' }, { label: categoryLabel, href: `/products?category=${category}` }, { label: typeLabel }]
-    : categoryLabel
-    ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: categoryLabel }]
+    : typeLabel && breadcrumbLabel
+    ? [{ label: 'Home', href: '/' }, { label: breadcrumbLabel, href: `/products?category=${category}` }, { label: typeLabel }]
+    : breadcrumbLabel
+    ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: breadcrumbLabel }]
     : [{ label: 'Home', href: '/' }, { label: 'Products' }]
 
   return (
@@ -89,7 +100,7 @@ export default async function ProductsPage({
       {/* Header */}
       <div className="pt-6 mb-4">
         <div className="flex flex-col gap-2" data-testid="plp-header">
-          <h1 className="text-sm uppercase tracking-widest font-medium" data-testid="plp-title">
+          <h1 className="text-[28px] uppercase tracking-widest font-medium text-center" data-testid="plp-title">
             {pageTitle}
           </h1>
           <div className="flex justify-end">
