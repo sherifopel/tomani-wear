@@ -9,7 +9,7 @@ export default function NavCartButton() {
 
   const icon = (
     <ShoppingBag
-      className="h-[15px] w-[15px] text-black transition-all duration-200"
+      className="h-[15px] w-[15px] md:h-5 md:w-5 text-black transition-all duration-200"
       strokeWidth={totalItems > 0 ? 2 : 1.5}
       fill={totalItems > 0 ? 'rgba(201,162,39,0.35)' : 'none'}
     />

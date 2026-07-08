@@ -71,7 +71,7 @@ export default function SignInForm({ callbackUrl }: { callbackUrl: string }) {
 
         <div className="flex items-center gap-3 mb-6">
           <hr className="flex-1 border-neutral-200" />
-          <span className="text-xs text-neutral-400 uppercase tracking-wider">or</span>
+          <span className="text-xs text-neutral-400 ">or</span>
           <hr className="flex-1 border-neutral-200" />
         </div>
 

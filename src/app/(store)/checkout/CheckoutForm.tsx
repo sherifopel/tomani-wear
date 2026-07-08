@@ -14,7 +14,16 @@ const inputClass = `
   focus:outline-none focus:border-black transition-colors duration-200
 `
 
-const labelClass = 'block text-[11px] uppercase tracking-widest text-gray-500 mb-1.5'
+const labelClass = 'text-[12px] text-gray-500'
+
+function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between mb-1.5">
+      <label htmlFor={htmlFor} className={labelClass}>{children}</label>
+      <span className="text-[12px] text-gray-400">Required</span>
+    </div>
+  )
+}
 
 type FormState = {
   fullName: string
@@ -149,13 +158,21 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   function validate(): boolean {
     const e: Partial<FormState> = {}
-    if (!form.fullName.trim()) e.fullName = 'Required'
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Valid email required'
-    if (!form.phone.trim()) e.phone = 'Required'
-    if (!form.address.trim()) e.address = 'Required'
-    if (!form.city.trim()) e.city = 'Required'
-    if (!form.state.trim()) e.state = 'Required'
-    if (!form.country.trim()) e.country = 'Required'
+    if (!form.fullName.trim()) e.fullName = 'Please enter your full name'
+    if (!form.email.trim()) {
+      e.email = 'Please enter your email address'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      e.email = 'Please enter a valid email address'
+    }
+    if (!form.phone.trim()) {
+      e.phone = 'Please enter your phone number'
+    } else if (!/^(\+?234|0)[789]\d{9}$/.test(form.phone.replace(/\s/g, ''))) {
+      e.phone = 'Please enter a valid Nigerian phone number (e.g. 08012345678)'
+    }
+    if (!form.address.trim()) e.address = 'Please enter your street address'
+    if (!form.city.trim()) e.city = 'Please enter your city'
+    if (!form.state.trim()) e.state = 'Please enter your state'
+    if (!form.country.trim()) e.country = 'Please enter your country'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -184,63 +201,63 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
         {/* ── LEFT: Customer details ── */}
         <div>
-          <h2 className="text-xs uppercase tracking-widest font-medium mb-6" data-testid="checkout-section-contact">
+          <h2 className="text-xs  font-medium mb-6" data-testid="checkout-section-contact">
             Contact Information
           </h2>
 
           <div className="flex flex-col gap-5">
             <div>
-              <label htmlFor="fullName" className={labelClass}>Full Name</label>
+              <RequiredLabel htmlFor="fullName">Full Name</RequiredLabel>
               <input id="fullName" name="fullName" type="text" value={form.fullName} onChange={handleChange}
-                placeholder="Tomiwa Adeyemi" className={inputClass} data-testid="checkout-full-name" />
+                className={inputClass} data-testid="checkout-full-name" />
               {errors.fullName && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-fullName">{errors.fullName}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="email" className={labelClass}>Email</label>
+                <RequiredLabel htmlFor="email">Email</RequiredLabel>
                 <input id="email" name="email" type="email" value={form.email} onChange={handleChange}
-                  placeholder="tomiwa@example.com" className={inputClass} data-testid="checkout-email" />
+                  className={inputClass} data-testid="checkout-email" />
                 {errors.email && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-email">{errors.email}</p>}
               </div>
               <div>
-                <label htmlFor="phone" className={labelClass}>Phone Number</label>
+                <RequiredLabel htmlFor="phone">Phone Number</RequiredLabel>
                 <input id="phone" name="phone" type="tel" value={form.phone} onChange={handleChange}
-                  placeholder="+234 800 000 0000" className={inputClass} data-testid="checkout-phone" />
+                  className={inputClass} data-testid="checkout-phone" />
                 {errors.phone && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-phone">{errors.phone}</p>}
               </div>
             </div>
           </div>
 
-          <h2 className="text-xs uppercase tracking-widest font-medium mt-10 mb-6" data-testid="checkout-section-delivery">
+          <h2 className="text-xs  font-medium mt-10 mb-6" data-testid="checkout-section-delivery">
             Delivery Address
           </h2>
 
           <div className="flex flex-col gap-5">
             <div>
-              <label htmlFor="address" className={labelClass}>Street Address</label>
+              <RequiredLabel htmlFor="address">Street Address</RequiredLabel>
               <input id="address" name="address" type="text" value={form.address} onChange={handleChange}
-                placeholder="12 Lagos-Ibadan Expressway" className={inputClass} data-testid="checkout-address" />
+                className={inputClass} data-testid="checkout-address" />
               {errors.address && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-address">{errors.address}</p>}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
-                <label htmlFor="city" className={labelClass}>City</label>
+                <RequiredLabel htmlFor="city">City</RequiredLabel>
                 <input id="city" name="city" type="text" value={form.city} onChange={handleChange}
-                  placeholder="Lagos" className={inputClass} data-testid="checkout-city" />
+                  className={inputClass} data-testid="checkout-city" />
                 {errors.city && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-city">{errors.city}</p>}
               </div>
               <div>
-                <label htmlFor="state" className={labelClass}>State</label>
+                <RequiredLabel htmlFor="state">State</RequiredLabel>
                 <input id="state" name="state" type="text" value={form.state} onChange={handleChange}
-                  placeholder="Lagos State" className={inputClass} data-testid="checkout-state" />
+                  className={inputClass} data-testid="checkout-state" />
                 {errors.state && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-state">{errors.state}</p>}
               </div>
             </div>
 
             <div>
-              <label htmlFor="country" className={labelClass}>Country</label>
+              <RequiredLabel htmlFor="country">Country</RequiredLabel>
               <input id="country" name="country" type="text" value={form.country} onChange={handleChange}
                 className={inputClass} data-testid="checkout-country" />
               {errors.country && <p className="text-xs text-red-500 mt-1" data-testid="checkout-error-country">{errors.country}</p>}
@@ -251,7 +268,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
         {/* ── RIGHT: Order summary ── */}
         <div className="mt-12 lg:mt-0">
           <div className="flex items-baseline justify-between mb-6">
-            <h2 className="text-xs uppercase tracking-widest font-medium" data-testid="checkout-section-summary">
+            <h2 className="text-xs  font-medium" data-testid="checkout-section-summary">
               Order Summary
             </h2>
             <Link href="/cart" className="text-[11px] text-gray-400 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
@@ -299,7 +316,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
           </div>
 
           <button type="submit" disabled={loading} data-testid="checkout-pay-button"
-            className="hidden lg:flex w-full mt-6 items-center justify-center bg-black text-white text-xs uppercase tracking-widest py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
+            className="hidden lg:flex w-full mt-6 items-center justify-center bg-black text-white text-xs  py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
             {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
           </button>
           <p className="hidden lg:block text-center text-[10px] text-gray-400 mt-3">
@@ -311,7 +328,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
       {/* Mobile sticky pay button */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 z-50" data-testid="checkout-mobile-bar">
         <button type="submit" disabled={loading} data-testid="checkout-pay-button-mobile"
-          className="w-full flex items-center justify-center bg-black text-white text-xs uppercase tracking-widest py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
+          className="w-full flex items-center justify-center bg-black text-white text-xs  py-4 rounded border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed">
           {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()}`}
         </button>
       </div>

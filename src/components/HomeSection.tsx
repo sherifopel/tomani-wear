@@ -221,7 +221,7 @@ export default function HomeSection({
               style={textVars}
             >
               {content.label && (
-                <p className="text-xs uppercase tracking-widest mb-4 font-semibold text-[var(--brand-yellow)]">
+                <p className="text-xs  mb-4 font-semibold text-[var(--brand-yellow)]">
                   {content.label}
                 </p>
               )}
@@ -241,7 +241,7 @@ export default function HomeSection({
               {content.ctaLabel && content.href && (
                 <Link
                   href={content.href}
-                  className={`inline-block border px-8 py-3 text-xs uppercase tracking-widest font-medium transition-colors duration-300 ${hasCustomBtn ? '' : btnClasses}`}
+                  className={`inline-block border px-8 py-3 text-xs  font-medium transition-colors duration-300 ${hasCustomBtn ? '' : btnClasses}`}
                   style={btnStyle}
                 >
                   {content.ctaLabel}
@@ -259,14 +259,14 @@ export default function HomeSection({
           {/* Heading row — always padded */}
           <div className="pt-6 pb-4 px-6 md:pt-10 md:pb-6 md:px-10 max-w-7xl mx-auto flex items-center justify-between">
             {carousel?.title && (
-              <h2 className="text-[28px] font-light tracking-widest uppercase">
+              <h2 className="text-[28px] font-light ">
                 {carousel.title}
               </h2>
             )}
             {carousel?.viewAllLink && (
               <Link
                 href={carousel.viewAllLink}
-                className="text-xs tracking-widest uppercase underline underline-offset-4 hover:opacity-60 transition-opacity"
+                className="text-xs  underline underline-offset-4 hover:opacity-60 transition-opacity"
               >
                 View All
               </Link>

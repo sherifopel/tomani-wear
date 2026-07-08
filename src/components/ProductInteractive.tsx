@@ -200,7 +200,7 @@ export default function ProductInteractive({
 
             {onSale && (
               <span
-                className="absolute top-4 left-4 bg-[var(--brand-red)] text-white text-[10px] uppercase tracking-widest px-2 py-1 z-10"
+                className="absolute top-4 left-4 bg-[var(--brand-red)] text-white text-[10px]  px-2 py-1 z-10"
                 data-testid="pdp-sale-badge"
               >
                 Sale
@@ -285,7 +285,7 @@ export default function ProductInteractive({
 
           {/* Category — desktop only */}
           {category && (
-            <p className="hidden md:block text-xs uppercase tracking-widest text-gray-400" data-testid="pdp-category">
+            <p className="hidden md:block text-xs  text-gray-400" data-testid="pdp-category">
               {category}
             </p>
           )}
@@ -303,7 +303,7 @@ export default function ProductInteractive({
           {/* Colour swatches */}
           {hasColors && (
             <div data-testid="pdp-colour-swatches">
-              <p className="text-xs uppercase tracking-widest mb-3 font-medium" data-testid="pdp-colour-label">
+              <p className="text-xs  mb-3 font-medium" data-testid="pdp-colour-label">
                 Colour
                 {activeColorIndex !== null && (
                   <span className="text-gray-400 normal-case tracking-normal font-normal ml-1">

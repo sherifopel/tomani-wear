@@ -83,7 +83,7 @@ export default async function Navbar() {
               href={link.href}
               data-testid={`nav-${link.label.toLowerCase().replace(/\s+/g, '-')}-link`}
               style={{ '--link-underline-color': link.underlineColor } as React.CSSProperties}
-              className={`nav-link-underline text-xs uppercase tracking-widest transition-colors whitespace-nowrap ${
+              className={`nav-link-underline text-[14px] font-light transition-colors whitespace-nowrap ${
                 link.accent
                   ? 'text-[var(--brand-red)] hover:opacity-70'
                   : 'hover:text-gray-400'
@@ -110,7 +110,7 @@ export default async function Navbar() {
                       key={child.href}
                       href={child.href}
                       data-testid={`nav-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
-                      className="block px-4 py-2.5 text-xs uppercase tracking-widest
+                      className="block px-4 py-2.5 text-xs 
                                  bg-white rounded border border-gray-200
                                  text-black font-semibold hover:bg-black hover:text-white hover:border-black
                                  shadow-sm hover:shadow-md

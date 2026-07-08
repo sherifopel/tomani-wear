@@ -19,7 +19,7 @@ export default function FooterAccordion({ sections }: { sections: Section[] }) {
             <button
               onClick={() => setOpenIndex(openIndex === i ? null : i)}
               data-testid={`footer-accordion-${section.title.toLowerCase().replace(/\s+/g, '-')}`}
-              className="flex items-center justify-between w-full py-4 text-xs uppercase tracking-widest font-medium touch-manipulation"
+              className="flex items-center justify-between w-full py-4 text-xs  font-medium touch-manipulation"
             >
               {section.title}
               {openIndex === i
@@ -64,7 +64,7 @@ export default function FooterAccordion({ sections }: { sections: Section[] }) {
       >
         {sections.map(section => (
           <div key={section.title}>
-            <p className="text-xs uppercase tracking-widest font-medium mb-5">{section.title}</p>
+            <p className="text-xs  font-medium mb-5">{section.title}</p>
             <ul className="flex flex-col gap-3">
               {section.links.map(link => (
                 <li key={link.href}>

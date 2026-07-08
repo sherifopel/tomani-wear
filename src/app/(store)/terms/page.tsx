@@ -11,7 +11,7 @@ const TERMS = [
 export default function TermsPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-3">Legal</p>
+      <p className="text-[10px]  text-gray-400 mb-3">Legal</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-4">Terms & Conditions</h1>
       <p className="text-xs text-gray-400 mb-10">Last updated: July 2026</p>
 

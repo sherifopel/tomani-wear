@@ -100,7 +100,7 @@ export default function AccountButton() {
         className="p-1 rounded hover:bg-gray-100 transition-colors duration-200"
       >
         <User
-          className={`h-[15px] w-[15px] transition-colors duration-200 ${
+          className={`h-[15px] w-[15px] md:h-5 md:w-5 transition-colors duration-200 ${
             isLoggedIn ? 'text-green-400' : 'text-black'
           }`}
           strokeWidth={1.5}
@@ -151,7 +151,7 @@ export default function AccountButton() {
           <div className="w-10 h-1 rounded-full bg-gray-200" />
         </div>
         <div className="px-5 py-3 border-b border-gray-100 shrink-0">
-          <p className="text-xs uppercase tracking-widest font-medium">Account</p>
+          <p className="text-xs  font-medium">Account</p>
         </div>
 
         {isLoggedIn ? (

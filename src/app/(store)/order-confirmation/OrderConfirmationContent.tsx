@@ -38,7 +38,7 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
         </div>
 
         {/* Personalised greeting */}
-        <h1 className="text-2xl uppercase tracking-widest font-medium mb-3" data-testid="order-confirmation-heading">
+        <h1 className="text-2xl  font-medium mb-3" data-testid="order-confirmation-heading">
           {firstName ? `Thank you, ${firstName}!` : 'Order Confirmed'}
         </h1>
 
@@ -63,13 +63,13 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
         <div className="border border-gray-100 rounded-md px-6 py-5 mb-10 text-left">
           {order && (
             <div className="flex items-center justify-between mb-3" data-testid="order-confirmation-number">
-              <span className="text-[11px] uppercase tracking-widest text-gray-400">Order number</span>
+              <span className="text-[11px]  text-gray-400">Order number</span>
               <span className="text-sm font-semibold tracking-wider">{order}</span>
             </div>
           )}
           {paystackRef && (
             <div className="flex items-center justify-between border-t border-gray-100 pt-3" data-testid="order-confirmation-ref">
-              <span className="text-[11px] uppercase tracking-widest text-gray-400">Payment ref</span>
+              <span className="text-[11px]  text-gray-400">Payment ref</span>
               <span className="text-xs text-gray-400 font-mono">{paystackRef}</span>
             </div>
           )}
@@ -80,7 +80,7 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
           <Link
             href="/products"
             data-testid="order-confirmation-continue"
-            className="w-full sm:w-auto px-8 py-3.5 bg-black text-white text-xs uppercase tracking-widest rounded border border-black btn-wipe"
+            className="w-full sm:w-auto px-8 py-3.5 bg-black text-white text-xs  rounded border border-black btn-wipe"
           >
             Continue Shopping
           </Link>
@@ -89,7 +89,7 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
             <Link
               href="/account"
               data-testid="order-confirmation-account"
-              className="w-full sm:w-auto px-8 py-3.5 text-xs uppercase tracking-widest rounded border border-black btn-wipe-white"
+              className="w-full sm:w-auto px-8 py-3.5 text-xs  rounded border border-black btn-wipe-white"
             >
               View My Orders
             </Link>
@@ -97,7 +97,7 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
             <Link
               href="/"
               data-testid="order-confirmation-home"
-              className="w-full sm:w-auto px-8 py-3.5 text-xs uppercase tracking-widest rounded border border-black btn-wipe-white"
+              className="w-full sm:w-auto px-8 py-3.5 text-xs  rounded border border-black btn-wipe-white"
             >
               Back to Home
             </Link>

@@ -57,14 +57,14 @@ const SECTIONS = [
 export default function PrivacyPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px] uppercase tracking-widest text-gray-400 mb-3">Legal</p>
+      <p className="text-[10px]  text-gray-400 mb-3">Legal</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-4">Privacy Policy</h1>
       <p className="text-xs text-gray-400 mb-12">Last updated: July 2026</p>
 
       <div className="flex flex-col divide-y divide-gray-100">
         {SECTIONS.map(({ title, body }) => (
           <div key={title} className="py-7">
-            <h2 className="text-[10px] uppercase tracking-widest text-gray-400 mb-4">{title}</h2>
+            <h2 className="text-[10px]  text-gray-400 mb-4">{title}</h2>
             <div className="flex flex-col gap-3">
               {body.map((paragraph, i) => (
                 <p key={i} className="text-sm text-gray-600 leading-relaxed">
