@@ -42,11 +42,12 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
   // Pre-fill all fields from session + saved delivery details on first load.
   // Uses || so that any field the user has already typed into is never overwritten.
   useEffect(() => {
-    if (!session?.user) return
+    const user = session?.user
+    if (!user) return
     setForm(prev => ({
       ...prev,
-      fullName: prev.fullName || session.user.name  || '',
-      email:    prev.email    || session.user.email || '',
+      fullName: prev.fullName || user.name  || '',
+      email:    prev.email    || user.email || '',
       phone:    prev.phone    || savedDetails?.phone   || '',
       address:  prev.address  || savedDetails?.address || '',
       city:     prev.city     || savedDetails?.city    || '',
