@@ -24,10 +24,6 @@ export default defineConfig({
                   .documentId('home-page-singleton')
                   .title('Home Page')
               ),
-            S.listItem()
-              .title('Hero Slides')
-              .schemaType('heroSlide')
-              .child(S.documentTypeList('heroSlide').title('Hero Slides')),
             orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
             S.listItem()
               .title('Global Settings')

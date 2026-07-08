@@ -78,41 +78,6 @@ export const FEATURED_PRODUCTS_QUERY = groq`*[_type == "product" && featured == 
 }`
 
 
-export const HERO_SLIDES_QUERY = groq`*[_type == "heroSlide" && enabled != false] | order(order asc, _createdAt asc) {
-  _id,
-  "label":    coalesce(content.label,    label),
-  "heading":  coalesce(content.heading,  heading),
-  "sub":      coalesce(content.sub,      sub),
-  "href":     coalesce(content.href,     href),
-  "videoUrl":     focalPoints.video.asset->url,
-  "imageMobile":  focalPoints.imageMobile,
-  "imageTablet":  coalesce(focalPoints.imageTablet,  focalPoints.imageMobile),
-  "imageDesktop": coalesce(focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile),
-  "imageXl":      coalesce(focalPoints.imageXl,      focalPoints.imageDesktop, focalPoints.imageTablet,  focalPoints.imageMobile),
-  "mobileFocalY":  coalesce(focalPoints.mobile,   50),
-  "tabletFocalY":  coalesce(focalPoints.tablet,   50),
-  "desktopFocalY": coalesce(focalPoints.desktop,  30),
-  "xlFocalY":      coalesce(focalPoints.xlarge,   30),
-  "mobileFocalX":  coalesce(focalPoints.mobileX,  50),
-  "tabletFocalX":  coalesce(focalPoints.tabletX,  50),
-  "desktopFocalX": coalesce(focalPoints.desktopX, 50),
-  "xlFocalX":      coalesce(focalPoints.xlargeX,  50),
-  "textPosition":         coalesce(content.textPosition,         textPosition,  85),
-  "textPositionX":        coalesce(content.textPositionX,        textPositionX, 0),
-  "mobileTextPosition":   coalesce(content.mobileTextPosition,   content.textPosition,  textPosition,  85),
-  "mobileTextPositionX":  coalesce(content.mobileTextPositionX,  content.textPositionX, textPositionX, 0),
-  "tabletTextPosition":   coalesce(content.tabletTextPosition,   content.textPosition,  textPosition,  85),
-  "tabletTextPositionX":  coalesce(content.tabletTextPositionX,  content.textPositionX, textPositionX, 0),
-  "desktopTextPosition":  coalesce(content.desktopTextPosition,  content.textPosition,  textPosition,  85),
-  "desktopTextPositionX": coalesce(content.desktopTextPositionX, content.textPositionX, textPositionX, 0),
-  "xlTextPosition":       coalesce(content.xlTextPosition,       content.textPosition,  textPosition,  85),
-  "xlTextPositionX":      coalesce(content.xlTextPositionX,      content.textPositionX, textPositionX, 0),
-  "textColor":            coalesce(content.textColor,            textColor,     "white"),
-  "buttonColor":          coalesce(content.buttonColor,          buttonColor,   "white"),
-  "buttonCustomColor":    content.buttonCustomColor,
-  "buttonBackgroundColor": content.buttonBackgroundColor
-}`
-
 export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
   sections[enabled != false] {
     _key,
@@ -207,9 +172,6 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
   announcementBar,
   announcementBars,
   announcementBarEnabled,
-  heroAutoplay,
-  heroShowArrows,
-  heroSlideInterval,
   footerLinks[]{
     label,
     href
