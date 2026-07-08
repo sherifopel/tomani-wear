@@ -19,13 +19,13 @@ type Product = {
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
-  men:         'Men',
-  women:       'Women',
-  new:         'New In',
-  accessories: 'Accessories',
-  collections: 'Collections',
-  archives:    'Archives',
-  sale:        'Sale',
+  men:         "Tomanni's Men",
+  women:       "Tomanni's Women",
+  new:         "Tomanni's New In",
+  accessories: "Tomanni's Accessories",
+  collections: "Tomanni's Collections",
+  archives:    "Tomanni's Archives",
+  sale:        "Tomanni's Sale",
 }
 
 export default async function ProductsPage({
