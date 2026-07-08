@@ -95,7 +95,7 @@ export default async function ProductsPage({
             <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
           </div>
         </div>
-        <p className="text-xs text-gray-400 mt-3" data-testid="plp-count">
+        <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
           Showing {products.length} {products.length === 1 ? 'product' : 'products'}
         </p>
       </div>
