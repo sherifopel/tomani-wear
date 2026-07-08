@@ -48,3 +48,16 @@ export const assertCardsVisible = async (page: Page) => {
   await expect(cards.addresses).toBeVisible(); Log.ok('addresses card')
   await expect(cards.profile).toBeVisible();   Log.ok('profile card')
 }
+
+export const assertOrdersCardNavigates = async (page: Page) => {
+  const { cards } = accountSelectors(page)
+  await cards.orders.click()
+  await expect(page).toHaveURL(/\/account\/orders/)
+  Log.ok('orders card navigates to /account/orders')
+}
+
+export const assertSignOutVisible = async (page: Page) => {
+  const { signOutButton } = accountSelectors(page)
+  await expect(signOutButton).toBeVisible()
+  Log.ok('sign out button visible')
+}

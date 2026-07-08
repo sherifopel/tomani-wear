@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 // Montserrat: clean, modern fashion font — free Google Fonts alternative to Gotham.
 // We load the weights we actually use; Next.js handles caching + self-hosting.
@@ -37,6 +39,8 @@ export default function RootLayout({
               {children}
             </div>
           </AuthProvider>
+          <Analytics />
+          <SpeedInsights />
         </body>
     </html>
   );

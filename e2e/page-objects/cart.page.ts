@@ -30,6 +30,23 @@ export const navigate = async (page: Page, baseURL: string) => {
   await page.goto(`${baseURL}/cart`, { waitUntil: 'domcontentloaded' })
 }
 
+// ╔════════════════════════════════════════════════════════════════════════════╗
+// ║  ASSERTIONS                                                                ║
+// ╚════════════════════════════════════════════════════════════════════════════╝
+
+export const assertEmptyState = async (page: Page) => {
+  const { empty } = cartSelectors(page)
+  await expect(empty).toBeVisible()
+  Log.ok('empty cart state visible')
+}
+
+export const assertStartShoppingLink = async (page: Page) => {
+  const { startShopping } = cartSelectors(page)
+  await expect(startShopping).toBeVisible()
+  await expect(startShopping).toHaveAttribute('href', '/products')
+  Log.ok('start shopping link visible with correct href')
+}
+
 /** Navigate to a PDP, select the first available size, and click Add to Cart */
 export const addProductToCart = async (page: Page, baseURL: string, slug: string) => {
   Log.navigate(`${baseURL}/products/${slug}`)

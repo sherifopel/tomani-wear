@@ -125,3 +125,26 @@ export const assertMobileNavLinksVisible = async (page: Page) => {
   await expect(mobileLinks.sale).toBeVisible()
   Log.ok('Sale')
 }
+
+export const assertMenuClosesOnMenClick = async (page: Page) => {
+  const { mobileLinks, mobileMenu } = headerSelectors(page)
+  await mobileLinks.men.click()
+  await expect(mobileMenu.overlay).not.toBeVisible()
+  Log.ok('menu closed after men link click')
+}
+
+export const assertMenLinkNavigates = async (page: Page, baseURL: string) => {
+  const { mobileLinks } = headerSelectors(page)
+  await mobileLinks.men.click()
+  await expect(page).toHaveURL(`${baseURL}/products?category=men`)
+  await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  Log.ok('men link navigates to /products?category=men')
+}
+
+export const assertWomenLinkNavigates = async (page: Page, baseURL: string) => {
+  const { mobileLinks } = headerSelectors(page)
+  await mobileLinks.women.click()
+  await expect(page).toHaveURL(`${baseURL}/products?category=women`)
+  await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
+  Log.ok('women link navigates to /products?category=women')
+}

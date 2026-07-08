@@ -1,6 +1,6 @@
-import { test } from '../../../fixtures'
-import * as homePage from '../../../pages/home.page'
-import * as util from '../../../utils/utils'
+import { test } from '../../../fixtures/fixtures'
+import * as homePage from '../../../page-objects/home.page'
+import * as util from '../../../helpers/utils'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 🖥  DESKTOP
