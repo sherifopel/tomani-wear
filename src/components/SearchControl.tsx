@@ -58,7 +58,7 @@ export default function SearchControl() {
             bg-white rounded-full border border-gray-300 shadow-md
           "
           style={{
-            width: 'min(320px, calc(100vw - 80px))',
+            width: 'min(320px, calc(100vw - 160px))',
             animation: 'searchExpand 0.2s ease-out',
           }}
         >
