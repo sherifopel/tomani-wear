@@ -96,7 +96,7 @@ export default function MobileMenu() {
                           href={child.href}
                           data-testid={`mobile-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setOpen(false)}
-                          className="py-3 text-sm text-gray-500 hover:text-black transition-colors border-b border-gray-50 last:border-0"
+                          className="py-3 text-sm text-black hover:text-gray-500 transition-colors border-b border-gray-50 last:border-0"
                         >
                           {child.label}
                         </Link>
