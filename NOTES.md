@@ -417,3 +417,75 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 **ffmpeg blur letterbox** — portrait video on a landscape screen: instead of cropping or adding black bars, scale the video to fill the width (blurred, darkened), then overlay the original centred in the correct aspect ratio. Command: `ffmpeg -i input.mp4 -filter_complex "[0:v]scale=W:H,boxblur=20:5,colorchannelmixer=.3:.3:.3:.3:.3:.3:.3:.3:.3[bg]; [0:v]scale=-1:H[fg]; [bg][fg]overlay=(W-w)/2:(H-h)/2" output.mp4`
 
 **Sanity singleton + Studio structure** — a "singleton" document is a Sanity document with a fixed `_id` (e.g. `home-page-singleton`). In `sanity.config.ts`, you register it as `S.document().schemaType('homePage').documentId('home-page-singleton')` so Studio always opens the same document, not a list of many. Combined with `S.defaultInitialValueTemplateItems()` filtering it out of New Document, it behaves like a settings page.
+
+---
+
+## Session 7 — Checkout Overhaul, Delivery Fees, Domain Launch & v0.6.0
+
+### What we built
+
+**Checkout page full layout overhaul**
+- Layout now matches a premium editorial style (Noble Panacea reference): large `text-2xl font-light` section headings, two-column desktop grid (`1fr 380px`), mobile-first single column
+- Mobile: Order Summary appears first (before the form), achieved with `order-1`/`order-2` CSS on flex children — no DOM reordering needed
+- Desktop: left column = form, right column = sticky Order Summary card (`lg:sticky lg:top-24 lg:self-start`)
+- Order Summary is wrapped in a bordered card (`border border-gray-200 rounded p-6`) on all viewports
+- All form fields are full-width (no side-by-side layout) for clean mobile UX
+
+**Payment section at the bottom of the form**
+- Replaced the old Pay CTA inside the Order Summary card with a dedicated Payment section at the bottom of the left column
+- Contains: a short trust message ("You'll be taken to Paystack..."), the Pay button, and "Secured by Paystack · 256-bit SSL" micro-copy
+- One CTA on the page regardless of viewport — no sticky bottom bar, no duplicate buttons
+
+**Nigerian delivery fee calculation by state**
+- Three delivery zones defined in a `DELIVERY_ZONES` array at the top of `CheckoutForm.tsx`:
+  - Lagos: ₦2,500 (same city)
+  - Interstate (most states): ₦4,000
+  - Remote (Adamawa, Bauchi, Borno, Gombe, Taraba, Yobe): ₦7,000
+- `getDeliveryFee(state: string): number | null` — returns `null` if the field is empty (shows "Enter your state"), otherwise matches the state string against zone arrays
+- Fee updates live as the user types their state
+- Grand total = subtotal + delivery fee, updates in real time
+
+**Product slug fix — no more 404s**
+- 3 products had spaces in their slugs (e.g. `wind breaker jacket` → URL-encoded as `wind%20breaker%20jacket` → 404)
+- Added a custom `slugify` function to the Sanity `slug` field options so all new slugs auto-hyphenate on Generate
+- Existing broken slugs: Tomiwa needs to open each in Studio and click Generate to regenerate with the correct format
+
+**MiniCart auto-close timer**
+- Empty cart: closes automatically after 2 seconds
+- Cart with items: closes after 10 seconds (resets on pointer interaction, pauses on hover)
+
+**Domain `tomanni.com` launched**
+- Purchased via Cloudflare Registrar (at-cost pricing, no markup)
+- DNS records added manually in Cloudflare:
+  - A record: `@` → `76.76.21.21` (Vercel IP), proxy OFF (grey cloud)
+  - CNAME: `www` → `cname.vercel-dns.com`, proxy OFF (grey cloud)
+- Vercel picked up both records; SSL certificate generated automatically
+- `tomani-wear.vercel.app` remains valid as a fallback
+
+**Release v0.6.0**
+- Merged `dev` → `main` (no-ff), tagged `v0.6.0`, pushed to GitHub
+- Vercel deployed automatically from the `main` branch push
+
+### Why we built it this way
+
+**CSS `order` for mobile reordering** — changing `order-1`/`order-2` on flex children reorders them visually without touching the HTML structure. This matters because the DOM order affects keyboard navigation and screen readers — the form should still be first in the DOM even if Order Summary appears first visually on mobile.
+
+**Delivery zones as a flat array** — a simple array of `{ states, fee, label }` objects is easier to update than a switch statement or nested if-else. Add a new zone by adding one object. The `getDeliveryFee` function loops through it with `.some()` for a fuzzy match (handles typos like "Abuja" vs "FCT").
+
+**Cloudflare proxy OFF** — when Cloudflare's orange cloud is ON, it proxies all traffic through Cloudflare's servers. Vercel can't verify domain ownership (it only sees Cloudflare's IP), so SSL cert issuance fails. Grey cloud = DNS only, traffic goes straight to Vercel, SSL works.
+
+### Key concepts learned
+
+**DNS (Domain Name System)** — the internet's phone book. Translates `tomanni.com` → `76.76.21.21`. When you type a domain, your browser asks DNS servers for the IP behind it, then connects to that IP.
+- **A record** = domain → IP address (used for the apex domain `@`)
+- **CNAME record** = domain → another hostname (used for `www`, points to `cname.vercel-dns.com`)
+- **TTL** = Time To Live — how long DNS servers cache the record before re-checking. "Auto" lets Cloudflare decide.
+
+**CSS `order` property** — every flex child has an implicit `order: 0`. Lower numbers appear first. `order-1` (CSS `order: 1`) appears after `order-2` would be wrong — lower `order` value = appears earlier. In Tailwind: `order-1` = appears first, `order-2` = appears second. You can flip visual order on mobile with `flex-col` + different `order` values, then restore DOM order on desktop with `lg:grid`.
+
+**`lg:sticky lg:top-24 lg:self-start`** — three classes work together for a sticky sidebar:
+- `sticky` — sticks inside its scroll container (unlike `fixed` which is viewport-relative)
+- `top-24` — sticks 96px from the top of the viewport (clears the fixed navbar)
+- `self-start` — tells the element to be only as tall as its content (in a grid/flex row, items stretch to match the tallest sibling by default — `self-start` prevents this so `sticky` actually kicks in)
+
+**Lesson: buy domains through Vercel** — purchasing a domain via Vercel auto-configures DNS with zero manual steps. Third-party registrars (Cloudflare, Namecheap) require manually adding A and CNAME records. Use Vercel for future domains unless the TLD isn't available there.
