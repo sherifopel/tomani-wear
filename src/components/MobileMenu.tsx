@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, Plus, Minus } from 'lucide-react'
 import { NAV_LINKS } from '@/lib/nav-links'
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
   const [panelTop, setPanelTop] = useState(0)
+  const [expanded, setExpanded] = useState<string | null>(null)
 
   useEffect(() => {
     document.dispatchEvent(new CustomEvent('mobilemenu', { detail: { open } }))
@@ -32,12 +33,14 @@ export default function MobileMenu() {
     }
   }, [open])
 
+  const toggle = (href: string) => setExpanded(prev => prev === href ? null : href)
+
   return (
     <>
       <button
         data-testid={open ? 'mobile-menu-close-button' : 'mobile-menu-open-button'}
         aria-label={open ? 'Close menu' : 'Open menu'}
-        onClick={() => setOpen((current) => !current)}
+        onClick={() => setOpen(current => !current)}
         className="md:hidden p-1.5 rounded hover:bg-gray-100 transition-colors duration-200"
       >
         {open ? <X size={22} strokeWidth={1.5} /> : <Menu size={22} strokeWidth={1.5} />}
@@ -52,31 +55,48 @@ export default function MobileMenu() {
           <nav className="flex h-full flex-col px-6 overflow-y-auto pb-8">
             {NAV_LINKS.map((link) => {
               const hasChildren = !!link.children?.length
+              const isExpanded  = expanded === link.href
 
               return (
                 <div key={link.href} className="border-b border-gray-100">
-                  {/* Parent label — always a direct link to the category page */}
-                  <Link
-                    href={link.href}
-                    data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
-                    onClick={() => setOpen(false)}
-                    className={`block pt-5 ${hasChildren ? 'pb-3' : 'pb-5'} text-sm font-medium transition-colors ${
-                      link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
+                  <div className="flex items-center">
+                    {/* Label — navigates to the category page */}
+                    <Link
+                      href={link.href}
+                      data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+                      onClick={() => setOpen(false)}
+                      className={`flex-1 py-5 text-sm font-medium transition-colors ${
+                        link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
 
-                  {/* Sub-links always visible — no tap required */}
-                  {hasChildren && (
-                    <div className="flex flex-wrap gap-x-5 gap-y-1 pb-4 pl-1">
+                    {/* + / − toggle — only shown when there are sub-items */}
+                    {hasChildren && (
+                      <button
+                        aria-label={isExpanded ? `Close ${link.label}` : `Open ${link.label}`}
+                        onClick={() => toggle(link.href)}
+                        className="touch-manipulation p-3 -mr-3 text-gray-400 active:text-black"
+                      >
+                        {isExpanded
+                          ? <Minus size={16} strokeWidth={1.5} />
+                          : <Plus  size={16} strokeWidth={1.5} />
+                        }
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Sub-links — revealed when + is tapped */}
+                  {hasChildren && isExpanded && (
+                    <div className="pb-4 pl-1 flex flex-col gap-0">
                       {link.children!.map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}
                           data-testid={`mobile-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setOpen(false)}
-                          className="text-sm text-gray-400 hover:text-black transition-colors py-1"
+                          className="py-3 text-sm text-gray-500 hover:text-black transition-colors border-b border-gray-50 last:border-0"
                         >
                           {child.label}
                         </Link>
