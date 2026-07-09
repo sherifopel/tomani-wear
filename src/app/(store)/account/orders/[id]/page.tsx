@@ -147,6 +147,15 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         )}
       </section>
 
+      {/* ── Tracking ── */}
+      {order.trackingNumber && (
+        <section className="mb-8 border border-gray-100 rounded-md px-5 py-4">
+          <h2 className="text-xs  text-gray-400 mb-2">Tracking</h2>
+          <p className="text-sm font-medium" data-testid="order-detail-tracking">{order.trackingNumber}</p>
+          <p className="text-xs text-gray-400 mt-1">Contact your courier with this reference to track your delivery.</p>
+        </section>
+      )}
+
       {/* ── Delivery address ── */}
       {order.address && (
         <section className="mb-8 border border-gray-100 rounded-md px-5 py-4">

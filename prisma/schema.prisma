@@ -79,21 +79,24 @@ model Address {
 }
 
 model Order {
-  id            String      @id @default(cuid())
-  userId        String
-  user          User        @relation(fields: [userId], references: [id])
-  totalNgn      Int
-  paystackRef   String?
-  status        String      @default("pending")
-  customerName  String?
-  customerEmail String?
-  customerPhone String?
-  address       String?
-  city          String?
-  state         String?
-  country       String?
-  items         OrderItem[]
-  createdAt     DateTime    @default(now())
+  id             String      @id @default(cuid())
+  userId         String
+  user           User        @relation(fields: [userId], references: [id])
+  totalNgn       Int
+  paystackRef    String?
+  status         String      @default("processing")
+  paymentStatus  String      @default("pending")
+  trackingNumber String?
+  customerName   String?
+  customerEmail  String?
+  customerPhone  String?
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  items          OrderItem[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 model OrderItem {

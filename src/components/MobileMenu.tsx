@@ -2,18 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '@/lib/nav-links'
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false)
   const [panelTop, setPanelTop] = useState(0)
-  const [expanded, setExpanded] = useState<string | null>(null)
 
   useEffect(() => {
     document.dispatchEvent(new CustomEvent('mobilemenu', { detail: { open } }))
-
-    // Lock body scroll while menu is open
     document.body.style.overflow = open ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [open])
@@ -27,7 +24,6 @@ export default function MobileMenu() {
     }
 
     measure()
-
     const timer = setTimeout(measure, 320)
     window.addEventListener('resize', measure)
     return () => {
@@ -35,10 +31,6 @@ export default function MobileMenu() {
       window.removeEventListener('resize', measure)
     }
   }, [open])
-
-  const toggle = (href: string) => {
-    setExpanded((prev) => (prev === href ? null : href))
-  }
 
   return (
     <>
@@ -57,68 +49,39 @@ export default function MobileMenu() {
           className="fixed left-0 right-0 bottom-0 z-[100] bg-white border-t border-gray-100 md:hidden"
           style={{ top: panelTop }}
         >
-          <nav className="flex h-full flex-col px-6 overflow-y-auto">
+          <nav className="flex h-full flex-col px-6 overflow-y-auto pb-8">
             {NAV_LINKS.map((link) => {
               const hasChildren = !!link.children?.length
-              const isExpanded = expanded === link.href
 
               return (
                 <div key={link.href} className="border-b border-gray-100">
-                  {hasChildren ? (
-                    <>
-                      {/* Row with two tappable zones: label → navigate, chevron → expand */}
-                      <div className="flex items-center">
-                        <Link
-                          href={link.href}
-                          data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
-                          onClick={() => setOpen(false)}
-                          className={`flex-1 py-5 text-sm  font-medium transition-colors ${
-                            link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
-                          }`}
-                        >
-                          {link.label}
-                        </Link>
-                        <button
-                          aria-label={isExpanded ? `Collapse ${link.label}` : `Expand ${link.label}`}
-                          onClick={() => toggle(link.href)}
-                          className="touch-manipulation p-3 -mr-3 text-gray-400"
-                        >
-                          {isExpanded
-                            ? <ChevronDown size={16} strokeWidth={1.5} />
-                            : <ChevronRight size={16} strokeWidth={1.5} />
-                          }
-                        </button>
-                      </div>
+                  {/* Parent label — always a direct link to the category page */}
+                  <Link
+                    href={link.href}
+                    data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+                    onClick={() => setOpen(false)}
+                    className={`block pt-5 ${hasChildren ? 'pb-3' : 'pb-5'} text-sm font-medium transition-colors ${
+                      link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
 
-                      {/* Sub-links */}
-                      {isExpanded && (
-                        <div className="pb-2">
-                          {link.children!.map((child) => (
-                            <Link
-                              key={child.href}
-                              href={child.href}
-                              data-testid={`mobile-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
-                              onClick={() => setOpen(false)}
-                              className="block pl-4 py-3 text-sm text-gray-500 hover:text-black transition-colors"
-                            >
-                              {child.label}
-                            </Link>
-                          ))}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <Link
-                      href={link.href}
-                      data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
-                      onClick={() => setOpen(false)}
-                      className={`flex items-center justify-between py-5 text-sm  font-medium transition-colors ${
-                        link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
-                      }`}
-                    >
-                      {link.label}
-                      <ChevronRight size={16} strokeWidth={1.5} className="text-gray-300" />
-                    </Link>
+                  {/* Sub-links always visible — no tap required */}
+                  {hasChildren && (
+                    <div className="flex flex-wrap gap-x-5 gap-y-1 pb-4 pl-1">
+                      {link.children!.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          data-testid={`mobile-sub-${child.label.toLowerCase().replace(/\s+/g, '-')}`}
+                          onClick={() => setOpen(false)}
+                          className="text-sm text-gray-400 hover:text-black transition-colors py-1"
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
                   )}
                 </div>
               )

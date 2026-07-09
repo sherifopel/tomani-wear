@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 
+async function verifyPaystackPayment(reference: string, expectedAmountKobo: number) {
+  const res = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
+    headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` },
+  })
+  if (!res.ok) return { verified: false, reason: 'Paystack API error' }
+
+  const { data } = await res.json()
+  if (data.status !== 'success') return { verified: false, reason: `Payment status: ${data.status}` }
+  if (data.amount !== expectedAmountKobo) return { verified: false, reason: 'Amount mismatch' }
+
+  return { verified: true }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth()
@@ -24,8 +37,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Only save to DB if the customer is logged in — guest orders still get
-    // a confirmation page but won't appear in order history
+    // Verify the payment actually succeeded with Paystack before saving anything
+    const amountKobo = Math.round(totalAmount) * 100
+    const { verified, reason } = await verifyPaystackPayment(paystackReference, amountKobo)
+    if (!verified) {
+      return NextResponse.json({ error: `Payment verification failed: ${reason}` }, { status: 402 })
+    }
+
+    // Guest checkout — no DB record, still gets a confirmation page
     if (!session?.user?.id) {
       const orderNumber = `TW-${Date.now().toString(36).toUpperCase()}`
       return NextResponse.json({ success: true, orderNumber })
@@ -37,6 +56,7 @@ export async function POST(req: NextRequest) {
         totalNgn:      Math.round(totalAmount),
         paystackRef:   paystackReference,
         status:        'processing',
+        paymentStatus: 'paid',
         customerName:  customerName  ?? null,
         customerEmail: customerEmail ?? null,
         customerPhone: customerPhone ?? null,

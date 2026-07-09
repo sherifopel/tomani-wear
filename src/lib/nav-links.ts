@@ -60,9 +60,7 @@ export const NAV_LINKS: NavLink[] = [
     href: '/products?category=collections',
     underlineColor: 'var(--brand-yellow)',
     children: [
-      { label: 'Archives',              href: '/products?category=archives' },
-      { label: 'Summer Collection 2024', href: '/products?collection=summer-2024' },
-      { label: 'Summer Collection 2025', href: '/products?collection=summer-2025' },
+      { label: 'Archives', href: '/products?category=archives' },
     ],
   },
   {
