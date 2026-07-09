@@ -37,9 +37,9 @@ export default function CartPage() {
       <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
 
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-medium ">Shopping Cart</h1>
-        <div className="flex items-center gap-2 mt-1">
+      <div className="mb-8 text-center">
+        <h1 className="text-2xl font-medium">Shopping Cart</h1>
+        <div className="flex items-center justify-center gap-2 mt-1">
           <p className="text-xs text-gray-400">
             {totalItems} {totalItems === 1 ? 'item' : 'items'}
           </p>
