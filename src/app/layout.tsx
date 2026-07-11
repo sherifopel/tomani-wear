@@ -17,6 +17,12 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "Tomanni Official",
   description: "Premium clothing from Lagos, Nigeria",
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: '32x32' },
+    ],
+  },
 };
 
 export default function RootLayout({
