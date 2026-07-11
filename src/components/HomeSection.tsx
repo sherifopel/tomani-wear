@@ -199,16 +199,19 @@ export default function HomeSection({
               {xlImg      && <source media="(min-width: 1280px)" srcSet={xlImg.srcSet}      sizes="1920px" />}
               {desktopImg && <source media="(min-width: 1024px)" srcSet={desktopImg.srcSet} sizes="1505px" />}
               {tabletImg  && <source media="(min-width: 768px)"  srcSet={tabletImg.srcSet}  sizes="100vw"  />}
-              {/* <img> is the fallback (mobile) and carries fetchPriority for the whole element */}
+              {/* <img> is the fallback (mobile) and carries fetchPriority for the whole element.
+                  style comes from getImageProps — position:absolute, w/h 100%, inset:0.
+                  Using inline style (not Tailwind) so Tailwind preflight can't override it. */}
               <img
                 src={mobileImg.src}
                 srcSet={mobileImg.srcSet}
                 sizes="100vw"
                 alt={content?.heading ?? ''}
+                style={mobileImg.style}
                 fetchPriority={priority ? 'high' : 'auto'}
                 loading={priority ? undefined : 'lazy'}
                 decoding="async"
-                className="home-section-banner-img absolute inset-0 w-full h-full"
+                className="home-section-banner-img"
               />
             </picture>
           )}
