@@ -195,8 +195,11 @@ body {
     scroll-snap-stop: always;
   }
   /* Always fill the visible screen on mobile regardless of Sanity's --h value.
+     div.home-section-banner (element + class) beats the base .home-section-banner (class only)
+     in specificity, so this wins even if the build reorders the rules.
+     Applies to every section type — image, video, or mixed.
      svh = small viewport height (stable; excludes browser chrome like Safari's address bar). */
-  .home-section-banner {
+  div.home-section-banner {
     height: calc(100svh - var(--header-height, 84px));
   }
 }
