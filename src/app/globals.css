@@ -194,5 +194,10 @@ body {
     scroll-snap-align: start;
     scroll-snap-stop: always;
   }
+  /* Always fill the visible screen on mobile regardless of Sanity's --h value.
+     svh = small viewport height (stable; excludes browser chrome like Safari's address bar). */
+  .home-section-banner {
+    height: calc(100svh - var(--header-height, 84px));
+  }
 }
 
