@@ -223,7 +223,7 @@ export default function HomeSection({
               {/* Mobile — video › image */}
               {videoUrl ? (
                 <video src={videoUrl} autoPlay muted loop playsInline
-                  className="absolute inset-0 w-full h-full block md:hidden" />
+                  className="home-section-banner-img absolute inset-0 w-full h-full block md:hidden" />
               ) : imageMobile ? (
                 <Image src={imageMobile} alt={content?.heading ?? ''} fill sizes="100vw" priority={priority}
                   className="home-section-banner-img block md:hidden" />
@@ -235,7 +235,7 @@ export default function HomeSection({
                   className="home-section-banner-img hidden md:block lg:hidden" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
                 <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-                  className="absolute inset-0 w-full h-full hidden md:block lg:hidden" />
+                  className="home-section-banner-img absolute inset-0 w-full h-full hidden md:block lg:hidden" />
               ) : null}
 
               {/* Desktop — image › video */}
@@ -244,7 +244,7 @@ export default function HomeSection({
                   className="home-section-banner-img hidden lg:block xl:hidden" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
                 <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-                  className="absolute inset-0 w-full h-full hidden lg:block xl:hidden" />
+                  className="home-section-banner-img absolute inset-0 w-full h-full hidden lg:block xl:hidden" />
               ) : null}
 
               {/* XL — image › video */}
@@ -253,7 +253,7 @@ export default function HomeSection({
                   className="home-section-banner-img hidden xl:block" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
                 <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-                  className="absolute inset-0 w-full h-full hidden xl:block" />
+                  className="home-section-banner-img absolute inset-0 w-full h-full hidden xl:block" />
               ) : null}
             </>
           )}
