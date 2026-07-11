@@ -489,3 +489,87 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 - `self-start` — tells the element to be only as tall as its content (in a grid/flex row, items stretch to match the tallest sibling by default — `self-start` prevents this so `sticky` actually kicks in)
 
 **Lesson: buy domains through Vercel** — purchasing a domain via Vercel auto-configures DNS with zero manual steps. Third-party registrars (Cloudflare, Namecheap) require manually adding A and CNAME records. Use Vercel for future domains unless the TLD isn't available there.
+
+---
+
+## Session 8 — Paystack Verification, Admin Orders & Mobile Nav UX
+
+### What we built
+
+**Paystack server-side payment verification**
+- Before saving any order to the database, the server calls Paystack's verify API: `GET https://api.paystack.co/transaction/verify/{reference}`
+- Only saves the order if `data.status === 'success'` AND the amount matches
+- Prevents anyone calling `/api/orders` with a fake or recycled reference
+- Secret key lives in `.env.local` only — never committed to git
+
+**Admin orders dashboard (`/admin/orders`)**
+- Protected route — only emails listed in `ADMIN_EMAILS` env var can access
+- Lists all orders with customer name, email, items, total, payment status, fulfilment status
+- Per-order page (`/admin/orders/[id]`): status dropdown (pending → processing → shipped → delivered) + tracking number input
+- PATCH route at `/api/orders/[id]` handles status updates
+- `updatedAt` column added via Prisma migration using `DEFAULT NOW()` to handle existing rows
+
+**Mobile nav UX improvements**
+- Changed `>` arrows to `+` / `−` accordion icons in MobileMenu — clearer for Nigerian users unfamiliar with chevron conventions
+- Accordion text set to black for readability
+- iOS Safari scroll lock fix: `overflow: hidden` on body is ignored by iOS Safari. Fix: save `window.scrollY`, set `position: fixed; top: -${scrollY}px; width: 100%` on open, restore on close
+
+**Release v0.7.0**
+- Merged dev → main (no-ff), tagged v0.7.0
+
+### Key concepts learned
+
+**Server-side payment verification** — never trust the client. When Paystack calls back, the client sends a `reference` string. Always verify with Paystack's server directly before fulfilling an order. Amount check too — prevents paying ₦1 for a ₦50,000 order.
+
+**`DEFAULT NOW()` in SQL migrations** — when adding a `NOT NULL` column to a table that already has rows, Postgres needs a default value for existing rows. `DEFAULT NOW()` fills them with the current timestamp. Prisma's `--create-only` flag lets you edit the raw SQL before it runs.
+
+**iOS Safari scroll lock** — iOS Safari ignores `overflow: hidden` on `<body>`. Workaround: save `scrollY`, set `position: fixed; top: -${scrollY}px; width: 100%` to freeze the viewport, restore on close.
+
+---
+
+## Session 9 — Locale/Currency Switcher & UX Polish
+
+### What we built
+
+**Locale/currency switcher (NGN / USD / GBP)**
+- Country detected via Vercel's `x-vercel-ip-country` header — no third-party service or API key needed
+- Exchange rates fetched from `open.er-api.com` (free, no auth) and cached 1 hour via Next.js `revalidate: 3600`
+- `CurrencyProvider` client component wraps the app — holds `currency` state and live rates
+- `CurrencyContext` + `useCurrency()` hook: any component can call `formatPrice(amountNgn)` to get the converted value
+- `PriceDisplay` client component bridges the gap: server components can't use hooks, so they render `<PriceDisplay priceNgn={n} />` which reads the context client-side
+- User's choice persisted in `localStorage` key `tomanni-currency`
+
+**FlagCircle SVG component (`src/components/FlagCircle.tsx`)**
+- Inline SVG flags for Nigeria, UK, USA — no emoji (emoji render as waving rectangles, not clean circles)
+- Parent `span` with `border-radius: 50%; overflow: hidden` clips to circle (no SVG clipPath — avoids duplicate ID bugs when multiple flags render simultaneously)
+- UK flag uses `viewBox="0 0 120 60"` (correct 2:1 ratio) + `preserveAspectRatio="xMidYMid slice"` — like `object-fit: cover` for SVG
+
+**CurrencySwitcher redesign (Noble Panacea style)**
+- Left side of navbar: circular flag + `NG | NGN` label + chevron
+- Dropdown uses `position: fixed` with `getBoundingClientRect()` coordinates — escapes `overflow: hidden` on StickyHeader without needing a React portal
+- Outside-click handler checks both the button ref AND the dropdown ref — prevents `mousedown` from closing the dropdown before the button's `onClick` fires (classic timing bug)
+
+**Announcement bar flash fix**
+- `announcement-slide` keyframe starts at `opacity: 0` — caused black bar flash on every page load
+- Fix: `hasRotated` state starts `false`; animation class only applied after first rotation fires
+
+**Coming Soon empty PLP state**
+- Category pages with no products show: category name eyebrow → "Coming Soon" heading → message → "Shop All" CTA
+- Header (title, sort dropdown, count) hidden when the coming-soon state is active
+- Search with no results still shows "No products found" (different user intent)
+
+**Pants rename**
+- "Trousers" → "Pants" in nav links, PLP labels, and Sanity Studio
+- URL slug `type=trousers` unchanged — no broken links
+
+### Key concepts learned
+
+**Vercel geo headers** — Vercel automatically injects `x-vercel-ip-country` on every server-side request (e.g. "NG", "GB", "US"). Read it in a Server Component via `headers()` from `next/headers`. Free, zero config, no third-party service.
+
+**`position: fixed` vs React portal** — `position: fixed` elements are NOT clipped by `overflow: hidden` ancestors (unless the ancestor uses `transform`/`filter`/`will-change`). This makes it a cleaner alternative to `createPortal` for dropdowns trapped inside overflow-hidden containers — no context boundary issues, stays in the React tree.
+
+**`mousedown` vs `click` timing** — `mousedown` fires before `click`. If you close a dropdown on `mousedown`, the button unmounts before `click` fires and the `onClick` never runs. Fix: in your outside-click handler, check if the click target is inside the dropdown itself, and skip closing if it is.
+
+**React Context for global UI state** — `CurrencyContext` shares currency + formatPrice across the whole app. Like Express middleware that stamps `req.currency` on every request — any route handler (component) can read it without the caller passing it in.
+
+**SVG `preserveAspectRatio="xMidYMid slice"`** — scales an SVG to fill its container, cropping the excess. Identical to `object-fit: cover`. Essential when your SVG's natural ratio (e.g. 2:1 flag) doesn't match the container (1:1 circle).

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
+import PriceDisplay from '@/components/PriceDisplay'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
 
@@ -70,7 +71,7 @@ export default async function ProductsPage({
   const TYPE_LABELS: Record<string, string> = {
     dresses: 'Dresses', hoodies: 'Hoodies', jackets: 'Jackets',
     joggers: 'Joggers', shirts: 'Shirts', shorts: 'Shorts',
-    tops: 'Tops', trousers: 'Trousers',
+    tops: 'Tops', trousers: 'Pants',
     bags: 'Bags', belts: 'Belts', boots: 'Boots', hats: 'Hats', shoes: 'Shoes',
   }
 
@@ -97,37 +98,58 @@ export default async function ProductsPage({
 
       <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
-      {/* Header */}
-      <div className="pt-6 mb-4">
-        <div className="flex flex-col gap-2" data-testid="plp-header">
-          <h1 className="text-[28px] font-medium text-center" data-testid="plp-title">
-            {pageTitle}
-          </h1>
-          <div className="flex justify-end">
-            <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
+      {/* Header — hidden when showing coming soon (empty category, no search) */}
+      {(products.length > 0 || searchQuery) && (
+        <div className="pt-6 mb-4">
+          <div className="flex flex-col gap-2" data-testid="plp-header">
+            <h1 className="text-[28px] font-medium text-center" data-testid="plp-title">
+              {pageTitle}
+            </h1>
+            <div className="flex justify-end">
+              <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
+            </div>
           </div>
+          <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
+            Showing {products.length} {products.length === 1 ? 'product' : 'products'}
+          </p>
         </div>
-        <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
-          Showing {products.length} {products.length === 1 ? 'product' : 'products'}
-        </p>
-      </div>
+      )}
 
       {/* Empty state */}
       {products.length === 0 && (
-        <div className="min-h-[40vh] flex flex-col items-center justify-center gap-6" data-testid="plp-empty">
-          <p className="text-sm  text-gray-400">No products found</p>
-          {searchQuery && (
-            <p className="max-w-sm text-center text-sm text-gray-500">
-              Try a different search term or browse the full collection.
-            </p>
+        <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4" data-testid="plp-empty">
+          {searchQuery ? (
+            <>
+              <p className="text-sm text-gray-400">No products found</p>
+              <p className="max-w-sm text-center text-sm text-gray-500">
+                Try a different search term or browse the full collection.
+              </p>
+              <Link
+                href="/products"
+                className="mt-2 px-8 py-3 bg-black text-white border border-black text-xs btn-wipe"
+                data-testid="plp-empty-cta"
+              >
+                View All
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400">
+                {pageTitle}
+              </p>
+              <h2 className="text-3xl font-light tracking-wide text-black">Coming Soon</h2>
+              <p className="text-sm text-gray-400 max-w-xs text-center leading-relaxed">
+                We&apos;re working on something for this collection. Check back soon.
+              </p>
+              <Link
+                href="/products"
+                className="mt-4 px-8 py-3 bg-black text-white border border-black text-xs btn-wipe"
+                data-testid="plp-empty-cta"
+              >
+                Shop All
+              </Link>
+            </>
           )}
-          <Link
-            href="/products"
-            className="px-8 py-3 bg-black text-white border border-black text-xs  btn-wipe"
-            data-testid="plp-empty-cta"
-          >
-            View All
-          </Link>
         </div>
       )}
 
@@ -179,17 +201,11 @@ export default async function ProductsPage({
                   </p>
                   {product.compareAtPrice && product.compareAtPrice > product.price ? (
                     <div className="flex items-center gap-2">
-                      <p className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price">
-                        ₦{product.compareAtPrice.toLocaleString()}
-                      </p>
-                      <p className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">
-                        ₦{product.price.toLocaleString()}
-                      </p>
+                      <PriceDisplay priceNgn={product.compareAtPrice} className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price" />
+                      <PriceDisplay priceNgn={product.price} className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price" />
                     </div>
                   ) : (
-                    <p className="text-sm font-medium" data-testid="plp-product-price">
-                      ₦{product.price.toLocaleString()}
-                    </p>
+                    <PriceDisplay priceNgn={product.price} className="text-sm font-medium" data-testid="plp-product-price" />
                   )}
                 </div>
 
