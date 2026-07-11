@@ -5,6 +5,7 @@ import AccountButton from '@/components/AccountButton'
 import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
 import SearchControl from '@/components/SearchControl'
+import CurrencySwitcher from '@/components/CurrencySwitcher'
 import { client } from '@/sanity/client'
 import { SETTINGS_QUERY } from '@/sanity/queries'
 import { NAV_LINKS } from '@/lib/nav-links'
@@ -32,8 +33,9 @@ export default async function Navbar() {
       data-testid="nav-main-row"
       className="border-b border-gray-100 px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center"
     >
-      <div className="flex items-center">
+      <div className="flex items-center gap-3">
         <MobileMenu />
+        <span className="hidden md:block"><CurrencySwitcher /></span>
       </div>
 
       <Link

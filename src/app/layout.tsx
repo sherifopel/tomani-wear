@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Montserrat, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { headers } from "next/headers";
 import AuthProvider from "@/components/AuthProvider";
+import CurrencyProvider from "@/components/CurrencyProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -23,11 +25,16 @@ export const metadata: Metadata = {
   description: "Premium clothing from Lagos, Nigeria",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Vercel sets x-vercel-ip-country on every request (e.g. "NG", "GB", "US")
+  // Falls back to "NG" in local development where the header isn't present
+  const headersList = await headers()
+  const countryCode = headersList.get('x-vercel-ip-country') ?? 'NG'
+
   return (
     <html
       lang="en"
@@ -35,9 +42,11 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
           <AuthProvider>
-            <div className="overflow-x-clip flex flex-col flex-1">
-              {children}
-            </div>
+            <CurrencyProvider countryCode={countryCode}>
+              <div className="overflow-x-clip flex flex-col flex-1">
+                {children}
+              </div>
+            </CurrencyProvider>
           </AuthProvider>
           <Analytics />
           <SpeedInsights />

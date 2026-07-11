@@ -4,10 +4,12 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Trash2, Minus, Plus } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import { useCurrency } from '@/context/CurrencyContext'
 import Breadcrumbs from '@/components/Breadcrumbs'
 
 export default function CartPage() {
   const { items, totalItems, totalPrice, removeItem, increment, decrement, clearCart } = useCart()
+  const { formatPrice } = useCurrency()
 
   const isPreview = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
 
@@ -126,7 +128,7 @@ export default function CartPage() {
                   </div>
 
                   <p className="text-sm font-medium whitespace-nowrap">
-                    ₦{(item.price * item.quantity).toLocaleString()}
+                    {formatPrice(item.price * item.quantity)}
                   </p>
                 </div>
 
@@ -147,12 +149,12 @@ export default function CartPage() {
           <div className="border-t border-gray-200 pt-4 space-y-3">
             <div className="flex justify-between text-sm" data-testid="cart-summary-subtotal-row">
               <span className="text-gray-500">Subtotal</span>
-              <span data-testid="cart-subtotal">₦{totalPrice.toLocaleString()}</span>
+              <span data-testid="cart-subtotal">{formatPrice(totalPrice)}</span>
             </div>
 
             <div className="flex justify-between text-sm font-medium" data-testid="cart-summary-total-row">
               <span>Total</span>
-              <span data-testid="cart-total">₦{totalPrice.toLocaleString()}</span>
+              <span data-testid="cart-total">{formatPrice(totalPrice)}</span>
             </div>
           </div>
 
@@ -171,7 +173,7 @@ export default function CartPage() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 px-6 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium ">Total</span>
-          <span className="text-sm font-medium">₦{totalPrice.toLocaleString()}</span>
+          <span className="text-sm font-medium">{formatPrice(totalPrice)}</span>
         </div>
         <Link
           href="/checkout"

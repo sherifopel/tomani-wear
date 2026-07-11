@@ -4,6 +4,7 @@ import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import Link from 'next/link'
+import PriceDisplay from '@/components/PriceDisplay'
 const IconPrev = () => (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="13 4 7 10 13 16" />
@@ -107,7 +108,7 @@ export default function ProductCarousel({ products }: { products: Product[] }) {
                   data-testid={`home-product-price-${product.id}`}
                   className="mt-1 text-[18px] font-normal leading-[27px] text-black"
                 >
-                  ₦{product.price.toLocaleString()}
+                  <PriceDisplay priceNgn={product.price} />
                 </p>
               </div>
             </Link>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import ProductActions from '@/components/ProductActions'
+import { useCurrency } from '@/context/CurrencyContext'
 
 export type GalleryImage = {
   url: string
@@ -84,6 +85,7 @@ export default function ProductInteractive({
   const [activeColorIndex, setActiveColorIndex] = useState<number | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false)
+  const { formatPrice } = useCurrency()
 
   const hasColors = colors && colors.length > 0
 
@@ -110,11 +112,11 @@ export default function ProductInteractive({
         className={`text-lg font-medium ${onSale ? 'text-[var(--brand-red)]' : ''}`}
         data-testid="pdp-price"
       >
-        ₦{price.toLocaleString()}
+        {formatPrice(price)}
       </span>
       {onSale && compareAtPrice && (
         <span className="text-sm text-gray-400 line-through" data-testid="pdp-compare-price">
-          ₦{compareAtPrice.toLocaleString()}
+          {formatPrice(compareAtPrice)}
         </span>
       )}
     </div>

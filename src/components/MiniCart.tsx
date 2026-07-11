@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { X, Trash2, Plus, Minus } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
+import { useCurrency } from '@/context/CurrencyContext'
 
 export default function MiniCart() {
   const {
@@ -17,6 +18,7 @@ export default function MiniCart() {
     miniCartOpen,
     closeMiniCart,
   } = useCart()
+  const { formatPrice } = useCurrency()
 
   const autoCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -98,7 +100,7 @@ export default function MiniCart() {
                 </button>
               </div>
               <span className="text-xs  whitespace-nowrap">
-                ₦{(item.price * item.quantity).toLocaleString()}
+                {formatPrice(item.price * item.quantity)}
               </span>
             </div>
           </div>
@@ -124,7 +126,7 @@ export default function MiniCart() {
     <div className="border-t border-gray-100 px-5 py-4 space-y-3 shrink-0">
       <div className="flex justify-between text-sm font-medium">
         <span>Subtotal</span>
-        <span>₦{totalPrice.toLocaleString()}</span>
+        <span>{formatPrice(totalPrice)}</span>
       </div>
       <p className="text-xs text-gray-400">Shipping calculated at checkout</p>
       <Link
