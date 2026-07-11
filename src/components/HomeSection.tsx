@@ -163,7 +163,9 @@ export default function HomeSection({
           className="home-section-banner snap-section relative overflow-hidden bg-black"
           style={bannerVars}
         >
-          {/* Each breakpoint picks independently: image wins, video is fallback */}
+          {/* Each breakpoint picks independently: image wins, video is fallback.
+              priority is only set on mobile + desktop — the two most common viewports.
+              Tablet and XL images load lazily so mobile users don't preload 4 images. */}
 
           {/* Mobile — portrait video › mobile image */}
           {videoUrl ? (
@@ -176,7 +178,7 @@ export default function HomeSection({
 
           {/* Tablet — tablet image › desktop video › mobile video */}
           {(imageTablet ?? imageMobile) ? (
-            <Image src={imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="100vw" priority={priority}
+            <Image src={imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="100vw"
               className="home-section-banner-img hidden md:block lg:hidden" />
           ) : (videoDesktopUrl ?? videoUrl) ? (
             <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
@@ -194,7 +196,7 @@ export default function HomeSection({
 
           {/* XL — xl image › desktop image › desktop video › mobile video */}
           {(imageXl ?? imageDesktop ?? imageTablet ?? imageMobile) ? (
-            <Image src={imageXl ?? imageDesktop ?? imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="1920px" priority={priority}
+            <Image src={imageXl ?? imageDesktop ?? imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="1920px"
               className="home-section-banner-img hidden xl:block" />
           ) : (videoDesktopUrl ?? videoUrl) ? (
             <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
