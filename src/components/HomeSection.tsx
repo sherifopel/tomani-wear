@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import ProductCarousel from '@/components/ProductCarousel'
@@ -143,6 +143,34 @@ export default function HomeSection({
       }
     : undefined
 
+  // ── Adaptive image sources ────────────────────────────────────────────────
+  // Resolve each breakpoint's source (later breakpoints fall back to earlier ones).
+  // Used both in <picture> (pure image sections) and in the fallback Image/video path.
+
+  const tabletSrc  = imageTablet  ?? imageMobile
+  const desktopSrc = imageDesktop ?? imageTablet  ?? imageMobile
+  const xlSrc      = imageXl      ?? imageDesktop ?? imageTablet ?? imageMobile
+
+  // A "pure image section" has a mobile image and no video at any breakpoint.
+  // For these we use <picture> + <source media> so the browser downloads only
+  // the image that matches the current viewport — not all four.
+  const isPureImageSection = Boolean(imageMobile) && !videoUrl && !videoDesktopUrl
+
+  // getImageProps is Next.js's escape hatch: it returns the same optimised srcset
+  // that <Image> would produce internally, so we can pass it into native <picture>.
+  const mobileImg  = isPureImageSection && imageMobile
+    ? getImageProps({ src: imageMobile,  alt: content?.heading ?? '', fill: true, sizes: '100vw',  priority }).props
+    : null
+  const tabletImg  = isPureImageSection && tabletSrc
+    ? getImageProps({ src: tabletSrc,    alt: '',                     fill: true, sizes: '100vw'           }).props
+    : null
+  const desktopImg = isPureImageSection && desktopSrc
+    ? getImageProps({ src: desktopSrc,   alt: '',                     fill: true, sizes: '1505px', priority }).props
+    : null
+  const xlImg      = isPureImageSection && xlSrc
+    ? getImageProps({ src: xlSrc,        alt: '',                     fill: true, sizes: '1920px'           }).props
+    : null
+
   // ── Carousel products (respect limit from Sanity) ─────────────────────────
 
   const rawProducts = carousel?.products?.slice(0, carousel.limit ?? 8) ?? []
@@ -163,45 +191,69 @@ export default function HomeSection({
           className="home-section-banner snap-section relative overflow-hidden bg-black"
           style={bannerVars}
         >
-          {/* Each breakpoint picks independently: image wins, video is fallback.
-              priority is only set on mobile + desktop — the two most common viewports.
-              Tablet and XL images load lazily so mobile users don't preload 4 images. */}
+          {/* ── Pure image section: <picture> for adaptive serving ─────────────
+              The browser reads <source media> top-to-bottom, picks the first
+              match, and downloads ONLY that image. One network request total. */}
+          {isPureImageSection && mobileImg && (
+            <picture>
+              {xlImg      && <source media="(min-width: 1280px)" srcSet={xlImg.srcSet}      sizes="1920px" />}
+              {desktopImg && <source media="(min-width: 1024px)" srcSet={desktopImg.srcSet} sizes="1505px" />}
+              {tabletImg  && <source media="(min-width: 768px)"  srcSet={tabletImg.srcSet}  sizes="100vw"  />}
+              {/* <img> is the fallback (mobile) and carries fetchPriority for the whole element */}
+              <img
+                src={mobileImg.src}
+                srcSet={mobileImg.srcSet}
+                sizes="100vw"
+                alt={content?.heading ?? ''}
+                fetchPriority={priority ? 'high' : 'auto'}
+                loading={priority ? undefined : 'lazy'}
+                decoding="async"
+                className="home-section-banner-img absolute inset-0 w-full h-full"
+              />
+            </picture>
+          )}
 
-          {/* Mobile — portrait video › mobile image */}
-          {videoUrl ? (
-            <video src={videoUrl} autoPlay muted loop playsInline
-              className="home-section-banner-img absolute inset-0 w-full h-full block md:hidden" />
-          ) : imageMobile ? (
-            <Image src={imageMobile} alt={content?.heading ?? ''} fill sizes="100vw" priority={priority}
-              className="home-section-banner-img block md:hidden" />
-          ) : null}
+          {/* ── Video / mixed section: per-breakpoint elements ───────────────
+              Only used when there is a video at any breakpoint. ── */}
+          {!isPureImageSection && (
+            <>
+              {/* Mobile — video › image */}
+              {videoUrl ? (
+                <video src={videoUrl} autoPlay muted loop playsInline
+                  className="absolute inset-0 w-full h-full block md:hidden" />
+              ) : imageMobile ? (
+                <Image src={imageMobile} alt={content?.heading ?? ''} fill sizes="100vw" priority={priority}
+                  className="home-section-banner-img block md:hidden" />
+              ) : null}
 
-          {/* Tablet — tablet image › desktop video › mobile video */}
-          {(imageTablet ?? imageMobile) ? (
-            <Image src={imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="100vw"
-              className="home-section-banner-img hidden md:block lg:hidden" />
-          ) : (videoDesktopUrl ?? videoUrl) ? (
-            <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-              className="home-section-banner-img absolute inset-0 w-full h-full hidden md:block lg:hidden" />
-          ) : null}
+              {/* Tablet — image › video */}
+              {tabletSrc ? (
+                <Image src={tabletSrc} alt={content?.heading ?? ''} fill sizes="100vw"
+                  className="home-section-banner-img hidden md:block lg:hidden" />
+              ) : (videoDesktopUrl ?? videoUrl) ? (
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                  className="absolute inset-0 w-full h-full hidden md:block lg:hidden" />
+              ) : null}
 
-          {/* Desktop — desktop image › desktop video › mobile video */}
-          {(imageDesktop ?? imageTablet ?? imageMobile) ? (
-            <Image src={imageDesktop ?? imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="1505px" priority={priority}
-              className="home-section-banner-img hidden lg:block xl:hidden" />
-          ) : (videoDesktopUrl ?? videoUrl) ? (
-            <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-              className="home-section-banner-img absolute inset-0 w-full h-full hidden lg:block xl:hidden" />
-          ) : null}
+              {/* Desktop — image › video */}
+              {desktopSrc ? (
+                <Image src={desktopSrc} alt={content?.heading ?? ''} fill sizes="1505px" priority={priority}
+                  className="home-section-banner-img hidden lg:block xl:hidden" />
+              ) : (videoDesktopUrl ?? videoUrl) ? (
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                  className="absolute inset-0 w-full h-full hidden lg:block xl:hidden" />
+              ) : null}
 
-          {/* XL — xl image › desktop image › desktop video › mobile video */}
-          {(imageXl ?? imageDesktop ?? imageTablet ?? imageMobile) ? (
-            <Image src={imageXl ?? imageDesktop ?? imageTablet ?? imageMobile!} alt={content?.heading ?? ''} fill sizes="1920px"
-              className="home-section-banner-img hidden xl:block" />
-          ) : (videoDesktopUrl ?? videoUrl) ? (
-            <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
-              className="home-section-banner-img absolute inset-0 w-full h-full hidden xl:block" />
-          ) : null}
+              {/* XL — image › video */}
+              {xlSrc ? (
+                <Image src={xlSrc} alt={content?.heading ?? ''} fill sizes="1920px"
+                  className="home-section-banner-img hidden xl:block" />
+              ) : (videoDesktopUrl ?? videoUrl) ? (
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                  className="absolute inset-0 w-full h-full hidden xl:block" />
+              ) : null}
+            </>
+          )}
 
           {/* Gradient — helps text readability on cover images */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
