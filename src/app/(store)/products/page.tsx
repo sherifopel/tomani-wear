@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { connection } from 'next/server'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
-import PriceDisplay from '@/components/PriceDisplay'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
 
@@ -201,11 +200,11 @@ export default async function ProductsPage({
                   </p>
                   {product.compareAtPrice && product.compareAtPrice > product.price ? (
                     <div className="flex items-center gap-2">
-                      <PriceDisplay priceNgn={product.compareAtPrice} className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price" />
-                      <PriceDisplay priceNgn={product.price} className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price" />
+                      <span className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price">₦{product.compareAtPrice.toLocaleString()}</span>
+                      <span className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">₦{product.price.toLocaleString()}</span>
                     </div>
                   ) : (
-                    <PriceDisplay priceNgn={product.price} className="text-sm font-medium" data-testid="plp-product-price" />
+                    <span className="text-sm font-medium" data-testid="plp-product-price">₦{product.price.toLocaleString()}</span>
                   )}
                 </div>
 
