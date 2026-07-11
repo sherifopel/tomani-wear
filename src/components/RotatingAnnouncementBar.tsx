@@ -11,10 +11,12 @@ const THEMES: Record<string, { bg: string; text: string }> = {
 
 export default function RotatingAnnouncementBar({ banners }: { banners: Banner[] }) {
   const [activeIndex, setActiveIndex] = useState(0)
+  const [hasRotated, setHasRotated] = useState(false)
 
   useEffect(() => {
     if (banners.length < 2) return
     const id = window.setInterval(() => {
+      setHasRotated(true)
       setActiveIndex((i) => (i + 1) % banners.length)
     }, 4000)
     return () => window.clearInterval(id)
@@ -26,12 +28,12 @@ export default function RotatingAnnouncementBar({ banners }: { banners: Banner[]
   return (
     <div
       data-testid="nav-announcement-bar"
-      className="flex items-center justify-center text-center text-xs px-5  overflow-hidden transition-colors duration-500 min-h-[3.5rem]"
+      className="flex items-center justify-center text-center text-xs px-5 overflow-hidden transition-colors duration-500 min-h-[3.5rem]"
       style={{ backgroundColor: bg, color: text }}
     >
       <span
         key={activeIndex}
-        className="mx-auto block max-w-[34rem] leading-relaxed animate-[announcement-slide_400ms_ease-out]"
+        className={`mx-auto block max-w-[34rem] leading-relaxed ${hasRotated ? 'animate-[announcement-slide_400ms_ease-out]' : ''}`}
       >
         {active.message}
       </span>

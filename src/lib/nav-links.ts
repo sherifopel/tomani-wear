@@ -27,7 +27,7 @@ export const NAV_LINKS: NavLink[] = [
       { label: 'Joggers',  href: '/products?category=men&type=joggers' },
       { label: 'Shirts',   href: '/products?category=men&type=shirts' },
       { label: 'Shorts',   href: '/products?category=men&type=shorts' },
-      { label: 'Trousers', href: '/products?category=men&type=trousers' },
+      { label: 'Pants', href: '/products?category=men&type=trousers' },
     ],
   },
   {
@@ -40,7 +40,7 @@ export const NAV_LINKS: NavLink[] = [
       { label: 'Joggers',  href: '/products?category=women&type=joggers' },
       { label: 'Shorts',   href: '/products?category=women&type=shorts' },
       { label: 'Tops',     href: '/products?category=women&type=tops' },
-      { label: 'Trousers', href: '/products?category=women&type=trousers' },
+      { label: 'Pants', href: '/products?category=women&type=trousers' },
     ],
   },
   {
