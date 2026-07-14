@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   description: "Premium streetwear from Lagos, Nigeria. Shop men's and women's clothing, accessories and collections.",
   // metadataBase is the root URL — Next.js prepends it to any relative image paths in OG/twitter
   metadataBase: new URL('https://www.tomanni.com'),
+  verification: {
+    google: 'GhiTlCXbYT8VnJvxtVsy4Pyyv5LB7dsMX5oK8PXCym4',
+  },
   openGraph: {
     type:        'website',
     siteName:    'Tomanni',
