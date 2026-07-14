@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import PostHogProvider from "@/components/PostHogProvider";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -58,11 +59,13 @@ export default function RootLayout({
       className={`${montserrat.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
-          <AuthProvider>
-            <div className="overflow-x-clip flex flex-col flex-1">
-              {children}
-            </div>
-          </AuthProvider>
+          <PostHogProvider>
+            <AuthProvider>
+              <div className="overflow-x-clip flex flex-col flex-1">
+                {children}
+              </div>
+            </AuthProvider>
+          </PostHogProvider>
           <Analytics />
           <SpeedInsights />
         </body>

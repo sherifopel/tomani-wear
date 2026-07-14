@@ -4,6 +4,220 @@ A running log of everything built and learned. Updated as we go.
 
 ---
 
+## React & Next.js — Building Blocks
+
+Before anything else — here's how React actually works, explained simply.
+
+---
+
+### 1. What is React?
+
+In vanilla JavaScript (what you know), you write code like:
+```js
+const div = document.createElement('div')
+div.textContent = 'Hello'
+document.body.appendChild(div)
+```
+You tell the browser **exactly what to do**, step by step.
+
+React flips this. Instead of telling the browser what to do, you describe **what the page should look like**, and React figures out the steps itself.
+
+```jsx
+function Greeting() {
+  return <div>Hello</div>
+}
+```
+
+That's it. React takes your description and handles the DOM. When something changes, React figures out the minimum number of DOM updates needed — you never touch the DOM directly.
+
+**Think of it like:** In Express, you write `res.send(html)` and Express handles the HTTP protocol. In React, you write JSX and React handles the DOM.
+
+---
+
+### 2. Components — The Building Blocks
+
+A **component** is just a JavaScript function that returns some HTML (called JSX).
+
+```tsx
+function ProductCard() {
+  return (
+    <div>
+      <img src="/shoe.jpg" alt="Shoe" />
+      <p>Air Max — ₦45,000</p>
+    </div>
+  )
+}
+```
+
+Rules:
+- Function name **must start with a capital letter** (`ProductCard`, not `productCard`) — this is how React tells your components apart from regular HTML tags
+- Must return **one root element** (wrap siblings in a `<div>` or empty `<>...</>` fragment)
+- You use components like HTML tags: `<ProductCard />`
+
+**Think of it like:** A component is like an Express route handler — a function you define once and call many times. The difference is it returns JSX instead of `res.send()`.
+
+---
+
+### 3. JSX — HTML Inside JavaScript
+
+JSX looks like HTML but it's not — it's JavaScript. Two things to remember:
+
+| HTML | JSX |
+|---|---|
+| `class="btn"` | `className="btn"` (`class` is a reserved JS word) |
+| `<img>` | `<img />` (must self-close) |
+| `onclick="fn()"` | `onClick={fn}` (camelCase, curly braces, no quotes) |
+
+Curly braces `{}` let you drop JavaScript into JSX:
+```tsx
+const name = 'Sherif'
+return <p>Hello {name}</p>      // → Hello Sherif
+return <p>{2 + 2}</p>           // → 4
+return <p>{inStock ? 'In Stock' : 'Sold Out'}</p>
+```
+
+---
+
+### 4. Props — Passing Data Into Components
+
+Props are how you pass data into a component. Like function arguments, but for components.
+
+```tsx
+// Define the component — it receives props
+function ProductCard({ name, price }: { name: string; price: number }) {
+  return (
+    <div>
+      <p>{name}</p>
+      <p>₦{price.toLocaleString()}</p>
+    </div>
+  )
+}
+
+// Use the component — pass props like HTML attributes
+<ProductCard name="Air Max" price={45000} />
+<ProductCard name="Joggers" price={25000} />
+```
+
+Same component, different data. This is the whole point — write once, reuse many times.
+
+**Think of it like:** Props are like the arguments you pass into an Express middleware function. The middleware is the same function every time; what changes is the data you hand it.
+
+---
+
+### 5. State — Components That Remember Things
+
+A component re-renders (redraws itself) whenever its **state** changes. State is data that belongs to a component and can change over time.
+
+```tsx
+import { useState } from 'react'
+
+function Counter() {
+  const [count, setCount] = useState(0)  // start at 0
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  )
+}
+```
+
+- `useState(0)` — creates a piece of state, starting at `0`
+- `count` — the current value (read this in JSX)
+- `setCount` — the function to update it (calling this triggers a re-render)
+
+**Never do `count = count + 1` directly** — React won't know the value changed and won't re-render. Always use the setter function (`setCount`).
+
+**Think of it like:** State is like a session variable in Express (`req.session.count`). It persists across "requests" (re-renders) and changing it triggers a response (a new render).
+
+---
+
+### 6. Hooks — Special React Functions
+
+Hooks are functions that start with `use`. They let you tap into React features from inside a component.
+
+| Hook | What it does |
+|---|---|
+| `useState` | Stores a value that triggers re-renders when it changes |
+| `useEffect` | Runs side effects (fetch data, set up timers, read the DOM) after the component renders |
+| `useRef` | Stores a value that does NOT trigger re-renders (e.g. a reference to a DOM element) |
+| `useContext` | Reads a value from a Context (shared global state — like a database connection pool) |
+
+Rules for hooks:
+- Only call them **at the top level** of a component — never inside an `if` or a loop
+- Only call them **inside React components** (or custom hooks)
+
+---
+
+### 7. Server vs Client Components (Next.js specific)
+
+This is where Next.js adds something React alone doesn't have.
+
+| | Server Component | Client Component |
+|---|---|---|
+| **Runs on** | The server (Node.js) | The browser |
+| **Can use** | `async/await`, databases, secrets | `useState`, `useEffect`, event handlers |
+| **File** | Default — any `.tsx` file | Add `'use client'` at the top |
+| **Example** | Fetching products from Sanity | Cart drawer open/close |
+
+**The rule:** Make everything a Server Component by default. Only add `'use client'` when you need interactivity (clicks, state, effects).
+
+**Think of it like:** Server components are like Express route handlers — they run on the server, fetch data, and return HTML. Client components are like the JavaScript you'd put in a `<script>` tag — they run in the browser and handle user interaction.
+
+---
+
+### 8. How Next.js App Router Works
+
+The folder structure **is** the routes:
+
+```
+src/app/
+├── page.tsx                    → /
+├── layout.tsx                  → wraps every page (navbar, footer)
+├── (store)/
+│   └── products/
+│       ├── page.tsx            → /products
+│       └── [slug]/
+│           └── page.tsx        → /products/black-tee  ← [slug] = dynamic segment
+```
+
+- `layout.tsx` — runs on every page. Like Express middleware that wraps every route.
+- `page.tsx` — the content for that specific URL.
+- `[slug]` — a dynamic segment. Next.js passes whatever is in the URL as a prop: `params.slug`.
+- `(store)` — a group folder (in parentheses). Doesn't add to the URL — just organises files.
+
+---
+
+### 9. Data Flow — One Direction Only
+
+React data flows **down**, never up.
+
+```
+Parent passes props ↓
+  └── Child reads props
+        └── Grandchild reads props
+```
+
+If a child needs to tell a parent something, it does it through a **function passed as a prop**:
+
+```tsx
+// Parent
+function Parent() {
+  const [open, setOpen] = useState(false)
+  return <Child onOpen={() => setOpen(true)} />
+}
+
+// Child — calls the function, parent handles the state
+function Child({ onOpen }: { onOpen: () => void }) {
+  return <button onClick={onOpen}>Open</button>
+}
+```
+
+When state needs to be shared between siblings, **lift it up** to the nearest common parent. When it needs to be shared across the whole app (like cart items or the logged-in user), use **Context** (`useContext`).
+
+---
+
 ## Session 1 — Project Setup
 
 ### What we built
