@@ -15,8 +15,27 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Tomanni Official",
-  description: "Premium clothing from Lagos, Nigeria",
+  // template: every page that sets its own title gets " | Tomanni" appended automatically
+  title: {
+    default:  'Tomanni Official',
+    template: '%s | Tomanni',
+  },
+  description: "Premium streetwear from Lagos, Nigeria. Shop men's and women's clothing, accessories and collections.",
+  // metadataBase is the root URL — Next.js prepends it to any relative image paths in OG/twitter
+  metadataBase: new URL('https://www.tomanni.com'),
+  openGraph: {
+    type:        'website',
+    siteName:    'Tomanni',
+    title:       'Tomanni Official',
+    description: "Premium streetwear from Lagos, Nigeria.",
+    images:      [{ url: '/images/logo-black.png', width: 1500, height: 500, alt: 'Tomanni' }],
+  },
+  twitter: {
+    card:        'summary_large_image',
+    title:       'Tomanni Official',
+    description: "Premium streetwear from Lagos, Nigeria.",
+    images:      ['/images/logo-black.png'],
+  },
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },

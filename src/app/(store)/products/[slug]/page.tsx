@@ -1,6 +1,6 @@
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
+import type { Metadata } from 'next'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
@@ -20,6 +20,40 @@ type Product = {
   category?: string
   sizes?: string[]
   inStock: boolean
+}
+
+// ── SEO: per-product title, description, and Open Graph image ─────────────────
+// Next.js calls this at build time (for static pages) and on-demand (for dynamic).
+// The title template in layout.tsx appends " | Tomanni" automatically.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug })
+  if (!product) return {}
+
+  const title       = `${product.name} — ₦${product.price.toLocaleString()}`
+  const description = product.description
+    ?? `Shop ${product.name} at Tomanni. Premium quality clothing from Lagos, Nigeria.`
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type:   'website',
+      images: product.image ? [{ url: product.image, width: 800, height: 1067, alt: product.name }] : [],
+    },
+    twitter: {
+      card:        'summary_large_image',
+      title,
+      description,
+      images:      product.image ? [product.image] : [],
+    },
+  }
 }
 
 // Pre-generate all product pages at build time so they load instantly.
@@ -44,8 +78,32 @@ export default async function ProductPage({
 
   const onSale = !!(product.compareAtPrice && product.compareAtPrice > product.price)
 
+  // JSON-LD structured data — tells Google this is a buyable product with a price and stock status.
+  // Google uses this to show rich results (price + availability) directly in search listings.
+  const jsonLd = {
+    '@context':   'https://schema.org',
+    '@type':      'Product',
+    name:         product.name,
+    description:  product.description,
+    image:        product.image,
+    brand:        { '@type': 'Brand', name: 'Tomanni' },
+    offers: {
+      '@type':        'Offer',
+      price:          product.price,
+      priceCurrency:  'NGN',
+      availability:   product.inStock
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'Tomanni' },
+    },
+  }
+
   return (
     <div className="min-h-screen bg-white" data-testid="pdp-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
       <div className="max-w-7xl mx-auto px-6 pb-16">
