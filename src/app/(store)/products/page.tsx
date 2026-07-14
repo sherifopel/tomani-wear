@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { connection } from 'next/server'
+import type { Metadata } from 'next'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
@@ -26,6 +27,40 @@ const CATEGORY_LABELS: Record<string, string> = {
   collections: "Tomanni's Collections",
   archives:    "Tomanni's Archives",
   sale:        "Tomanni's Sale",
+}
+
+// ── SEO metadata per category/filter ─────────────────────────────────────────
+const CATEGORY_META: Record<string, { title: string; description: string }> = {
+  men:         { title: "Men's Clothing",   description: "Shop men's streetwear and fashion at Tomanni. Premium quality clothing from Lagos, Nigeria." },
+  women:       { title: "Women's Clothing", description: "Shop women's fashion at Tomanni. Dresses, tops, and more from Lagos, Nigeria." },
+  new:         { title: "New In",           description: "Fresh drops at Tomanni. New arrivals updated weekly — be the first to shop." },
+  accessories: { title: "Accessories",      description: "Shop bags, belts, hats and accessories at Tomanni." },
+  collections: { title: "Collections",      description: "Explore curated collections from Tomanni — Lagos streetwear at its finest." },
+  archives:    { title: "Archives",         description: "Past collections and archive pieces from Tomanni." },
+  sale:        { title: "Sale",             description: "Shop discounted clothing and accessories at Tomanni. Lagos fashion at reduced prices." },
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string; type?: string; q?: string }>
+}): Promise<Metadata> {
+  const { category, type, q } = await searchParams
+
+  if (q) {
+    return { title: `Search: "${q}"`, description: `Search results for "${q}" on Tomanni.` }
+  }
+  if (category && CATEGORY_META[category]) {
+    return CATEGORY_META[category]
+  }
+  if (type) {
+    const label = type.charAt(0).toUpperCase() + type.slice(1)
+    return { title: label, description: `Shop ${label} at Tomanni. Premium clothing from Lagos, Nigeria.` }
+  }
+  return {
+    title:       'All Products',
+    description: 'Browse all Tomanni clothing and accessories. Premium streetwear from Lagos, Nigeria.',
+  }
 }
 
 const BREADCRUMB_LABELS: Record<string, string> = {
