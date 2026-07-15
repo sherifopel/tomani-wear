@@ -6,5 +6,6 @@ allowBuilds:
   "logr-kit@https://codeload.github.com/sherifopel/pw-log/tar.gz/d3bc4ece760237dc15c42f46f946cf40c7d2bcd5": true
   '@prisma/engines': true
   prisma: true
+  core-js: false
 patchedDependencies:
   playwright@1.61.0: patches/playwright@1.61.0.patch
