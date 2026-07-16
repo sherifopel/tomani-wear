@@ -30,8 +30,9 @@ test.describe('Cart — size validation', { tag: ['@tomanni', '@cart', '@desktop
   })
 
   test('Should show size error when Add to Cart is clicked without selecting a size', async ({ page, baseURL }) => {
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
-    await pdpPage.assertSoldOut(page)
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
+    await pdpPage.clickAddToCart(page)
+    await pdpPage.assertSizeError(page)
   })
 })
 

@@ -6,7 +6,7 @@ import * as util     from '../../helpers/utils'
 test.describe('PDP — core details', { tag: ['@tomanni', '@pdp', '@desktop'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
   })
 
   test('Should display the product name',                                   async ({ page }) => { await pdpPage.assertNameVisible(page) })
@@ -18,9 +18,11 @@ test.describe('PDP — core details', { tag: ['@tomanni', '@pdp', '@desktop'] },
 
 // prettier-ignore
 test.describe('PDP — sold-out state', { tag: ['@tomanni', '@pdp', '@desktop'] }, () => {
+  test.skip() // Needs a product Tomiwa has marked out of stock — update slug when one exists
+
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
   })
 
   test('Should show "Sold Out" and disable the button when product is not in stock', async ({ page }) => {
@@ -32,7 +34,7 @@ test.describe('PDP — sold-out state', { tag: ['@tomanni', '@pdp', '@desktop'] 
 test.describe('PDP — core details — Mobile', { tag: ['@tomanni', '@pdp', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
   })
 
   test('Should display the product name',         async ({ page }) => { await pdpPage.assertNameVisible(page) })
@@ -51,7 +53,7 @@ test.describe('PDP — 404 for unknown slug', { tag: ['@tomanni', '@pdp'] }, () 
 test.describe('PDP smoke — Desktop', { tag: ['@tomanni-smoke', '@pdp', '@desktop'] }, () => {
   test('Should render PDP with name, price, image and description', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
     await pdpPage.assertCoreDetailsVisible(page)
   })
 })
@@ -60,7 +62,7 @@ test.describe('PDP smoke — Desktop', { tag: ['@tomanni-smoke', '@pdp', '@deskt
 test.describe('PDP smoke — Mobile', { tag: ['@tomanni-smoke', '@pdp', '@mobile'] }, () => {
   test('Should render PDP with name, price and image on mobile', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
-    await pdpPage.navigate(page, baseURL!, 'skeleton-hoodie')
+    await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
     await pdpPage.assertMobileSmoke(page)
   })
 })

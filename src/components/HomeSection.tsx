@@ -188,6 +188,7 @@ export default function HomeSection({
       {/* ── Hero banner ───────────────────────────────────────────────────── */}
       {hasMedia && (
         <div
+          data-testid="home-hero-section"
           className="home-section-banner snap-section relative overflow-hidden bg-black"
           style={bannerVars}
         >
@@ -278,12 +279,13 @@ export default function HomeSection({
               style={textVars}
             >
               {content.label && (
-                <p className="text-xs  mb-4 font-semibold text-[var(--brand-yellow)]">
+                <p data-testid="home-hero-subtitle" className="text-xs  mb-4 font-semibold text-[var(--brand-yellow)]">
                   {content.label}
                 </p>
               )}
               {content.heading && (
                 <h2
+                  data-testid="home-hero-heading"
                   className="text-5xl md:text-6xl font-bold leading-tight tracking-tight mb-4 whitespace-pre-line"
                   style={{ color: textColor }}
                 >
@@ -291,12 +293,13 @@ export default function HomeSection({
                 </h2>
               )}
               {content.sub && (
-                <p className="mb-8 text-sm leading-relaxed" style={{ color: textColor, opacity: 0.85 }}>
+                <p data-testid="home-hero-description" className="mb-8 text-sm leading-relaxed" style={{ color: textColor, opacity: 0.85 }}>
                   {content.sub}
                 </p>
               )}
               {content.ctaLabel && content.href && (
                 <Link
+                  data-testid="home-hero-cta-button"
                   href={content.href}
                   className={`inline-block border px-8 py-3 text-xs  font-medium transition-colors duration-300 ${hasCustomBtn ? '' : btnClasses}`}
                   style={btnStyle}
@@ -311,7 +314,7 @@ export default function HomeSection({
 
       {/* ── Product carousel ──────────────────────────────────────────────── */}
       {carouselProducts.length > 0 && (
-        <div className="snap-section bg-[#f9f9f9] border-t border-gray-200">
+        <div data-testid="home-featured-products" className="snap-section bg-[#f9f9f9] border-t border-gray-200">
 
           {/* Heading row — always padded */}
           <div className="pt-6 pb-4 px-6 md:pt-10 md:pb-6 md:px-10 max-w-7xl mx-auto flex items-center justify-between">
