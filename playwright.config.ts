@@ -17,6 +17,7 @@ export default defineConfig({
     ['./e2e/reporters/status-reporter.ts'],
     ['playwright-final-summary-reporter', {
       sections: [
+        { key: 'smoke',    label: 'SSR Health',          matchers: ['@tomanni-smoke'] },
         { key: 'header',   label: 'Header',              matchers: ['@header'] },
         { key: 'hero',     label: 'Hero Carousel',       matchers: ['@hero', '@homepage'] },
         { key: 'pdp',      label: 'Product Detail Page', matchers: ['@pdp'] },
