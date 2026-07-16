@@ -4,8 +4,10 @@ import { groq } from 'next-sanity'
 // CDN serves a pre-resized WebP instead of the full-size original.
 // Next.js <Image> then further optimises from this smaller source — not from a
 // raw 8 MB phone photo — which is what was burning through the 100 GB quota.
-const IMG_CARD = '?w=800&auto=format&fit=max&q=80'   // product cards / carousels
-const IMG_PDP  = '?w=1200&auto=format&fit=max&q=85'  // PDP main image + gallery
+// GROQ string literals — the outer JS quotes wrap inner GROQ double-quotes so that
+// ${IMG_CARD} interpolates as a valid quoted GROQ string, not a bare token.
+const IMG_CARD = '"?w=800&auto=format&fit=max&q=80"'   // product cards / carousels
+const IMG_PDP  = '"?w=1200&auto=format&fit=max&q=85"'  // PDP main image + gallery
 
 export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && newIn == true] | order(orderRank asc) {
   _id,
