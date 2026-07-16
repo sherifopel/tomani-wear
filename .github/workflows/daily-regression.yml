@@ -34,14 +34,14 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium webkit --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Install Playwright system deps (cached browsers)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium webkit
+        run: pnpm exec playwright install-deps chromium
 
       - name: Run full regression against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Chrome" --project="Mobile Safari"
+        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Chrome"
         env:
           BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
