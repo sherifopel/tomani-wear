@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import posthog from 'posthog-js'
+// posthog loaded dynamically so it never runs during SSR
 import { useCart } from '@/hooks/useCart'
 
 type Props = {
@@ -52,7 +52,9 @@ export default function ProductActions({
     }
     setSizeError(false)
     addItem({ productId, slug, name, price, image, colorName, size: selectedSize ?? '', quantity })
-    posthog.capture('add_to_cart', { product: name, price, size: selectedSize ?? 'one-size', quantity })
+    import('posthog-js').then(({ default: posthog }) => {
+      posthog.capture('add_to_cart', { product: name, price, size: selectedSize ?? 'one-size', quantity })
+    })
     setJustAdded(true)
     setTimeout(() => setJustAdded(false), 2000)
     openMiniCart()

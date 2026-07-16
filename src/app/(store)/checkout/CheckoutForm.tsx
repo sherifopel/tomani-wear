@@ -43,7 +43,8 @@ const DELIVERY_ZONES: Array<{ states: string[]; fee: number; label: string }> = 
   },
 ]
 
-function getDeliveryFee(state: string): number | null {
+function getDeliveryFee(state: string, totalPrice: number): number | null {
+  if (totalPrice >= 50000) return 0  // free nationwide on orders over ₦50,000
   const s = state.trim().toLowerCase()
   if (!s) return null
   for (const zone of DELIVERY_ZONES) {
@@ -110,7 +111,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   if (items.length === 0) return null
 
-  const deliveryFee = getDeliveryFee(form.state)
+  const deliveryFee = getDeliveryFee(form.state, totalPrice)
   const grandTotal  = totalPrice + (deliveryFee ?? 0)
 
   const paystackConfig = {
@@ -380,6 +381,21 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
           </div>
         </div>
 
+      </div>
+
+      {/* ── Mobile sticky pay bar — hidden on lg+ where the desktop button is visible ── */}
+      <div
+        data-testid="checkout-mobile-bar"
+        className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)] lg:hidden"
+      >
+        <button
+          type="submit"
+          disabled={loading}
+          data-testid="checkout-pay-button-mobile"
+          className="w-full flex items-center justify-center bg-black text-white text-xs py-4 border border-black btn-wipe disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
+        </button>
       </div>
 
     </form>

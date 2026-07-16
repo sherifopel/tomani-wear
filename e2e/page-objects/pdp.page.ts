@@ -97,6 +97,19 @@ export const assertBreadcrumbVisible = async (page: Page) => {
   Log.ok('breadcrumb visible')
 }
 
+export const clickAddToCart = async (page: Page) => {
+  const { addToCart } = pdpSelectors(page)
+  await addToCart.click()
+  Log.info('clicked Add to Cart')
+}
+
+export const assertSizeError = async (page: Page) => {
+  const sizeError = page.locator('[data-testid="pdp-size-error"]')
+  await expect(sizeError).toBeVisible()
+  await expect(sizeError).toContainText('Please select a size first')
+  Log.ok('size error shown')
+}
+
 export const assertSoldOut = async (page: Page) => {
   const { addToCart } = pdpSelectors(page)
   await expect(addToCart).toBeVisible()

@@ -8,7 +8,7 @@ import { Log } from 'logr-kit'
 export const homeSelectors = (page: Page) => {
   return {
     hero: {
-      section:     page.locator('[data-testid="home-hero-section"]'),
+      section:     page.locator('[data-testid="home-hero-section"]').first(),
       subtitle:    page.locator('[data-testid="home-hero-subtitle"]').first(),
       heading:     page.locator('[data-testid="home-hero-heading"]').first(),
       description: page.locator('[data-testid="home-hero-description"]').first(),
