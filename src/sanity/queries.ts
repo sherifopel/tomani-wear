@@ -1,5 +1,12 @@
 import { groq } from 'next-sanity'
 
+// Sanity image transformation params appended to every asset->url so Sanity's
+// CDN serves a pre-resized WebP instead of the full-size original.
+// Next.js <Image> then further optimises from this smaller source — not from a
+// raw 8 MB phone photo — which is what was burning through the 100 GB quota.
+const IMG_CARD = '?w=800&auto=format&fit=max&q=80'   // product cards / carousels
+const IMG_PDP  = '?w=1200&auto=format&fit=max&q=85'  // PDP main image + gallery
+
 export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && newIn == true] | order(orderRank asc) {
   _id,
   name,
@@ -12,7 +19,7 @@ export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && newIn == true]
     productImages[0].image.asset->url,
     image.asset->url,
     gallery[0].asset->url
-  ),
+  ) + ${IMG_CARD},
   description,
   category,
   _createdAt,
@@ -31,7 +38,7 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
     productImages[0].image.asset->url,
     image.asset->url,
     gallery[0].asset->url
-  ),
+  ) + ${IMG_CARD},
   description,
   category,
   _createdAt,
@@ -55,7 +62,7 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
     productImages[0].image.asset->url,
     image.asset->url,
     gallery[0].asset->url
-  ),
+  ) + ${IMG_CARD},
   description,
   category,
   _createdAt,
@@ -74,7 +81,7 @@ export const FEATURED_PRODUCTS_QUERY = groq`*[_type == "product" && featured == 
     productImages[0].image.asset->url,
     image.asset->url,
     gallery[0].asset->url
-  )
+  ) + ${IMG_CARD}
 }`
 
 
@@ -82,10 +89,10 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
   sections[enabled != false] {
     _key,
     title,
-    "imageMobile":  focalPoints.imageMobile.asset->url,
-    "imageTablet":  coalesce(focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url),
-    "imageDesktop": coalesce(focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url),
-    "imageXl":      coalesce(focalPoints.imageXl.asset->url,      focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url, focalPoints.imageMobile.asset->url),
+    "imageMobile":  focalPoints.imageMobile.asset->url  + "?w=800&auto=format&fit=max&q=85",
+    "imageTablet":  coalesce(focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1200&auto=format&fit=max&q=85",
+    "imageDesktop": coalesce(focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1600&auto=format&fit=max&q=85",
+    "imageXl":      coalesce(focalPoints.imageXl.asset->url,      focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url, focalPoints.imageMobile.asset->url) + "?w=1920&auto=format&fit=max&q=85",
     "videoUrl":        focalPoints.video.asset->url,
     "videoDesktopUrl": focalPoints.videoDesktop.asset->url,
     "mobileFocalY":  coalesce(focalPoints.mobile,   50),
@@ -124,7 +131,7 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
           productImages[0].image.asset->url,
           image.asset->url,
           gallery[0].asset->url
-        )
+        ) + ${IMG_CARD}
       }
     }
   }
@@ -141,7 +148,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
     productImages[0].image.asset->url,
     image.asset->url,
     gallery[0].asset->url
-  ),
+  ) + ${IMG_PDP},
   "hotspot": coalesce(
     productImages[isMain == true][0].image.hotspot,
     productImages[0].image.hotspot,
@@ -150,11 +157,11 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   ),
   "gallery": select(
     defined(productImages[0]) => productImages[isMain != true][]{
-      "url": image.asset->url,
+      "url": image.asset->url + ${IMG_PDP},
       "hotspot": image.hotspot
     },
     defined(gallery[0]) => gallery[]{
-      "url": asset->url,
+      "url": asset->url + ${IMG_PDP},
       "hotspot": hotspot
     },
     []

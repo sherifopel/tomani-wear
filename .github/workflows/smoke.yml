@@ -84,6 +84,7 @@ jobs:
         env:
           BASE_URL: ${{ steps.vercel_preview.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          LOG_LEVEL: silent
 
       - name: Upload Playwright report on failure
         if: failure()

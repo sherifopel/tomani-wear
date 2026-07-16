@@ -11,7 +11,7 @@ export default defineConfig({
   testDir: './e2e/specs',
   tsconfig: './e2e/tsconfig.json',
   fullyParallel: true,
-  workers: process.env.CI ? undefined : 2,
+  workers: 2,
   retries: process.env.CI ? 2 : 0,
   timeout: process.env.CI ? 60_000 : 30_000,
   reporter: [
