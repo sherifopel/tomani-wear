@@ -1,39 +1,39 @@
-import { test, expect } from '../../fixtures/fixtures'
+import { test }      from '../../fixtures/fixtures'
+import * as smokePage from '../../page-objects/smoke.page'
 
-// ─── Routes guarded against SSR crashes and blank pages ──────────────────────
-// If a third-party lib (e.g. PostHog, analytics) accesses browser globals
-// at module import time it will crash SSR and produce a blank white page for
-// first-time visitors. This suite catches that before it reaches real users.
+// ─── Routes to guard against SSR crashes ─────────────────────────────────────
+// An SSR crash (e.g. a third-party lib touching browser globals at import time)
+// produces a blank white page for first-time visitors. These tests catch that.
 const ROUTES = [
-  { name: 'Homepage',   path: '/' },
-  { name: 'PLP — Men',  path: '/products?category=men' },
-  { name: 'PLP — Women',path: '/products?category=women' },
-  { name: 'Cart',       path: '/cart' },
-  { name: 'Sign In',    path: '/sign-in' },
+  { name: 'Homepage',    path: '/' },
+  { name: 'PLP — Men',   path: '/products?category=men' },
+  { name: 'PLP — Women', path: '/products?category=women' },
+  { name: 'Cart',        path: '/cart' },
+  { name: 'Sign In',     path: '/sign-in' },
 ] as const
 
 // prettier-ignore
-test.describe('SSR health', { tag: ['@tomanni', '@tomanni-smoke'] }, () => {
+test.describe('SSR health — key routes render without JS crashes', { tag: ['@tomanni', '@smoke'] }, () => {
   for (const route of ROUTES) {
-    test(route.name, async ({ page, baseURL }) => {
-      // Collect uncaught JS exceptions — an SSR crash surfaces here on load
-      const uncaughtErrors: string[] = []
-      page.on('pageerror', err => uncaughtErrors.push(err.message))
-
-      await page.goto(`${baseURL}${route.path}`, { waitUntil: 'domcontentloaded' })
-
-      // A blank white page from an SSR crash renders a near-empty body
-      const bodyChildCount = await page.evaluate(() => document.body.children.length)
-      expect(
-        bodyChildCount,
-        `${route.name}: page body is empty — possible SSR crash or blank white page`,
-      ).toBeGreaterThan(0)
-
-      // No uncaught JS exceptions during load
-      expect(
-        uncaughtErrors,
-        `${route.name}: unexpected JS error(s): ${uncaughtErrors.join(' | ')}`,
-      ).toHaveLength(0)
+    test(`Should render ${route.name} without a blank page or JS error`, async ({ page, baseURL }) => {
+      smokePage.listenForJSErrors(page)
+      await smokePage.navigateTo(page, baseURL!, route.path)
+      await smokePage.assertPageNotBlank(page, route.name)
+      smokePage.assertNoJSErrors(page, route.name)
     })
   }
+})
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 🚀 TOMANNI SMOKE
+// ─────────────────────────────────────────────────────────────────────────────
+
+// prettier-ignore
+test.describe('SSR health Smoke', { tag: ['@tomanni-smoke', '@smoke'] }, () => {
+  test('Should render Homepage without a blank page or JS error', async ({ page, baseURL }) => {
+    smokePage.listenForJSErrors(page)
+    await smokePage.navigateTo(page, baseURL!, '/')
+    await smokePage.assertPageNotBlank(page, 'Homepage')
+    smokePage.assertNoJSErrors(page, 'Homepage')
+  })
 })

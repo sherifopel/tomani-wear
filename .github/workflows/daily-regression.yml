@@ -7,9 +7,9 @@ on:
 
 jobs:
   regression:
-    name: SSR health smoke (@tomanni-smoke)
+    name: Full regression (@tomanni)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -34,14 +34,14 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium webkit --with-deps
 
       - name: Install Playwright system deps (cached browsers)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install-deps chromium webkit
 
-      - name: Run smoke tests against Vercel
-        run: pnpm exec playwright test --grep "@tomanni-smoke" --project="Desktop Chrome"
+      - name: Run full regression against Vercel
+        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Chrome" --project="Mobile Safari"
         env:
           BASE_URL: https://tomani-wear.vercel.app
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
