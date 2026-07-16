@@ -1,12 +1,19 @@
 import type { Reporter, TestCase, TestResult } from '@playwright/test/reporter'
-import { logTestStatus, getEnvLabel } from 'playwright-final-summary-reporter'
+import { logTestStatus } from 'playwright-final-summary-reporter'
+
+function envLabel(baseURL: string): string {
+  if (!baseURL || baseURL.includes('localhost')) return 'LOCAL'
+  if (baseURL.includes('tomanni.com'))           return 'PRODUCTION'
+  if (baseURL.includes('vercel.app'))            return 'PREPROD'
+  return 'UNKNOWN'
+}
 
 // Runs in the MAIN process (not a worker) so stdout is never buffered or swallowed.
 // Playwright calls onTestEnd after every test completes, regardless of status.
 export default class StatusReporter implements Reporter {
   onTestEnd(test: TestCase, result: TestResult) {
-    const project    = test.parent?.project()
-    const baseURL    = project?.use?.baseURL ?? ''
+    const project     = test.parent?.project()
+    const baseURL     = project?.use?.baseURL ?? ''
     const projectName = (project?.name ?? '').toLowerCase()
 
     const browserName = projectName.includes('firefox') ? 'firefox'
@@ -27,6 +34,6 @@ export default class StatusReporter implements Reporter {
       },
     }
 
-    logTestStatus(getEnvLabel(baseURL), testInfo as never, browserName)
+    logTestStatus(envLabel(baseURL), testInfo as never, browserName)
   }
 }

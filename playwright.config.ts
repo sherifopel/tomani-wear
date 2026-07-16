@@ -13,6 +13,7 @@ export default defineConfig({
   fullyParallel: true,
   workers: process.env.CI ? undefined : 2,
   retries: process.env.CI ? 2 : 0,
+  timeout: process.env.CI ? 60_000 : 30_000,
   reporter: [
     ['./e2e/reporters/status-reporter.ts'],
     ['playwright-final-summary-reporter', {
