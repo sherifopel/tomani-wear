@@ -6,8 +6,9 @@ on:
   workflow_dispatch:       # allow manual trigger from the Actions UI
 
 jobs:
-  regression:
-    name: Full regression (@tomanni)
+  # ─── Job 1: Full regression on Chrome ────────────────────────────────────────
+  regression-chrome:
+    name: Full regression — Chrome (@tomanni)
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -30,7 +31,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -50,6 +51,55 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: daily-regression-${{ github.run_number }}
+          name: regression-chrome-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 14
+
+  # ─── Job 2: Smoke on Safari (cross-browser sanity) ───────────────────────────
+  smoke-safari:
+    name: Smoke — Safari (@tomanni-smoke)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-webkit-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install webkit --with-deps
+
+      - name: Install Playwright system deps (cached browsers)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps webkit
+
+      - name: Run smoke tests against Vercel
+        run: pnpm exec playwright test --grep "@tomanni-smoke" --project="Mobile Safari"
+        env:
+          BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-safari-${{ github.run_number }}
           path: playwright-report/
           retention-days: 14
