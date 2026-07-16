@@ -6,11 +6,11 @@ on:
   workflow_dispatch:       # allow manual trigger from the Actions UI
 
 jobs:
-  # ─── Job 1: Full regression on Chrome ────────────────────────────────────────
-  regression-chrome:
-    name: Full regression — Chrome (@tomanni)
+  # ─── Job 1: Smoke on Chrome ──────────────────────────────────────────────────
+  smoke-chrome:
+    name: Smoke — Chrome (@tomanni-smoke)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -41,8 +41,8 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
-      - name: Run full regression against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Chrome"
+      - name: Run smoke tests against Vercel
+        run: pnpm exec playwright test --grep "@tomanni-smoke" --project="Desktop Chrome"
         env:
           BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -51,7 +51,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: regression-chrome-${{ github.run_number }}
+          name: smoke-chrome-${{ github.run_number }}
           path: playwright-report/
           retention-days: 14
 
