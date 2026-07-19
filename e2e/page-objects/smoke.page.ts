@@ -44,11 +44,15 @@ export const assertPageNotBlank = async (page: Page, routeName: string): Promise
   ).not.toHaveCount(0)
 }
 
-// WebKit fires ResizeObserver loop warnings as pageerror events; Chrome ignores them.
-// They indicate a resize callback triggered a layout change mid-frame — not an app crash.
+// WebKit surfaces certain browser-internal errors as pageerror events that Chrome ignores.
+// These do not affect page rendering or app functionality.
 const BENIGN_ERRORS = [
+  // WebKit fires these when a resize callback triggers a layout change mid-frame
   'ResizeObserver loop completed with undelivered notifications',
   'ResizeObserver loop limit exceeded',
+  // PostHog calls navigator.storage.persisted() internally; Playwright's WebKit build
+  // has navigator.storage but lacks the persisted() method — app renders correctly
+  "navigator.storage.persisted",
 ]
 
 export const assertNoJSErrors = (page: Page, routeName: string): void => {
