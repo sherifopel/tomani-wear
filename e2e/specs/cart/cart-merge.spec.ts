@@ -15,9 +15,11 @@ test.describe('Cart — guest cart merge on sign-in', { tag: ['@tomanni', '@cart
     await mergePage.mockAuthSession(page)
     await mergePage.mockMergeApi(page, [guest], (body) => { mergePayload = body as { items: unknown[] } })
 
+    // Set up response waiter before navigation so we don't miss a fast response
+    const mergeResponse = page.waitForResponse('**/api/cart/merge', { timeout: 8_000 })
     await mergePage.navigate(page, baseURL!)
+    await mergeResponse  // waits for the route handler to fully respond (guarantees onRequest ran)
 
-    await page.waitForTimeout(2000)
     test.expect(mergePayload).not.toBeNull()
     test.expect((mergePayload as unknown as { items: unknown[] }).items).toHaveLength(1)
   })
