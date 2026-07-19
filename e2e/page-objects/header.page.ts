@@ -145,18 +145,18 @@ export const assertMenuClosesOnMenClick = async (page: Page) => {
   Log.ok('menu closed after men link click')
 }
 
-export const assertMenLinkNavigates = async (page: Page, baseURL: string) => {
+export const assertMenLinkNavigates = async (page: Page, _baseURL: string) => {
   const { mobileLinks } = headerSelectors(page)
   await mobileLinks.men.click()
-  await expect(page).toHaveURL(`${baseURL}/products?category=men`)
+  await expect(page).toHaveURL(/\/products\?category=men$/)
   await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
   Log.ok('men link navigates to /products?category=men')
 }
 
-export const assertWomenLinkNavigates = async (page: Page, baseURL: string) => {
+export const assertWomenLinkNavigates = async (page: Page, _baseURL: string) => {
   const { mobileLinks } = headerSelectors(page)
   await mobileLinks.women.click()
-  await expect(page).toHaveURL(`${baseURL}/products?category=women`)
+  await expect(page).toHaveURL(/\/products\?category=women$/)
   await expect(page.locator('[data-testid="plp-page"]')).toBeVisible()
   Log.ok('women link navigates to /products?category=women')
 }

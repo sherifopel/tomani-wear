@@ -12,7 +12,8 @@ test.describe('PDP — core details', { tag: ['@tomanni', '@pdp', '@desktop'] },
   test('Should display the product name',                                   async ({ page }) => { await pdpPage.assertNameVisible(page) })
   test('Should display the product price in Naira',                         async ({ page }) => { await pdpPage.assertPriceInNaira(page) })
   test('Should display a product image',                                    async ({ page }) => { await pdpPage.assertImageVisible(page) })
-  test('Should display the product description',                            async ({ page }) => { await pdpPage.assertDescriptionVisible(page) })
+  // Skipped until Tomiwa adds product descriptions in Sanity Studio (tomanni-wear.sanity.studio)
+  test.skip('Should display the product description',                       async ({ page }) => { await pdpPage.assertDescriptionVisible(page) })
   test('Should show the breadcrumb trail with Home / Products / product name', async ({ page }) => { await pdpPage.assertBreadcrumbVisible(page) })
 })
 
