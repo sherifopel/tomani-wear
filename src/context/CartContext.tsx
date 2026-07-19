@@ -108,6 +108,7 @@ const STORAGE_KEY = 'tomani-cart'
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, { items: [] })
   const [miniCartOpen, setMiniCartOpen] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
   const { status } = useSession()
   const prevStatusRef = useRef<string>('')
 
@@ -121,6 +122,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     } catch {
       // localStorage unavailable or malformed JSON — start with empty cart
     }
+    setHydrated(true)
   }, [])
 
   // Whenever the cart changes, save it to localStorage
@@ -134,9 +136,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   // When a guest session becomes authenticated, merge the localStorage cart
   // into the user's saved DB cart — exactly once per browser session.
-  // sessionStorage survives SPA navigation but clears when the tab closes,
-  // so a fresh sign-in always gets a fresh merge.
+  // Guard with `hydrated` so we never merge before localStorage has been read —
+  // on WebKit the auth session can respond before the hydration effect runs,
+  // causing an empty guest cart to be sent and the hydration effect to then
+  // overwrite the merged result.
   useEffect(() => {
+    if (!hydrated) return
     if (status === 'authenticated' && !sessionStorage.getItem('cart-merged')) {
       sessionStorage.setItem('cart-merged', '1')
       const guestItems = state.items
@@ -147,14 +152,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
       })
         .then((res) => res.ok ? res.json() : null)
         .then((merged: CartItem[] | null) => {
-          if (merged) dispatch({ type: 'HYDRATE', payload: merged })
+          if (merged) {
+            dispatch({ type: 'HYDRATE', payload: merged })
+            // Write directly — bypass the state sync effect for WebKit reliability
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(merged))
+          }
         })
         .catch(() => {
           // Network error — keep the local cart as-is
         })
     }
     prevStatusRef.current = status
-  }, [status]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [status, hydrated]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Derived totals — computed fresh on every render, not stored
   const totalItems = state.items.reduce((sum, i) => sum + i.quantity, 0)

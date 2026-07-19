@@ -5,7 +5,11 @@ import { test as base, expect } from '@playwright/test'
 export const test = base.extend({
   page: async ({ page }, use) => {
     await use(page)
-    await page.evaluate(() => localStorage.removeItem('tomani-cart'))
+    // Guard: page may be on about:blank (e.g. test skipped before navigation) —
+    // WebKit throws SecurityError for localStorage on about:blank.
+    await page.evaluate(() => {
+      try { localStorage.removeItem('tomani-cart') } catch {}
+    }).catch(() => {})
   },
 })
 

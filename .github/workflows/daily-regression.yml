@@ -56,7 +56,7 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
-  # ─── Job 2: Regression on Safari (cross-browser) ────────────────────────────
+  # ─── Job 2: Regression on Desktop Safari (cross-browser) ───────────────────
   regression-safari:
     name: Regression — Safari (@tomanni)
     runs-on: ubuntu-latest
@@ -92,7 +92,7 @@ jobs:
         run: pnpm exec playwright install-deps webkit
 
       - name: Run regression tests against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project="Mobile Safari"
+        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Safari"
         env:
           BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
