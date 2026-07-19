@@ -16,7 +16,7 @@ type Props = {
 }
 
 const btnClass = (inStock: boolean, justAdded: boolean) =>
-  `flex-1 py-4 text-xs  font-medium transition-colors duration-200 ${
+  `flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors duration-200 ${
     !inStock
       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
       : justAdded
