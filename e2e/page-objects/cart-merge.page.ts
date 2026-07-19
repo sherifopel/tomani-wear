@@ -105,21 +105,33 @@ export const assertCartBadgeCount = async (page: Page, expected: number) => {
 }
 
 export const assertLocalStorageCart = async (page: Page, expectedLength: number) => {
-  const items = await page.evaluate(() => {
-    const raw = localStorage.getItem('tomani-cart')
-    return raw ? JSON.parse(raw) : []
-  })
-  expect(items).toHaveLength(expectedLength)
+  // Poll until localStorage reflects the merged state — a one-shot check races React's effect timing
+  await expect.poll(
+    async () => {
+      const items = await page.evaluate(() => {
+        const raw = localStorage.getItem('tomani-cart')
+        return raw ? (JSON.parse(raw) as unknown[]) : []
+      })
+      return items.length
+    },
+    { timeout: 8_000 }
+  ).toBe(expectedLength)
   Log.ok(`localStorage has ${expectedLength} cart item(s)`)
 }
 
 export const assertMergedQuantity = async (page: Page, productId: string, expectedQty: number) => {
-  const items = await page.evaluate(() => {
-    const raw = localStorage.getItem('tomani-cart')
-    return raw ? JSON.parse(raw) : []
-  })
-  const item = items.find((i: { productId: string }) => i.productId === productId)
-  expect(item).toBeDefined()
-  expect(item.quantity).toBe(expectedQty)
+  await expect.poll(
+    async () => {
+      const items = await page.evaluate(() => {
+        const raw = localStorage.getItem('tomani-cart')
+        return raw ? JSON.parse(raw) : []
+      })
+      const item = (items as { productId: string; quantity: number }[]).find(
+        (i) => i.productId === productId
+      )
+      return item?.quantity ?? null
+    },
+    { timeout: 8_000 }
+  ).toBe(expectedQty)
   Log.ok(`${productId} quantity is ${expectedQty}`)
 }

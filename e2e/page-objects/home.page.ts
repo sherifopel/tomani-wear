@@ -101,20 +101,28 @@ export const assertHeroHeightForViewport = async (
   const { hero } = homeSelectors(page)
   const box = await hero.section.boundingBox()
   const expected = await page.evaluate(() => {
-    // Use clientWidth (excludes scrollbar) so the breakpoint check matches CSS media queries
     const cw = document.documentElement.clientWidth
-    // lg breakpoint (1024px+): hero uses aspect-ratio 1505/600, not svh
-    if (cw >= 1024) return Math.round(cw * 600 / 1505)
-    // mobile/tablet: hero = 100svh - header-height (set dynamically by StickyHeader)
-    const headerH = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
-    )
     const testDiv = document.createElement('div')
     testDiv.style.cssText = 'height:100svh;position:absolute;visibility:hidden'
     document.body.appendChild(testDiv)
     const svh = testDiv.getBoundingClientRect().height
     document.body.removeChild(testDiv)
-    return Math.round(svh - headerH)
+
+    if (cw < 768) {
+      // Mobile: height = calc(100svh - --header-height)
+      const headerH = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
+      )
+      return Math.round(svh - headerH)
+    } else {
+      // Tablet+: height = var(--h, 80vh) — read the actual vh% from the element's inline style
+      const banner = document.querySelector('[data-testid="home-hero-section"]') as HTMLElement | null
+      const hVar = banner
+        ? getComputedStyle(banner).getPropertyValue('--h').trim()
+        : '80vh'
+      const vhPct = parseFloat(hVar) || 80
+      return Math.round(vhPct * svh / 100)
+    }
   })
   // Allow ±5px tolerance for subpixel rounding across browsers
   expect(box?.height).toBeGreaterThanOrEqual(expected - 5)
