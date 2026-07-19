@@ -174,8 +174,8 @@ export default function ProductInteractive({
 
         {/* ── Mobile-only: name + price above the image ─────────────────────── */}
         <div className="md:hidden mb-4">
-          <h1 className="text-2xl font-light tracking-wide" data-testid="pdp-name">
-            {name}
+          <h1 className="text-2xl font-light tracking-wide capitalize" data-testid="pdp-name">
+            {name.toLowerCase()}
           </h1>
           <div className="mt-2">{priceBlock}</div>
         </div>
@@ -284,8 +284,8 @@ export default function ProductInteractive({
         <div className="space-y-6 md:pt-4 mt-8 md:mt-0">
 
           {/* Name — desktop only (mobile version is above the image) */}
-          <h1 className="hidden md:block text-2xl font-light tracking-wide" data-testid="pdp-name">
-            {name}
+          <h1 className="hidden md:block text-2xl font-light tracking-wide capitalize" data-testid="pdp-name">
+            {name.toLowerCase()}
           </h1>
 
           {/* Price — desktop only */}
