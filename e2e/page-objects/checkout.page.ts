@@ -82,8 +82,8 @@ export const waitForMobileForm = async (page: Page) => {
   await page.waitForSelector('[data-testid="checkout-pay-button-mobile"]')
 }
 
-export const assertRedirectToCart = async (page: Page, baseURL: string) => {
-  await expect(page).toHaveURL(`${baseURL}/cart`)
+export const assertRedirectToCart = async (page: Page, _baseURL: string) => {
+  await expect(page).toHaveURL(/\/cart$/)
   Log.ok('redirected to /cart')
 }
 

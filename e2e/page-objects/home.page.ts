@@ -18,9 +18,9 @@ export const homeSelectors = (page: Page) => {
     },
 
     featured: {
-      section:           page.locator('[data-testid="home-featured-products"]'),
-      firstProductName:  page.locator('[data-testid="home-product-name-1"]'),
-      firstProductPrice: page.locator('[data-testid="home-product-price-1"]'),
+      section:           page.locator('[data-testid="home-featured-products"]').first(),
+      firstProductName:  page.locator('[data-testid="home-product-name-1"]').first(),
+      firstProductPrice: page.locator('[data-testid="home-product-price-1"]').first(),
     },
   }
 }
@@ -100,20 +100,30 @@ export const assertHeroHeightForViewport = async (
   await page.waitForLoadState('domcontentloaded')
   const { hero } = homeSelectors(page)
   const box = await hero.section.boundingBox()
-  const expected = await page.evaluate((vw) => {
-    // lg breakpoint (1024px+): hero uses aspect-ratio 1505/600, not svh
-    if (vw >= 1024) return Math.round(vw * 600 / 1505)
-    // mobile/tablet: hero = 100svh - header-height (set dynamically by StickyHeader)
-    const headerH = parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
-    )
+  const expected = await page.evaluate(() => {
+    const cw = document.documentElement.clientWidth
     const testDiv = document.createElement('div')
     testDiv.style.cssText = 'height:100svh;position:absolute;visibility:hidden'
     document.body.appendChild(testDiv)
     const svh = testDiv.getBoundingClientRect().height
     document.body.removeChild(testDiv)
-    return Math.round(svh - headerH)
-  }, viewport.width)
+
+    if (cw < 768) {
+      // Mobile: height = calc(100svh - --header-height)
+      const headerH = parseFloat(
+        getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
+      )
+      return Math.round(svh - headerH)
+    } else {
+      // Tablet+: height = var(--h, 80vh) — read the actual vh% from the element's inline style
+      const banner = document.querySelector('[data-testid="home-hero-section"]') as HTMLElement | null
+      const hVar = banner
+        ? getComputedStyle(banner).getPropertyValue('--h').trim()
+        : '80vh'
+      const vhPct = parseFloat(hVar) || 80
+      return Math.round(vhPct * svh / 100)
+    }
+  })
   // Allow ±5px tolerance for subpixel rounding across browsers
   expect(box?.height).toBeGreaterThanOrEqual(expected - 5)
   expect(box?.height).toBeLessThanOrEqual(expected + 5)

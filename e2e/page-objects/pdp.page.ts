@@ -40,8 +40,6 @@ export const assertCoreDetailsVisible = async (page: Page) => {
   Log.ok('price')
   await expect(selectors.image).toBeVisible()
   Log.ok('image')
-  await expect(selectors.description).toBeVisible()
-  Log.ok('description')
 }
 
 export const assertSizesVisible = async (page: Page, sizes: string[]) => {

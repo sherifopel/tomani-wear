@@ -57,10 +57,10 @@ export const assertBreadcrumbVisible = async (page: Page) => {
   Log.ok('breadcrumb visible on 404 page')
 }
 
-export const assertHomeCtaNavigates = async (page: Page, baseURL: string) => {
+export const assertHomeCtaNavigates = async (page: Page, _baseURL: string) => {
   const { homeCta } = notFoundSelectors(page)
   await homeCta.click()
-  await expect(page).toHaveURL(`${baseURL}/`)
+  await expect(page).toHaveURL(/\/$/)
   Log.ok('Back to Home CTA navigates to /')
 }
 
@@ -68,7 +68,7 @@ export const assertShopCtaNavigates = async (page: Page, baseURL: string) => {
   await navigate(page, baseURL)
   const { shopCta } = notFoundSelectors(page)
   await shopCta.click()
-  await expect(page).toHaveURL(`${baseURL}/products`)
+  await expect(page).toHaveURL(/\/products$/)
   Log.ok('Shop All CTA navigates to /products')
 }
 

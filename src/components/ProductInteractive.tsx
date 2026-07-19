@@ -283,13 +283,6 @@ export default function ProductInteractive({
         {/* ── RIGHT: product details ────────────────────────────────────────── */}
         <div className="space-y-6 md:pt-4 mt-8 md:mt-0">
 
-          {/* Category — desktop only */}
-          {category && (
-            <p className="hidden md:block text-xs  text-gray-400" data-testid="pdp-category">
-              {category}
-            </p>
-          )}
-
           {/* Name — desktop only (mobile version is above the image) */}
           <h1 className="hidden md:block text-2xl font-light tracking-wide" data-testid="pdp-name">
             {name}
