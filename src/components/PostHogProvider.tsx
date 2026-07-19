@@ -24,11 +24,12 @@ export default function PostHogProvider({ children }: { children: React.ReactNod
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
     if (!key || typeof window === 'undefined') return
 
-    // Safari <15.2 has no navigator.storage — polyfill before PostHog reads it
-    if (!('storage' in navigator)) {
+    // WebKit builds may have navigator.storage but lack persisted() — polyfill both gaps
+    if (!('storage' in navigator) || typeof navigator.storage?.persisted !== 'function') {
       Object.defineProperty(navigator, 'storage', {
-        value: { persisted: () => Promise.resolve(false), persist: () => Promise.resolve(false) },
+        value:        { persisted: () => Promise.resolve(false), persist: () => Promise.resolve(false) },
         configurable: true,
+        writable:     true,
       })
     }
 
