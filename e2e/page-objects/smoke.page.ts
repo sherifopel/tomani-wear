@@ -44,10 +44,18 @@ export const assertPageNotBlank = async (page: Page, routeName: string): Promise
   ).not.toHaveCount(0)
 }
 
+// WebKit fires ResizeObserver loop warnings as pageerror events; Chrome ignores them.
+// They indicate a resize callback triggered a layout change mid-frame — not an app crash.
+const BENIGN_ERRORS = [
+  'ResizeObserver loop completed with undelivered notifications',
+  'ResizeObserver loop limit exceeded',
+]
+
 export const assertNoJSErrors = (page: Page, routeName: string): void => {
   const errors = pageErrors.get(page) ?? []
+  const real = errors.filter(msg => !BENIGN_ERRORS.some(b => msg.includes(b)))
   expect(
-    errors,
-    `${routeName}: unexpected JS error(s) on load: ${errors.join(' | ')}`,
+    real,
+    `${routeName}: unexpected JS error(s) on load: ${real.join(' | ')}`,
   ).toHaveLength(0)
 }
