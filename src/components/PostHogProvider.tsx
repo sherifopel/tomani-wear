@@ -24,6 +24,14 @@ export default function PostHogProvider({ children }: { children: React.ReactNod
     const key = process.env.NEXT_PUBLIC_POSTHOG_KEY
     if (!key || typeof window === 'undefined') return
 
+    // Safari <15.2 has no navigator.storage — polyfill before PostHog reads it
+    if (!('storage' in navigator)) {
+      Object.defineProperty(navigator, 'storage', {
+        value: { persisted: () => Promise.resolve(false), persist: () => Promise.resolve(false) },
+        configurable: true,
+      })
+    }
+
     import('posthog-js').then(({ default: posthog }) => {
       if (!posthog.__loaded) {
         posthog.init(key, {

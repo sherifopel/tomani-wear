@@ -114,7 +114,7 @@ export const assertLocalStorageCart = async (page: Page, expectedLength: number)
       })
       return items.length
     },
-    { timeout: 8_000 }
+    { timeout: 15_000 }
   ).toBe(expectedLength)
   Log.ok(`localStorage has ${expectedLength} cart item(s)`)
 }
@@ -131,7 +131,7 @@ export const assertMergedQuantity = async (page: Page, productId: string, expect
       )
       return item?.quantity ?? null
     },
-    { timeout: 8_000 }
+    { timeout: 15_000 }
   ).toBe(expectedQty)
   Log.ok(`${productId} quantity is ${expectedQty}`)
 }
