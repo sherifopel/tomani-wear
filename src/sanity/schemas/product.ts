@@ -32,17 +32,20 @@ export const product = defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'category',
+      name: 'categories',
       title: 'Category',
-      type: 'string',
+      description: 'Select one or more — a unisex item can belong to both Men and Women.',
+      type: 'array',
+      of: [{ type: 'string' }],
       options: {
-        layout: 'radio',
         list: [
           { title: 'Men',         value: 'men'         },
           { title: 'Women',       value: 'women'       },
           { title: 'Accessories', value: 'accessories' },
+          { title: 'New In',      value: 'new-in'      },
           { title: 'Archives',    value: 'archives'    },
         ],
+        layout: 'grid',
       },
     }),
     defineField({
@@ -50,7 +53,11 @@ export const product = defineType({
       title: 'Type',
       description: 'Pick the sub-category for this Men\'s product.',
       type: 'string',
-      hidden: ({ document }) => document?.category !== 'men',
+      hidden: ({ document }) => {
+        const cats = (document?.categories as string[] | undefined) ?? []
+        const legacy = document?.category as string | undefined
+        return !cats.includes('men') && legacy !== 'men'
+      },
       options: {
         layout: 'radio',
         list: [
@@ -68,7 +75,11 @@ export const product = defineType({
       title: 'Type',
       description: 'Pick the sub-category for this Women\'s product.',
       type: 'string',
-      hidden: ({ document }) => document?.category !== 'women',
+      hidden: ({ document }) => {
+        const cats = (document?.categories as string[] | undefined) ?? []
+        const legacy = document?.category as string | undefined
+        return !cats.includes('women') && legacy !== 'women'
+      },
       options: {
         layout: 'radio',
         list: [
@@ -86,7 +97,11 @@ export const product = defineType({
       title: 'Type',
       description: 'Pick the sub-category for this accessory.',
       type: 'string',
-      hidden: ({ document }) => document?.category !== 'accessories',
+      hidden: ({ document }) => {
+        const cats = (document?.categories as string[] | undefined) ?? []
+        const legacy = document?.category as string | undefined
+        return !cats.includes('accessories') && legacy !== 'accessories'
+      },
       options: {
         layout: 'radio',
         list: [
@@ -105,14 +120,6 @@ export const product = defineType({
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
-    }),
-    defineField({
-      name: 'collections',
-      title: 'Collections',
-      description: 'Add this product to one or more collections e.g. Summer 2025.',
-      type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'collection' }] }],
-      validation: (Rule) => Rule.unique(),
     }),
     defineField({
       name: 'description',
@@ -199,20 +206,6 @@ export const product = defineType({
     }),
 
     // ── Visibility ────────────────────────────────────────────────────────
-    defineField({
-      name: 'featured',
-      title: 'Show in New Arrivals',
-      description: 'Tick to feature this product on the homepage.',
-      type: 'boolean',
-      initialValue: false,
-    }),
-    defineField({
-      name: 'newIn',
-      title: 'Show in New In',
-      description: 'Tick to show this product in the New In editorial grid on the homepage.',
-      type: 'boolean',
-      initialValue: false,
-    }),
     defineField({
       name: 'inStock',
       title: 'In Stock',

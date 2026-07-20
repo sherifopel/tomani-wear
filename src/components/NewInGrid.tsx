@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { client } from '@/sanity/client'
 import { groq } from 'next-sanity'
 
-const NEW_IN_QUERY = groq`*[_type == "product" && newIn == true] | order(orderRank asc) [0...4] {
+const NEW_IN_QUERY = groq`*[_type == "product" && ("new-in" in coalesce(categories, []) || newIn == true)] | order(orderRank asc) [0...4] {
   _id,
   name,
   "slug": slug.current,

@@ -54,7 +54,7 @@ export default function FilterDropdown({
     const params = new URLSearchParams()
     if (category) params.set('category', category)
     if (query) params.set('q', query)
-    if (sort && sort !== 'featured') params.set('sort', sort)
+    if (sort && sort !== 'default') params.set('sort', sort)
     const qs = params.toString()
     return qs ? `/products?${qs}` : '/products'
   }

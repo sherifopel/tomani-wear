@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ChevronDown, ArrowUpDown } from 'lucide-react'
 
 const SORT_OPTIONS = [
-  { value: 'featured',   label: 'Featured items' },
+  { value: 'default',    label: 'Default order' },
   { value: 'newest',     label: 'Newest items' },
   { value: 'price-asc',  label: 'Price: Ascending' },
   { value: 'price-desc', label: 'Price: Descending' },
@@ -15,19 +15,17 @@ export default function SortDropdown({
   current,
   category,
   type,
-  collection,
   query,
 }: {
   current: string
   category?: string
   type?: string
-  collection?: string
   query?: string
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
-  const currentLabel = SORT_OPTIONS.find(o => o.value === current)?.label ?? 'Featured items'
+  const currentLabel = SORT_OPTIONS.find(o => o.value === current)?.label ?? 'Default order'
 
   // Close on outside click
   useEffect(() => {
@@ -40,11 +38,10 @@ export default function SortDropdown({
 
   function buildHref(sort: string) {
     const params = new URLSearchParams()
-    if (category)   params.set('category',   category)
-    if (type)       params.set('type',        type)
-    if (collection) params.set('collection',  collection)
-    if (query)      params.set('q',           query)
-    if (sort !== 'featured') params.set('sort', sort)
+    if (category) params.set('category', category)
+    if (type)     params.set('type',     type)
+    if (query)    params.set('q',        query)
+    if (sort !== 'default') params.set('sort', sort)
     const qs = params.toString()
     return qs ? `/products?${qs}` : '/products'
   }
