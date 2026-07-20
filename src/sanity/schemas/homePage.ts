@@ -185,7 +185,7 @@ export const homePage = defineType({
               defineField({
                 name: 'filter',
                 title: 'Products to Show',
-                description: 'Which products appear in the carousel.',
+                description: 'Pick a category. Ignored if "Filter by Tag" is filled in below.',
                 type: 'string',
                 initialValue: 'new',
                 options: {
@@ -200,6 +200,18 @@ export const homePage = defineType({
                   ],
                   layout: 'radio',
                 },
+              }),
+              defineField({
+                name: 'filterSubCategory',
+                title: 'Sub-category',
+                description: 'ℹ Optional — narrows the category above to a specific type. Leave empty to show all. Men: hoodies · jackets · joggers · shirts · shorts · trousers. Women: dresses · jackets · joggers · shorts · tops · trousers. Accessories: bags · belts · boots · hats · shoes.',
+                type: 'string',
+              }),
+              defineField({
+                name: 'filterTag',
+                title: 'Filter by Tag',
+                description: 'ℹ Overrides "Products to Show" and Sub-category above — shows only products tagged with this value. e.g. lookbook or summer-2025. Tag products first from the Products section.',
+                type: 'string',
               }),
               defineField({
                 name: 'limit',

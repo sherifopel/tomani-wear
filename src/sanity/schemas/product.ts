@@ -107,6 +107,14 @@ export const product = defineType({
       validation: (Rule) => Rule.unique(),
     }),
     defineField({
+      name: 'tags',
+      title: 'Tags',
+      description: 'Custom labels for carousel filtering — e.g. lookbook, summer-2025, collab. Type a tag and press Enter.',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: { layout: 'tags' },
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
