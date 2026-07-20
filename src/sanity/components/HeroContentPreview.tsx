@@ -56,14 +56,22 @@ const SCREEN_CONTROL_FIELDS: Record<string, string[]> = {
 const CSS = `
   .tw-page-builder {
     display: flex;
-    gap: 20px;
+    gap: 0;
     align-items: flex-start;
   }
 
   /* ── Left: scrollable controls ── */
   .tw-controls {
-    flex: 0 0 44%;
+    flex: 0 0 52%;
     min-width: 0;
+    padding-right: 20px;
+    border-right: 1px solid #e5e7eb;
+  }
+
+  /* Reduce Sanity's own field labels so they don't wrap */
+  .tw-controls label,
+  .tw-controls [data-ui="FormField"] > div > label {
+    font-size: 12px !important;
   }
 
   .tw-section {
@@ -96,6 +104,7 @@ const CSS = `
     border: 1px solid #e5e7eb;
     border-radius: 10px;
     padding: 16px;
+    margin-left: 20px;
     background: #fafafa;
   }
 
@@ -111,6 +120,19 @@ const CSS = `
     color: #aaa;
     margin-top: 8px;
     text-align: center;
+  }
+
+  /* ── Colour field cards ── */
+  .tw-field-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: #fff;
+  }
+
+  .tw-field-card:last-child {
+    margin-bottom: 0;
   }
 `
 
@@ -220,7 +242,11 @@ export function HeroContentPreview(props: ObjectInputProps) {
 
         <div className="tw-section">
           <p className="tw-section-title">Colours & Button</p>
-          {renderFields(['textColor', 'textCustomColor', 'buttonColor', 'buttonCustomColor', 'buttonBackgroundColor'])}
+          <div className="tw-field-card">{renderFieldByName('textColor')}</div>
+          <div className="tw-field-card">{renderFieldByName('textCustomColor')}</div>
+          <div className="tw-field-card">{renderFieldByName('buttonColor')}</div>
+          <div className="tw-field-card">{renderFieldByName('buttonCustomColor')}</div>
+          <div className="tw-field-card">{renderFieldByName('buttonBackgroundColor')}</div>
         </div>
 
       </div>
