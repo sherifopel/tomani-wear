@@ -180,7 +180,7 @@ export function ProductEditor(props: ObjectInputProps) {
 
   const productImagesMember = member('productImages')
 
-  const identityFields   = ['name', 'slug', 'category', 'menType', 'womenType', 'accessoriesType', 'description']
+  const identityFields   = ['name', 'slug', 'category', 'menType', 'womenType', 'accessoriesType', 'tags', 'description']
   const visibilityFields = ['featured', 'newIn', 'inStock']
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -487,19 +487,6 @@ export function ProductEditor(props: ObjectInputProps) {
           Create new collections first from the <strong>Collection</strong> section in the sidebar.
         </p>
         {(() => { const m = member('collections'); return m?.kind === 'field' && <MemberField member={m} {...renderProps} /> })()}
-      </div>
-
-      {/* ── SECTION 6: TAGS ── */}
-      <div style={card}>
-        <p style={heading}>
-          Tags
-          <span style={{ fontWeight: 400, fontSize: 11, color: '#888', marginLeft: 8, textTransform: 'none', letterSpacing: 0 }}>optional</span>
-        </p>
-        <p style={{ fontSize: 13, color: '#555', margin: '0 0 16px 0' }}>
-          Add custom labels to filter this product in carousels — e.g. <em>lookbook</em>, <em>summer-2025</em>, <em>collab</em>.
-          Type a tag and press <strong>Enter</strong> or comma to add it.
-        </p>
-        {(() => { const m = member('tags'); return m?.kind === 'field' && <MemberField member={m} {...renderProps} /> })()}
       </div>
 
       {/* ── Visibility toggles (Featured, In Stock) ── */}

@@ -99,20 +99,20 @@ export const product = defineType({
       },
     }),
     defineField({
-      name: 'collections',
-      title: 'Collections',
-      description: 'Add this product to one or more collections e.g. Summer 2025.',
-      type: 'array',
-      of: [{ type: 'reference', to: [{ type: 'collection' }] }],
-      validation: (Rule) => Rule.unique(),
-    }),
-    defineField({
       name: 'tags',
       title: 'Tags',
       description: 'Custom labels for carousel filtering — e.g. lookbook, summer-2025, collab. Type a tag and press Enter.',
       type: 'array',
       of: [{ type: 'string' }],
       options: { layout: 'tags' },
+    }),
+    defineField({
+      name: 'collections',
+      title: 'Collections',
+      description: 'Add this product to one or more collections e.g. Summer 2025.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'collection' }] }],
+      validation: (Rule) => Rule.unique(),
     }),
     defineField({
       name: 'description',
