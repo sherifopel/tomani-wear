@@ -112,21 +112,22 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
       viewAllLink,
       style,
       filter,
-      filterSubCategory,
+      filterMenType,
+      filterWomenType,
+      filterAccessoriesType,
       filterTag,
       limit,
       "products": *[_type == "product" && (
-        // Tag mode — overrides category + sub-category
+        // Tag mode — overrides category + type
         (defined(^.filterTag) && ^.filterTag in coalesce(tags, [])) ||
         // Category mode — only runs when no tag filter is set
         (!defined(^.filterTag) && (
           ^.filter == "all" ||
           (^.filter == "new"         && newIn == true) ||
-          (^.filter == "featured"    && featured == true) ||
           (^.filter == "sale"        && defined(compareAtPrice) && compareAtPrice > price) ||
-          (^.filter == "men"         && category == "men"         && (!defined(^.filterSubCategory) || menType         == ^.filterSubCategory)) ||
-          (^.filter == "women"       && category == "women"       && (!defined(^.filterSubCategory) || womenType       == ^.filterSubCategory)) ||
-          (^.filter == "accessories" && category == "accessories" && (!defined(^.filterSubCategory) || accessoriesType == ^.filterSubCategory))
+          (^.filter == "men"         && category == "men"         && (!defined(^.filterMenType)         || menType         == ^.filterMenType)) ||
+          (^.filter == "women"       && category == "women"       && (!defined(^.filterWomenType)       || womenType       == ^.filterWomenType)) ||
+          (^.filter == "accessories" && category == "accessories" && (!defined(^.filterAccessoriesType) || accessoriesType == ^.filterAccessoriesType))
         ))
       )] | order(orderRank asc) [0...20] {
         _id,

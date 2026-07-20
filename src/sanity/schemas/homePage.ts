@@ -191,7 +191,6 @@ export const homePage = defineType({
                 options: {
                   list: [
                     { title: 'New In',        value: 'new'          },
-                    { title: 'Featured',      value: 'featured'     },
                     { title: 'Men',           value: 'men'          },
                     { title: 'Women',         value: 'women'        },
                     { title: 'Accessories',   value: 'accessories'  },
@@ -201,11 +200,59 @@ export const homePage = defineType({
                   layout: 'radio',
                 },
               }),
+              // Sub-category radios — only one appears at a time based on the filter above
               defineField({
-                name: 'filterSubCategory',
-                title: 'Sub-category',
-                description: 'ℹ Optional — narrows the category above to a specific type. Leave empty to show all. Men: hoodies · jackets · joggers · shirts · shorts · trousers. Women: dresses · jackets · joggers · shorts · tops · trousers. Accessories: bags · belts · boots · hats · shoes.',
+                name: 'filterMenType',
+                title: 'Men\'s Type',
+                description: 'Optional — leave empty to show all Men\'s products.',
                 type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'men',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Hoodies',  value: 'hoodies'  },
+                    { title: 'Jackets',  value: 'jackets'  },
+                    { title: 'Joggers',  value: 'joggers'  },
+                    { title: 'Shirts',   value: 'shirts'   },
+                    { title: 'Shorts',   value: 'shorts'   },
+                    { title: 'Trousers', value: 'trousers' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'filterWomenType',
+                title: 'Women\'s Type',
+                description: 'Optional — leave empty to show all Women\'s products.',
+                type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'women',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Dresses',  value: 'dresses'  },
+                    { title: 'Jackets',  value: 'jackets'  },
+                    { title: 'Joggers',  value: 'joggers'  },
+                    { title: 'Shorts',   value: 'shorts'   },
+                    { title: 'Tops',     value: 'tops'     },
+                    { title: 'Trousers', value: 'trousers' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'filterAccessoriesType',
+                title: 'Accessories Type',
+                description: 'Optional — leave empty to show all Accessories.',
+                type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'accessories',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Bags',  value: 'bags'  },
+                    { title: 'Belts', value: 'belts' },
+                    { title: 'Boots', value: 'boots' },
+                    { title: 'Hats',  value: 'hats'  },
+                    { title: 'Shoes', value: 'shoes' },
+                  ],
+                },
               }),
               defineField({
                 name: 'filterTag',
