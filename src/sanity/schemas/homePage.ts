@@ -41,9 +41,10 @@ const contentFields = [
   defineField({ name: 'xlTextPosition',       title: 'XL Text Vertical Position',       type: 'number', components: { input: FocalYSlider } }),
   defineField({ name: 'xlTextPositionX',      title: 'XL Text Horizontal Position',     type: 'number', components: { input: FocalXSlider } }),
   defineField({
-    name: 'textColor', title: 'Text Colour', type: 'string', initialValue: 'white',
+    name: 'textColor', title: 'Text Colour Preset', type: 'string', initialValue: 'white',
     options: { list: [{ title: 'White', value: 'white' }, { title: 'Black', value: 'black' }], layout: 'radio' },
   }),
+  defineField({ name: 'textCustomColor', title: 'Custom Text Colour', description: 'Overrides the preset above. Leave empty to use White or Black.', type: 'string', components: { input: ColorPickerInput } }),
   defineField({
     name: 'buttonColor', title: 'Button Preset Colour', type: 'string', initialValue: 'white',
     options: { list: [{ title: 'White', value: 'white' }, { title: 'Black', value: 'black' }, { title: 'Gold', value: 'gold' }], layout: 'radio' },

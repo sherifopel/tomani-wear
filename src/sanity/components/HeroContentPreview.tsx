@@ -29,6 +29,7 @@ type ContentValue = {
   xlTextPosition?:       number
   xlTextPositionX?:      number
   textColor?:            string
+  textCustomColor?:      string
   buttonColor?:          string
   buttonCustomColor?:    string
   buttonBackgroundColor?: string
@@ -128,7 +129,7 @@ export function HeroContentPreview(props: ObjectInputProps) {
   const desktopImageRef = focalPoints?.imageDesktop?.asset?._ref ?? tabletImageRef
   const xlImageRef      = focalPoints?.imageXl?.asset?._ref      ?? desktopImageRef
 
-  const textColor        = cv.textColor === 'black' ? '#000' : '#fff'
+  const textColor        = cv.textCustomColor || (cv.textColor === 'black' ? '#000' : '#fff')
   const buttonTextColor  = cv.buttonCustomColor || BUTTON_BORDER[cv.buttonColor ?? 'white'] || '#fff'
   const buttonBackground = cv.buttonBackgroundColor || 'transparent'
   const defaultY         = cv.textPosition  ?? 85
@@ -219,7 +220,7 @@ export function HeroContentPreview(props: ObjectInputProps) {
 
         <div className="tw-section">
           <p className="tw-section-title">Colours & Button</p>
-          {renderFields(['textColor', 'buttonColor', 'buttonCustomColor', 'buttonBackgroundColor'])}
+          {renderFields(['textColor', 'textCustomColor', 'buttonColor', 'buttonCustomColor', 'buttonBackgroundColor'])}
         </div>
 
       </div>

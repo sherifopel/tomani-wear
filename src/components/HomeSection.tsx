@@ -36,8 +36,9 @@ type Content = {
   desktopTextPositionX?: number
   xlTextPosition?:       number
   xlTextPositionX?:      number
-  textColor:   'white' | 'black'
-  buttonColor: 'white' | 'black' | 'gold'
+  textColor:        'white' | 'black'
+  textCustomColor?: string
+  buttonColor:      'white' | 'black' | 'gold'
   buttonCustomColor?:     string
   buttonBackgroundColor?: string
 }
@@ -132,7 +133,7 @@ export default function HomeSection({
 
   // ── Button ────────────────────────────────────────────────────────────────
 
-  const textColor = content?.textColor === 'black' ? '#000' : '#fff'
+  const textColor = content?.textCustomColor || (content?.textColor === 'black' ? '#000' : '#fff')
   const hasCustomBtn = Boolean(content?.buttonCustomColor || content?.buttonBackgroundColor)
   const btnClasses   = BUTTON_CLASSES[content?.buttonColor ?? 'white'] ?? BUTTON_CLASSES.white
   const btnStyle = hasCustomBtn
