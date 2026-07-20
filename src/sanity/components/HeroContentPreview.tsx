@@ -246,8 +246,10 @@ export function HeroContentPreview(props: ObjectInputProps) {
             {renderFieldByName('textColor')}
             {renderFieldByName('textCustomColor')}
           </div>
-          <div className="tw-field-card">{renderFieldByName('buttonColor')}</div>
-          <div className="tw-field-card">{renderFieldByName('buttonCustomColor')}</div>
+          <div className="tw-field-card">
+            {renderFieldByName('buttonColor')}
+            {renderFieldByName('buttonCustomColor')}
+          </div>
           <div className="tw-field-card">{renderFieldByName('buttonBackgroundColor')}</div>
         </div>
 
