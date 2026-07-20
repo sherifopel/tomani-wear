@@ -4,6 +4,7 @@ import { MidBannerFocalPreview } from '../components/MidBannerFocalPreview'
 import { HeroContentPreview } from '../components/HeroContentPreview'
 import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
 import { ColorPickerInput } from '../components/ColorPickerInput'
+import { InfoTooltipField } from '../components/InfoTooltipField'
 
 // ── Reusable sub-fields ───────────────────────────────────────────────────────
 
@@ -257,8 +258,9 @@ export const homePage = defineType({
               defineField({
                 name: 'filterTag',
                 title: 'Filter by Tag',
-                description: 'ℹ Overrides "Products to Show" and Sub-category above — shows only products tagged with this value. e.g. lookbook or summer-2025. Tag products first from the Products section.',
+                description: 'ℹ Overrides "Products to Show" and Type above — shows only products tagged with this value. e.g. lookbook or summer-2025. Tag products first from the Products section.',
                 type: 'string',
+                components: { field: InfoTooltipField },
               }),
               defineField({
                 name: 'limit',
