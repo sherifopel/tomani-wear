@@ -7,6 +7,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePaystackPayment } from 'react-paystack'
 import { useCartContext } from '@/context/CartContext'
+import { pixel } from '@/lib/pixel'
 import type { SavedDetails } from './page'
 
 const inputClass = `
@@ -129,6 +130,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
   }
 
   const initializePayment = usePaystackPayment(paystackConfig)
+
+  // Fire InitiateCheckout once when checkout page loads
+  useEffect(() => { pixel.initiateCheckout(grandTotal) }, [grandTotal])
 
   // Test hook — lets Playwright call onSuccess without opening the iframe.
   // Never runs in production because Next.js removes non-prod env vars at build time.

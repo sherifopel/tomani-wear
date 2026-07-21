@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import Link from 'next/link'
 import { useCartContext } from '@/context/CartContext'
+import { pixel } from '@/lib/pixel'
 
 type Props = {
   paystackRef: string | null
@@ -15,8 +16,10 @@ type Props = {
 export default function OrderConfirmationContent({ paystackRef, order, userName, userEmail, isLoggedIn }: Props) {
   const { removeItem, items } = useCartContext()
 
-  // Clear the cart once on mount
+  // Fire Purchase event and clear the cart once on mount
   useEffect(() => {
+    const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    if (total > 0) pixel.purchase(order ?? paystackRef ?? 'unknown', total)
     items.forEach(item => removeItem(item.productId, item.size))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 // posthog loaded dynamically so it never runs during SSR
 import { useCart } from '@/hooks/useCart'
+import { pixel } from '@/lib/pixel'
 
 type Props = {
   productId: string
@@ -44,6 +45,9 @@ export default function ProductActions({
   const [justAdded, setJustAdded] = useState(false)
   const sizeRef = useRef<HTMLDivElement>(null)
 
+  // Fire ViewContent once when the product page loads
+  useEffect(() => { pixel.viewContent(name, price) }, [name, price])
+
   function handleAddToCart() {
     if (sizes.length > 0 && !selectedSize) {
       setSizeError(true)
@@ -52,6 +56,7 @@ export default function ProductActions({
     }
     setSizeError(false)
     addItem({ productId, slug, name, price, image, colorName, size: selectedSize ?? '', quantity })
+    pixel.addToCart(name, price)
     import('posthog-js').then(({ default: posthog }) => {
       posthog.capture('add_to_cart', { product: name, price, size: selectedSize ?? 'one-size', quantity })
     })
