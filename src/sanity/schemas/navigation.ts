@@ -1,12 +1,23 @@
 import { defineField, defineType } from 'sanity'
 import { Menu } from 'lucide-react'
+import { NavigationEditor } from '../components/NavigationEditor'
 
 export const navigation = defineType({
   name: 'navigation',
   title: 'Navigation',
   type: 'document',
   icon: Menu,
+  components: { input: NavigationEditor },
   fields: [
+    // Hidden title so the Studio shows "Navigation" instead of "Untitled"
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
+      initialValue: 'Navigation',
+    }),
     defineField({
       name: 'links',
       title: 'Nav Links',
