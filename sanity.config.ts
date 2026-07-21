@@ -1,4 +1,4 @@
-import { defineConfig } from 'sanity'
+import { defineConfig, definePlugin } from 'sanity'
 import { structureTool } from 'sanity/structure'
 import { visionTool } from '@sanity/vision'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
@@ -6,11 +6,22 @@ import { schemaTypes } from './src/sanity/schemas'
 import { InfoTooltipField } from './src/sanity/components/InfoTooltipField'
 import DiscountCodesTool from './src/sanity/tools/DiscountCodesTool'
 
+const discountCodesPlugin = definePlugin({
+  name: 'discount-codes-plugin',
+  tools: [
+    {
+      name: 'discount-codes',
+      title: 'Discount Codes',
+      component: DiscountCodesTool,
+    },
+  ],
+})
+
 export default defineConfig({
   name: 'default',
   title: 'Tomanni Wear',
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'tu8h6v2e',
-  dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
+  projectId: 'tu8h6v2e',
+  dataset: 'production',
   basePath: '/studio',
   plugins: [
     structureTool({
@@ -50,12 +61,7 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
-    // Custom sidebar tab — lets Tomiwa manage discount codes without leaving the Studio
-    {
-      name: 'discount-codes',
-      title: 'Discount Codes',
-      component: DiscountCodesTool,
-    },
+    discountCodesPlugin(),
   ],
   schema: {
     types: schemaTypes,

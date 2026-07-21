@@ -138,6 +138,7 @@ export const product = defineType({
         {
           type: 'object',
           fields: [
+            defineField({ name: 'cloudinaryUrl', title: 'Cloudinary URL', type: 'string', hidden: true, readOnly: true }),
             defineField({ name: 'image', title: 'Image', type: 'image', options: { hotspot: true } }),
             defineField({ name: 'isMain', title: 'Main Display', type: 'boolean', initialValue: false }),
           ],
