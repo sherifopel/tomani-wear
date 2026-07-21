@@ -1,17 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { ObjectInputProps, MemberField, set, unset, useFormValue } from 'sanity'
-import { createClient } from 'next-sanity'
-
-// Studio upload client — withCredentials uses the logged-in Studio session cookie.
-// No hook needed; the cookie auth is automatic in the browser.
-const uploadClient = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
-  dataset:   process.env.NEXT_PUBLIC_SANITY_DATASET!,
-  apiVersion: '2024-01-01',
-  useCdn:    false,
-  withCredentials: true,
-})
 
 /**
  * ProductEditor — unified product management UI for Sanity Studio.
@@ -86,6 +75,7 @@ const inputStyle: React.CSSProperties = {
 type SanityImageAsset = { _ref?: string }
 type ProductImage = {
   _key: string
+  cloudinaryUrl?: string
   image?: { asset?: SanityImageAsset; hotspot?: unknown }
   isMain?: boolean
 }
@@ -133,21 +123,28 @@ export function ProductEditor(props: ObjectInputProps) {
     if (!imageFiles.length) return
     setUploadProgress({ done: 0, total: imageFiles.length })
 
+    const cloudName    = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+
     let done = 0
     const assets = await Promise.all(
       imageFiles.map(async (file) => {
-        const asset = await uploadClient.assets.upload('image', file)
+        const body = new FormData()
+        body.append('file', file)
+        body.append('upload_preset', uploadPreset)
+        const res  = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body })
+        const data = await res.json() as { secure_url: string }
         done++
         setUploadProgress({ done, total: imageFiles.length })
-        return asset
+        return data
       })
     )
 
     const isFirstUpload = currentProductImages.length === 0
-    const newImages: ProductImage[] = assets.map((asset: { _id: string }, i: number) => ({
-      _key:  `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}${i}`,
-      image: { _type: 'image', asset: { _type: 'reference', _ref: asset._id } },
-      isMain: isFirstUpload && i === 0,
+    const newImages: ProductImage[] = assets.map((asset, i) => ({
+      _key:         `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}${i}`,
+      cloudinaryUrl: asset.secure_url.replace('/upload/', '/upload/w_1400,f_auto,q_85/'),
+      isMain:       isFirstUpload && i === 0,
     }))
 
     onChange(set([...currentProductImages, ...newImages], ['productImages']))
@@ -318,9 +315,8 @@ export function ProductEditor(props: ObjectInputProps) {
             <span style={label}>Click a thumbnail to set it as Main Display</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {currentProductImages.map((img) => {
-                const url = img.image?.asset?._ref
-                  ? assetRefToUrl(img.image.asset._ref)
-                  : null
+                const url = img.cloudinaryUrl
+                  ?? (img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null)
                 const isMain = !!img.isMain
 
                 return (

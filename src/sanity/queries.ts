@@ -17,11 +17,13 @@ export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && ("new-in" in c
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].image.asset->url,
-    productImages[0].image.asset->url,
-    image.asset->url,
-    gallery[0].asset->url
-  ) + ${IMG_CARD},
+    productImages[isMain == true][0].cloudinaryUrl,
+    productImages[0].cloudinaryUrl,
+    productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
+    productImages[0].image.asset->url + ${IMG_CARD},
+    image.asset->url + ${IMG_CARD},
+    gallery[0].asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
@@ -36,11 +38,13 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].image.asset->url,
-    productImages[0].image.asset->url,
-    image.asset->url,
-    gallery[0].asset->url
-  ) + ${IMG_CARD},
+    productImages[isMain == true][0].cloudinaryUrl,
+    productImages[0].cloudinaryUrl,
+    productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
+    productImages[0].image.asset->url + ${IMG_CARD},
+    image.asset->url + ${IMG_CARD},
+    gallery[0].asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
@@ -59,11 +63,13 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].image.asset->url,
-    productImages[0].image.asset->url,
-    image.asset->url,
-    gallery[0].asset->url
-  ) + ${IMG_CARD},
+    productImages[isMain == true][0].cloudinaryUrl,
+    productImages[0].cloudinaryUrl,
+    productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
+    productImages[0].image.asset->url + ${IMG_CARD},
+    image.asset->url + ${IMG_CARD},
+    gallery[0].asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
@@ -138,11 +144,13 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   price,
   compareAtPrice,
   "image": coalesce(
-    productImages[isMain == true][0].image.asset->url,
-    productImages[0].image.asset->url,
-    image.asset->url,
-    gallery[0].asset->url
-  ) + ${IMG_PDP},
+    productImages[isMain == true][0].cloudinaryUrl,
+    productImages[0].cloudinaryUrl,
+    productImages[isMain == true][0].image.asset->url + ${IMG_PDP},
+    productImages[0].image.asset->url + ${IMG_PDP},
+    image.asset->url + ${IMG_PDP},
+    gallery[0].asset->url + ${IMG_PDP}
+  ),
   "hotspot": coalesce(
     productImages[isMain == true][0].image.hotspot,
     productImages[0].image.hotspot,
@@ -151,7 +159,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   ),
   "gallery": select(
     defined(productImages[0]) => productImages[isMain != true][]{
-      "url": image.asset->url + ${IMG_PDP},
+      "url": coalesce(cloudinaryUrl, image.asset->url + ${IMG_PDP}),
       "hotspot": image.hotspot
     },
     defined(gallery[0]) => gallery[]{

@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    minimumCacheTTL: 2592000, // 30 days — Sanity URLs are content-addressed so long TTL is safe
     remotePatterns: [
       {
         protocol: 'https',
