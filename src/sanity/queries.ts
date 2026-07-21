@@ -109,9 +109,9 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
           ^.filter == "all" ||
           (^.filter == "new"         && ("new-in" in coalesce(categories, []) || newIn == true)) ||
           (^.filter == "sale"        && defined(compareAtPrice) && compareAtPrice > price) ||
-          (^.filter == "men"         && ("men"         in coalesce(categories, []) || category == "men")         && (!defined(^.filterMenType)         || menType         == ^.filterMenType)) ||
-          (^.filter == "women"       && ("women"       in coalesce(categories, []) || category == "women")       && (!defined(^.filterWomenType)       || womenType       == ^.filterWomenType)) ||
-          (^.filter == "accessories" && ("accessories" in coalesce(categories, []) || category == "accessories") && (!defined(^.filterAccessoriesType) || accessoriesType == ^.filterAccessoriesType))
+          (^.filter == "men"         && ("men"         in coalesce(categories, []) || category == "men")         && (!defined(^.filterMenType)         || ^.filterMenType         == "" || menType         == ^.filterMenType)) ||
+          (^.filter == "women"       && ("women"       in coalesce(categories, []) || category == "women")       && (!defined(^.filterWomenType)       || ^.filterWomenType       == "" || womenType       == ^.filterWomenType)) ||
+          (^.filter == "accessories" && ("accessories" in coalesce(categories, []) || category == "accessories") && (!defined(^.filterAccessoriesType) || ^.filterAccessoriesType == "" || accessoriesType == ^.filterAccessoriesType))
         ))
       )] | order(orderRank asc) [0...20] {
         _id,
