@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision'
 import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list'
 import { schemaTypes } from './src/sanity/schemas'
 import { InfoTooltipField } from './src/sanity/components/InfoTooltipField'
+import DiscountCodesTool from './src/sanity/tools/DiscountCodesTool'
 
 export default defineConfig({
   name: 'default',
@@ -27,6 +28,14 @@ export default defineConfig({
               ),
             orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
             S.listItem()
+              .title('Navigation')
+              .child(
+                S.document()
+                  .schemaType('navigation')
+                  .documentId('navigation-singleton')
+                  .title('Navigation')
+              ),
+            S.listItem()
               .title('Global Settings')
               .child(
                 S.document()
@@ -41,6 +50,12 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    // Custom sidebar tab — lets Tomiwa manage discount codes without leaving the Studio
+    {
+      name: 'discount-codes',
+      title: 'Discount Codes',
+      component: DiscountCodesTool,
+    },
   ],
   schema: {
     types: schemaTypes,

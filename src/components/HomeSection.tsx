@@ -362,7 +362,7 @@ export default function HomeSection({
             </>
           ) : (
             /* Scroll carousel — padded container */
-            <div className="px-4 pb-10 md:pb-16 md:px-10 max-w-7xl mx-auto">
+            <div className="px-6 pb-10 md:pb-16 md:px-10 max-w-7xl mx-auto">
               <ProductCarousel products={carouselProducts} />
             </div>
           )}
