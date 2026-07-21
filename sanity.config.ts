@@ -27,6 +27,14 @@ export default defineConfig({
               ),
             orderableDocumentListDeskItem({ type: 'product', title: 'Products', S, context }),
             S.listItem()
+              .title('Navigation')
+              .child(
+                S.document()
+                  .schemaType('navigation')
+                  .documentId('navigation-singleton')
+                  .title('Navigation')
+              ),
+            S.listItem()
               .title('Global Settings')
               .child(
                 S.document()

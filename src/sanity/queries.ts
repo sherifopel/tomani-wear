@@ -168,6 +168,16 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   inStock
 }`
 
+export const NAV_QUERY = groq`*[_id == "navigation-singleton"][0] {
+  links[enabled != false] {
+    label,
+    href,
+    accent,
+    underlineColor,
+    "children": children[enabled != false]{ label, href }
+  }
+}`
+
 export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
   announcementBars[]{ message, theme },
   announcementBarEnabled,

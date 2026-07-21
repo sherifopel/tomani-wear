@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Plus, Minus } from 'lucide-react'
-import { NAV_LINKS } from '@/lib/nav-links'
+import type { NavLink } from '@/lib/nav-links'
 
-export default function MobileMenu() {
+export default function MobileMenu({ links }: { links: NavLink[] }) {
   const [open, setOpen] = useState(false)
   const [panelTop, setPanelTop] = useState(0)
   const [expanded, setExpanded] = useState<string | null>(null)
@@ -72,7 +72,7 @@ export default function MobileMenu() {
           style={{ top: panelTop }}
         >
           <nav className="flex h-full flex-col px-6 overflow-y-auto pb-8">
-            {NAV_LINKS.map((link) => {
+            {links.map((link) => {
               const hasChildren = !!link.children?.length
               const isExpanded  = expanded === link.href
 

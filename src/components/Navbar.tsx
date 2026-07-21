@@ -6,8 +6,8 @@ import RotatingAnnouncementBar from '@/components/RotatingAnnouncementBar'
 import StickyHeader from '@/components/StickyHeader'
 import SearchControl from '@/components/SearchControl'
 import { client } from '@/sanity/client'
-import { SETTINGS_QUERY } from '@/sanity/queries'
-import { NAV_LINKS } from '@/lib/nav-links'
+import { SETTINGS_QUERY, NAV_QUERY } from '@/sanity/queries'
+import { NAV_LINKS, type NavLink } from '@/lib/nav-links'
 
 type Banner = { message: string; theme?: string }
 
@@ -17,7 +17,13 @@ type Settings = {
 }
 
 export default async function Navbar() {
-  const settings: Settings = await client.fetch(SETTINGS_QUERY) ?? {}
+  const [settings, navData]: [Settings, { links?: NavLink[] } | null] = await Promise.all([
+    client.fetch(SETTINGS_QUERY),
+    client.fetch(NAV_QUERY),
+  ])
+
+  // Fall back to hardcoded links if Tomiwa hasn't configured nav in Sanity yet
+  const navLinks: NavLink[] = navData?.links?.length ? navData.links : NAV_LINKS
   const showBanner = settings.announcementBarEnabled !== false
   const banners: Banner[] = settings.announcementBars?.filter(b => b.message) ?? [
     { message: 'Free delivery on orders over ₦50,000', theme: 'black-white' },
@@ -33,7 +39,7 @@ export default async function Navbar() {
       className="border-b border-gray-100 px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center"
     >
       <div className="flex items-center">
-        <MobileMenu />
+        <MobileMenu links={navLinks} />
       </div>
 
       <Link
@@ -73,7 +79,7 @@ export default async function Navbar() {
           Tomanni
         </Link>
 
-        {NAV_LINKS.map((link) => (
+        {navLinks.map((link) => (
           <div
             key={link.href}
             className="relative group/navitem flex items-center"
