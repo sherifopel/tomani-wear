@@ -4,6 +4,7 @@ import { MidBannerFocalPreview } from '../components/MidBannerFocalPreview'
 import { HeroContentPreview } from '../components/HeroContentPreview'
 import { FocalYSlider, FocalXSlider } from '../components/FocalYSlider'
 import { ColorPickerInput } from '../components/ColorPickerInput'
+import { InfoTooltipField } from '../components/InfoTooltipField'
 
 // ── Reusable sub-fields ───────────────────────────────────────────────────────
 
@@ -41,9 +42,10 @@ const contentFields = [
   defineField({ name: 'xlTextPosition',       title: 'XL Text Vertical Position',       type: 'number', components: { input: FocalYSlider } }),
   defineField({ name: 'xlTextPositionX',      title: 'XL Text Horizontal Position',     type: 'number', components: { input: FocalXSlider } }),
   defineField({
-    name: 'textColor', title: 'Text Colour', type: 'string', initialValue: 'white',
+    name: 'textColor', title: 'Text Colour Preset', type: 'string', initialValue: 'white',
     options: { list: [{ title: 'White', value: 'white' }, { title: 'Black', value: 'black' }], layout: 'radio' },
   }),
+  defineField({ name: 'textCustomColor', title: 'Custom Text Colour', description: 'Overrides the preset above. Leave empty to use White or Black.', type: 'string', components: { input: ColorPickerInput } }),
   defineField({
     name: 'buttonColor', title: 'Button Preset Colour', type: 'string', initialValue: 'white',
     options: { list: [{ title: 'White', value: 'white' }, { title: 'Black', value: 'black' }, { title: 'Gold', value: 'gold' }], layout: 'radio' },
@@ -184,13 +186,12 @@ export const homePage = defineType({
               defineField({
                 name: 'filter',
                 title: 'Products to Show',
-                description: 'Which products appear in the carousel.',
+                description: 'Pick a category. Ignored if "Filter by Tag" is filled in below.',
                 type: 'string',
                 initialValue: 'new',
                 options: {
                   list: [
                     { title: 'New In',        value: 'new'          },
-                    { title: 'Featured',      value: 'featured'     },
                     { title: 'Men',           value: 'men'          },
                     { title: 'Women',         value: 'women'        },
                     { title: 'Accessories',   value: 'accessories'  },
@@ -199,6 +200,67 @@ export const homePage = defineType({
                   ],
                   layout: 'radio',
                 },
+              }),
+              // Sub-category radios — only one appears at a time based on the filter above
+              defineField({
+                name: 'filterMenType',
+                title: 'Men\'s Type',
+                description: 'Optional — leave empty to show all Men\'s products.',
+                type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'men',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Hoodies',  value: 'hoodies'  },
+                    { title: 'Jackets',  value: 'jackets'  },
+                    { title: 'Joggers',  value: 'joggers'  },
+                    { title: 'Shirts',   value: 'shirts'   },
+                    { title: 'Shorts',   value: 'shorts'   },
+                    { title: 'Trousers', value: 'trousers' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'filterWomenType',
+                title: 'Women\'s Type',
+                description: 'Optional — leave empty to show all Women\'s products.',
+                type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'women',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Dresses',  value: 'dresses'  },
+                    { title: 'Jackets',  value: 'jackets'  },
+                    { title: 'Joggers',  value: 'joggers'  },
+                    { title: 'Shorts',   value: 'shorts'   },
+                    { title: 'Tops',     value: 'tops'     },
+                    { title: 'Trousers', value: 'trousers' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'filterAccessoriesType',
+                title: 'Accessories Type',
+                description: 'Optional — leave empty to show all Accessories.',
+                type: 'string',
+                hidden: ({ parent }) => (parent as { filter?: string })?.filter !== 'accessories',
+                options: {
+                  layout: 'radio',
+                  list: [
+                    { title: 'Bags',  value: 'bags'  },
+                    { title: 'Belts', value: 'belts' },
+                    { title: 'Boots', value: 'boots' },
+                    { title: 'Hats',  value: 'hats'  },
+                    { title: 'Shoes', value: 'shoes' },
+                  ],
+                },
+              }),
+              defineField({
+                name: 'filterTag',
+                title: 'Filter by Tag',
+                description: 'ℹ Overrides "Products to Show" and Type above — shows only products tagged with this value. e.g. lookbook or summer-2025. Tag products first from the Products section.',
+                type: 'string',
+                components: { field: InfoTooltipField },
               }),
               defineField({
                 name: 'limit',

@@ -9,7 +9,7 @@ import { groq } from 'next-sanity'
 const IMG_CARD = '"?w=800&auto=format&fit=max&q=80"'   // product cards / carousels
 const IMG_PDP  = '"?w=1200&auto=format&fit=max&q=85"'  // PDP main image + gallery
 
-export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && newIn == true] | order(orderRank asc) {
+export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && ("new-in" in coalesce(categories, []) || newIn == true)] | order(orderRank asc) {
   _id,
   name,
   "slug": slug.current,
@@ -48,10 +48,9 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
 }`
 
 export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
-  && ($category == "" || category == $category || ($category == "new" && newIn == true) || ($category == "sale" && compareAtPrice > price))
-  && ($type     == "" || menType == $type || womenType == $type || accessoriesType == $type)
-  && ($collection == "" || $collection in collections[]->slug.current)
-  && ($q == "" || name match $q || description match $q || category match $q || menType match $q || womenType match $q || accessoriesType match $q)
+  && ($category == "" || $category in coalesce(categories, []) || category == $category || ($category == "new" && ("new-in" in coalesce(categories, []) || newIn == true)) || ($category == "sale" && compareAtPrice > price))
+  && ($type == "" || menType == $type || womenType == $type || accessoriesType == $type)
+  && ($q == "" || name match $q || description match $q || menType match $q || womenType match $q || accessoriesType match $q)
 ] | order(orderRank asc) {
   _id,
   name,
@@ -69,21 +68,6 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   category,
   _createdAt,
   "productType": coalesce(menType, womenType, accessoriesType)
-}`
-
-export const FEATURED_PRODUCTS_QUERY = groq`*[_type == "product" && featured == true] | order(orderRank asc) {
-  _id,
-  name,
-  "slug": slug.current,
-  price,
-  compareAtPrice,
-  inStock,
-  "image": coalesce(
-    productImages[isMain == true][0].image.asset->url,
-    productImages[0].image.asset->url,
-    image.asset->url,
-    gallery[0].asset->url
-  ) + ${IMG_CARD}
 }`
 
 
@@ -112,15 +96,23 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
       viewAllLink,
       style,
       filter,
+      filterMenType,
+      filterWomenType,
+      filterAccessoriesType,
+      filterTag,
       limit,
       "products": *[_type == "product" && (
-        ^.filter == "all" ||
-        (^.filter == "new"          && newIn == true) ||
-        (^.filter == "featured"     && featured == true) ||
-        (^.filter == "men"          && category == "men") ||
-        (^.filter == "women"        && category == "women") ||
-        (^.filter == "accessories"  && category == "accessories") ||
-        (^.filter == "sale"         && defined(compareAtPrice) && compareAtPrice > price)
+        // Tag mode — overrides category + type
+        (defined(^.filterTag) && ^.filterTag in coalesce(tags, [])) ||
+        // Category mode — only runs when no tag filter is set
+        (!defined(^.filterTag) && (
+          ^.filter == "all" ||
+          (^.filter == "new"         && ("new-in" in coalesce(categories, []) || newIn == true)) ||
+          (^.filter == "sale"        && defined(compareAtPrice) && compareAtPrice > price) ||
+          (^.filter == "men"         && ("men"         in coalesce(categories, []) || category == "men")         && (!defined(^.filterMenType)         || menType         == ^.filterMenType)) ||
+          (^.filter == "women"       && ("women"       in coalesce(categories, []) || category == "women")       && (!defined(^.filterWomenType)       || womenType       == ^.filterWomenType)) ||
+          (^.filter == "accessories" && ("accessories" in coalesce(categories, []) || category == "accessories") && (!defined(^.filterAccessoriesType) || accessoriesType == ^.filterAccessoriesType))
+        ))
       )] | order(orderRank asc) [0...20] {
         _id,
         name,
@@ -173,8 +165,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   category,
   sizes,
   shoeSizes,
-  inStock,
-  featured
+  inStock
 }`
 
 export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {

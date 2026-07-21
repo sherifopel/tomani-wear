@@ -76,22 +76,21 @@ const BREADCRUMB_LABELS: Record<string, string> = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string; type?: string; collection?: string; sort?: string; q?: string }>
+  searchParams: Promise<{ category?: string; type?: string; sort?: string; q?: string }>
 }) {
   await connection()
 
-  const { category, type, collection, sort = 'featured', q } = await searchParams
+  const { category, type, sort = 'default', q } = await searchParams
   const searchQuery = q?.trim() ?? ''
   const sanitySearchQuery = searchQuery ? `${searchQuery}*` : ''
 
   const raw: Product[] = category === 'new' && !searchQuery
     ? await client.fetch(NEW_IN_PRODUCTS_QUERY)
-    : (category || type || collection || searchQuery)
+    : (category || type || searchQuery)
     ? await client.fetch(PRODUCTS_BY_CATEGORY_QUERY, {
-        category:   category   ?? '',
-        type:       type       ?? '',
-        collection: collection ?? '',
-        q:          sanitySearchQuery,
+        category: category ?? '',
+        type:     type     ?? '',
+        q:        sanitySearchQuery,
       })
     : await client.fetch(PRODUCTS_QUERY)
 
@@ -99,7 +98,7 @@ export default async function ProductsPage({
     if (sort === 'price-asc')  return a.price - b.price
     if (sort === 'price-desc') return b.price - a.price
     if (sort === 'newest')     return new Date(b._createdAt).getTime() - new Date(a._createdAt).getTime()
-    return 0 // featured — keep Sanity orderRank
+    return 0 // default — keep Sanity orderRank
   })
 
   const TYPE_LABELS: Record<string, string> = {
@@ -118,8 +117,6 @@ export default async function ProductsPage({
 
   const crumbs = searchQuery
     ? [{ label: 'Home', href: '/' }, { label: 'Products', href: '/products' }, { label: 'Search' }]
-    : collection
-    ? [{ label: 'Home', href: '/' }, { label: 'Collections', href: '/products?category=collections' }, { label: collection.replace(/-/g, ' ') }]
     : typeLabel && breadcrumbLabel
     ? [{ label: 'Home', href: '/' }, { label: breadcrumbLabel, href: `/products?category=${category}` }, { label: typeLabel }]
     : breadcrumbLabel
@@ -140,7 +137,7 @@ export default async function ProductsPage({
               {pageTitle}
             </h1>
             <div className="flex justify-end">
-              <SortDropdown current={sort} category={category} type={type} collection={collection} query={searchQuery} />
+              <SortDropdown current={sort} category={category} type={type} query={searchQuery} />
             </div>
           </div>
           <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
