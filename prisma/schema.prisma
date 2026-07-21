@@ -86,8 +86,10 @@ model Order {
   paystackRef    String?
   status         String      @default("processing")
   paymentStatus  String      @default("pending")
-  trackingNumber String?
-  customerName   String?
+  trackingNumber  String?
+  discountCode    String?
+  discountAmount  Int?
+  customerName    String?
   customerEmail  String?
   customerPhone  String?
   address        String?
@@ -97,6 +99,17 @@ model Order {
   items          OrderItem[]
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+}
+
+model DiscountCode {
+  id          String    @id @default(cuid())
+  code        String    @unique
+  discount    Int       // percentage, e.g. 30 = 30% off
+  maxUses     Int       @default(5)
+  usedCount   Int       @default(0)
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime?
 }
 
 model OrderItem {

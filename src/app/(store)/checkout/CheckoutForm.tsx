@@ -87,6 +87,10 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
   const [form, setForm]     = useState<FormState>(EMPTY_FORM)
   const [errors, setErrors] = useState<Partial<FormState>>({})
   const [loading, setLoading] = useState(false)
+  const [promoInput,   setPromoInput]   = useState('')
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoError,   setPromoError]   = useState('')
+  const [applied, setApplied] = useState<{ code: string; percentage: number; amount: number } | null>(null)
 
   // Pre-fill all fields from session + saved delivery details on first load.
   // Uses || so that any field the user has already typed into is never overwritten.
@@ -112,8 +116,10 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   if (items.length === 0) return null
 
-  const deliveryFee = getDeliveryFee(form.state, totalPrice)
-  const grandTotal  = totalPrice + (deliveryFee ?? 0)
+  const discountAmount  = applied ? Math.round(totalPrice * applied.percentage / 100) : 0
+  const discountedPrice = totalPrice - discountAmount
+  const deliveryFee     = getDeliveryFee(form.state, discountedPrice)
+  const grandTotal      = discountedPrice + (deliveryFee ?? 0)
 
   const paystackConfig = {
     reference: `TW-${Date.now()}`,
@@ -144,6 +150,32 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
     }
     return () => { delete w.__paystackSuccess }
   })
+
+  async function applyPromo() {
+    const code = promoInput.trim().toUpperCase()
+    if (!code) { setPromoError('Please enter a discount code'); return }
+    setPromoLoading(true)
+    setPromoError('')
+    try {
+      const res  = await fetch('/api/discount/validate', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ code }),
+      })
+      const data = await res.json()
+      if (data.valid) {
+        const amount = Math.round(totalPrice * data.percentage / 100)
+        setApplied({ code: data.code, percentage: data.percentage, amount })
+        setPromoInput('')
+      } else {
+        setPromoError(data.message ?? 'Invalid code')
+      }
+    } catch {
+      setPromoError('Could not apply code — please try again')
+    } finally {
+      setPromoLoading(false)
+    }
+  }
 
   function onSuccess(response: { reference: string }) {
     setLoading(true)
@@ -184,6 +216,8 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
           price:     i.price,
           image:     i.image ?? '',
         })),
+        discountCode:   applied?.code         ?? null,
+        discountAmount: applied?.amount        ?? null,
       }),
     })
       .then((res) => res.json())
@@ -369,10 +403,59 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               ))}
             </ul>
 
+            {/* ── Promo code ── */}
+            <div className="border-t border-gray-100 pt-4 mb-4" data-testid="checkout-promo">
+              {applied ? (
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-green-600 font-medium" data-testid="checkout-promo-applied">
+                    {applied.code} — {applied.percentage}% off
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setApplied(null)}
+                    className="text-xs text-gray-400 hover:text-black transition-colors duration-150 underline underline-offset-2"
+                    data-testid="checkout-promo-remove"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoInput}
+                    onChange={e => { setPromoInput(e.target.value); setPromoError('') }}
+                    onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), applyPromo())}
+                    placeholder="Promo code"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:border-black transition-colors duration-200"
+                    data-testid="checkout-promo-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromo}
+                    disabled={promoLoading}
+                    className="px-4 py-2 border border-black text-xs rounded hover:bg-black hover:text-white transition-colors duration-200 disabled:opacity-50 whitespace-nowrap"
+                    data-testid="checkout-promo-apply"
+                  >
+                    {promoLoading ? '…' : 'Apply'}
+                  </button>
+                </div>
+              )}
+              {promoError && (
+                <p className="text-xs text-red-500 mt-1.5" data-testid="checkout-promo-error">{promoError}</p>
+              )}
+            </div>
+
             <div className="border-t border-gray-100 pt-4 flex flex-col gap-3 text-sm">
               <div className="flex justify-between text-gray-500" data-testid="checkout-subtotal">
                 <span>Subtotal</span><span>₦{totalPrice.toLocaleString()}</span>
               </div>
+              {applied && (
+                <div className="flex justify-between text-green-600" data-testid="checkout-discount">
+                  <span>Discount ({applied.percentage}%)</span>
+                  <span>−₦{discountAmount.toLocaleString()}</span>
+                </div>
+              )}
               <div className="flex justify-between text-gray-500" data-testid="checkout-delivery">
                 <span>Delivery</span>
                 <span>{deliveryFee === null ? 'Enter your state' : deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}</span>

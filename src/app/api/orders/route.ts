@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
       city,
       state,
       country,
+      discountCode,
+      discountAmount,
     } = body
 
     if (!paystackReference || !items?.length) {
@@ -50,39 +52,55 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, orderNumber })
     }
 
-    const order = await prisma.order.create({
-      data: {
-        userId:        session.user.id,
-        totalNgn:      Math.round(totalAmount),
-        paystackRef:   paystackReference,
-        status:        'processing',
-        paymentStatus: 'paid',
-        customerName:  customerName  ?? null,
-        customerEmail: customerEmail ?? null,
-        customerPhone: customerPhone ?? null,
-        address:       address       ?? null,
-        city:          city          ?? null,
-        state:         state         ?? null,
-        country:       country       ?? null,
-        items: {
-          create: items.map((i: {
-            productId: string
-            name: string
-            price: number
-            size?: string
-            quantity: number
-            image?: string
-          }) => ({
-            productId: i.productId,
-            name:      i.name,
-            priceNgn:  Math.round(i.price),
-            size:      i.size ?? null,
-            quantity:  i.quantity,
-            imageUrl:  i.image ?? null,
-          })),
-        },
+    const orderData = {
+      userId:         session.user.id,
+      totalNgn:       Math.round(totalAmount),
+      paystackRef:    paystackReference,
+      status:         'processing',
+      paymentStatus:  'paid',
+      customerName:   customerName   ?? null,
+      customerEmail:  customerEmail  ?? null,
+      customerPhone:  customerPhone  ?? null,
+      address:        address        ?? null,
+      city:           city           ?? null,
+      state:          state          ?? null,
+      country:        country        ?? null,
+      discountCode:   discountCode   ?? null,
+      discountAmount: discountAmount ? Math.round(discountAmount) : null,
+      items: {
+        create: items.map((i: {
+          productId: string
+          name: string
+          price: number
+          size?: string
+          quantity: number
+          image?: string
+        }) => ({
+          productId: i.productId,
+          name:      i.name,
+          priceNgn:  Math.round(i.price),
+          size:      i.size ?? null,
+          quantity:  i.quantity,
+          imageUrl:  i.image ?? null,
+        })),
       },
-    })
+    }
+
+    // When a discount code is used, create the order and increment usedCount in one
+    // atomic transaction so the count can never drift out of sync.
+    let order
+    if (discountCode) {
+      const result = await prisma.$transaction([
+        prisma.order.create({ data: orderData }),
+        prisma.discountCode.update({
+          where: { code: discountCode },
+          data:  { usedCount: { increment: 1 } },
+        }),
+      ])
+      order = result[0]
+    } else {
+      order = await prisma.order.create({ data: orderData })
+    }
 
     const orderNumber = `TW-${order.id.slice(-6).toUpperCase()}`
     return NextResponse.json({ success: true, orderNumber, orderId: order.id })
