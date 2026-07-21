@@ -1,6 +1,17 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { ObjectInputProps, MemberField, set, unset, useFormValue } from 'sanity'
+import { createClient } from 'next-sanity'
+
+// Studio upload client — withCredentials uses the logged-in Studio session cookie.
+// No hook needed; the cookie auth is automatic in the browser.
+const uploadClient = createClient({
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID!,
+  dataset:   process.env.NEXT_PUBLIC_SANITY_DATASET!,
+  apiVersion: '2024-01-01',
+  useCdn:    false,
+  withCredentials: true,
+})
 
 /**
  * ProductEditor — unified product management UI for Sanity Studio.
@@ -86,6 +97,7 @@ export function ProductEditor(props: ObjectInputProps) {
   const { members, onChange, renderInput, renderField, renderItem, renderPreview } = props
   const renderProps = { renderInput, renderField, renderItem, renderPreview }
 
+
   // Read live document values (paths are at document root — this component
   // is mounted at the document level via components: { input: ProductEditor })
   const currentProductImages = (useFormValue(['productImages']) as ProductImage[]  | undefined) ?? []
@@ -103,6 +115,8 @@ export function ProductEditor(props: ObjectInputProps) {
   const [onSale,         setOnSale]           = useState(currentCompareAt != null)
   const [newColorName,   setNewColorName]     = useState('')
   const [newColorHex,    setNewColorHex]      = useState(BRAND_YELLOW)
+  const [uploadProgress, setUploadProgress]  = useState<{ done: number; total: number } | null>(null)
+  const [isDragging,     setIsDragging]      = useState(false)
 
   // Sync local state when the document updates from outside (undo, initial load)
   useEffect(() => { setLocalShoeSizes(currentShoeSizes) }, [currentShoeSizes])
@@ -111,6 +125,45 @@ export function ProductEditor(props: ObjectInputProps) {
     setLocalCompareAt(currentCompareAt != null ? String(currentCompareAt) : '')
     setOnSale(currentCompareAt != null)
   }, [currentCompareAt])
+
+  // ── Multi-image upload ────────────────────────────────────────────────────
+  async function uploadImages(files: File[]) {
+    if (!files.length) return
+    const imageFiles = Array.from(files).filter(f => f.type.startsWith('image/'))
+    if (!imageFiles.length) return
+    setUploadProgress({ done: 0, total: imageFiles.length })
+
+    let done = 0
+    const assets = await Promise.all(
+      imageFiles.map(async (file) => {
+        const asset = await uploadClient.assets.upload('image', file)
+        done++
+        setUploadProgress({ done, total: imageFiles.length })
+        return asset
+      })
+    )
+
+    const isFirstUpload = currentProductImages.length === 0
+    const newImages: ProductImage[] = assets.map((asset: { _id: string }, i: number) => ({
+      _key:  `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}${i}`,
+      image: { _type: 'image', asset: { _type: 'reference', _ref: asset._id } },
+      isMain: isFirstUpload && i === 0,
+    }))
+
+    onChange(set([...currentProductImages, ...newImages], ['productImages']))
+    setUploadProgress(null)
+  }
+
+  function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) uploadImages(Array.from(e.target.files))
+    e.target.value = ''
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files) uploadImages(Array.from(e.dataTransfer.files))
+  }
 
   // ── Image pool — mark one image as "Main Display" ─────────────────────────
   //
@@ -201,21 +254,68 @@ export function ProductEditor(props: ObjectInputProps) {
       {/* ── SECTION 1: IMAGES ── */}
       <div style={card}>
         <p style={heading}>Images</p>
-        <p style={{ fontSize: 13, color: '#555', margin: '0 0 16px 0' }}>
-          Upload all your product shots here — front, back, detail, angles. Then tick
-          <strong> Main Display</strong> on the one that should appear at the top of the product
-          page and on the shop grid. The rest automatically become the image gallery.
-        </p>
 
-        {/* Sanity's default array uploader — handles add / reorder / delete */}
-        {productImagesMember?.kind === 'field' && (
-          <MemberField member={productImagesMember} {...renderProps} />
-        )}
+        {/* ── Multi-upload drop zone ── */}
+        <label
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            padding: '28px 20px',
+            border: `2px dashed ${isDragging ? BRAND_YELLOW : '#ccc'}`,
+            borderRadius: 8,
+            background: isDragging ? '#fffbf0' : '#fafafa',
+            cursor: uploadProgress ? 'default' : 'pointer',
+            transition: 'all 0.15s',
+            marginBottom: 16,
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            style={{ display: 'none' }}
+            onChange={handleFileInput}
+            disabled={!!uploadProgress}
+          />
 
-        {/* ── Thumbnail strip with "Main Display" radio buttons ── */}
+          {uploadProgress ? (
+            <>
+              <div style={{ fontSize: 22 }}>⏳</div>
+              <p style={{ fontSize: 13, color: '#555', margin: 0, textAlign: 'center' }}>
+                Uploading {uploadProgress.done} / {uploadProgress.total}…
+              </p>
+              <div style={{ width: '100%', maxWidth: 200, height: 4, background: '#e5e5e5', borderRadius: 2, overflow: 'hidden' }}>
+                <div style={{
+                  height: '100%',
+                  width: `${(uploadProgress.done / uploadProgress.total) * 100}%`,
+                  background: BRAND_YELLOW,
+                  transition: 'width 0.2s',
+                }} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 28 }}>📸</div>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#333', margin: 0, textAlign: 'center' }}>
+                Drop images here or click to select
+              </p>
+              <p style={{ fontSize: 12, color: '#888', margin: 0, textAlign: 'center' }}>
+                Select multiple files at once — front, back, detail shots all in one go
+              </p>
+            </>
+          )}
+        </label>
+
+        {/* ── Thumbnail strip with "Main Display" picker ── */}
         {currentProductImages.length > 0 && (
-          <div style={{ marginTop: 20 }}>
-            <span style={label}>Tap an image below to set it as Main Display</span>
+          <div>
+            <span style={label}>Click a thumbnail to set it as Main Display</span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {currentProductImages.map((img) => {
                 const url = img.image?.asset?._ref
@@ -228,9 +328,8 @@ export function ProductEditor(props: ObjectInputProps) {
                     key={img._key}
                     style={{ position: 'relative', cursor: 'pointer' }}
                     onClick={() => markAsMain(img._key)}
-                    title={isMain ? 'Main Display (click to keep)' : 'Click to set as Main Display'}
+                    title={isMain ? 'Main Display' : 'Click to set as Main Display'}
                   >
-                    {/* Thumbnail */}
                     <div
                       style={{
                         width: 90,
@@ -247,34 +346,18 @@ export function ProductEditor(props: ObjectInputProps) {
                     >
                       {url ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={url}
-                          alt=""
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        />
+                        <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
                         <span style={{ fontSize: 11, color: '#aaa' }}>No image</span>
                       )}
                     </div>
-
-                    {/* Main Display badge */}
                     {isMain && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          bottom: 4,
-                          left: 0,
-                          right: 0,
-                          textAlign: 'center',
-                          background: BRAND_YELLOW,
-                          color: '#fff',
-                          fontSize: 9,
-                          fontWeight: 700,
-                          letterSpacing: '0.05em',
-                          padding: '2px 0',
-                          borderRadius: '0 0 4px 4px',
-                        }}
-                      >
+                      <div style={{
+                        position: 'absolute', bottom: 4, left: 0, right: 0,
+                        textAlign: 'center', background: BRAND_YELLOW, color: '#fff',
+                        fontSize: 9, fontWeight: 700, letterSpacing: '0.05em',
+                        padding: '2px 0', borderRadius: '0 0 4px 4px',
+                      }}>
                         ★ MAIN
                       </div>
                     )}
@@ -283,8 +366,16 @@ export function ProductEditor(props: ObjectInputProps) {
               })}
             </div>
             <p style={{ ...hint, marginTop: 8 }}>
-              The image with the gold border is your Main Display. Click any other thumbnail to switch.
+              Gold border = Main Display (shown on the product page and shop grid). Click any thumbnail to change it.
             </p>
+          </div>
+        )}
+
+        {/* Sanity's default array field handles reorder and delete */}
+        {currentProductImages.length > 0 && productImagesMember?.kind === 'field' && (
+          <div style={{ marginTop: 20 }}>
+            <span style={{ ...label, marginBottom: 8 }}>Reorder or delete images</span>
+            <MemberField member={productImagesMember} {...renderProps} />
           </div>
         )}
       </div>
