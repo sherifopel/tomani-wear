@@ -79,9 +79,10 @@ function withKeys(links: DefaultLink[]): Link[] {
 }
 
 const COLOURS = [
-  { value: 'var(--brand-black)',  hex: '#1a1a1a', name: 'Black'  },
-  { value: 'var(--brand-yellow)', hex: '#c9a227', name: 'Yellow' },
-  { value: 'var(--brand-red)',    hex: '#c0392b', name: 'Red'    },
+  { value: 'var(--brand-black)',  hex: '#0a0a0a', name: 'Black'  },
+  { value: 'var(--brand-yellow)', hex: '#FFD700', name: 'Yellow' },
+  { value: 'var(--brand-red)',    hex: '#E8000D', name: 'Red'    },
+  { value: 'var(--brand-blue)',   hex: '#1B6FE8', name: 'Blue'   },
 ]
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
