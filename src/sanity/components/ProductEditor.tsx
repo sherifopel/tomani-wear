@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { ObjectInputProps, MemberField, set, unset, useFormValue } from 'sanity'
+import { ObjectInputProps, MemberField, set, unset, useFormValue, useClient, DEFAULT_STUDIO_CLIENT_OPTIONS } from 'sanity'
 
 /**
  * ProductEditor — unified product management UI for Sanity Studio.
@@ -81,6 +81,16 @@ type ProductImage = {
 }
 type ColorItem = { _key: string; colorName?: string; colorHex?: string }
 
+// Navigation-derived types for the dynamic category picker
+type NavLink = { label: string; href: string; children?: NavLink[] }
+type NavCategory = {
+  label: string
+  navSlug: string      // slug used in the URL (?category=new)
+  storedSlug: string   // slug stored in Sanity (new-in, not new)
+  types: { label: string; slug: string }[]
+}
+type CategoryType = { _key: string; category: string; type: string }
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function ProductEditor(props: ObjectInputProps) {
@@ -88,14 +98,22 @@ export function ProductEditor(props: ObjectInputProps) {
   const renderProps = { renderInput, renderField, renderItem, renderPreview }
 
 
+  const client = useClient(DEFAULT_STUDIO_CLIENT_OPTIONS)
+
   // Read live document values (paths are at document root — this component
   // is mounted at the document level via components: { input: ProductEditor })
-  const currentProductImages = (useFormValue(['productImages']) as ProductImage[]  | undefined) ?? []
-  const currentColors        = (useFormValue(['colors'])        as ColorItem[]     | undefined) ?? []
-  const currentSizes         = (useFormValue(['sizes'])         as string[]        | undefined) ?? []
-  const currentShoeSizes     = (useFormValue(['shoeSizes'])     as string          | undefined) ?? ''
-  const currentPrice         = (useFormValue(['price'])         as number          | undefined)
-  const currentCompareAt     = (useFormValue(['compareAtPrice']) as number         | undefined)
+  const currentProductImages   = (useFormValue(['productImages'])   as ProductImage[]  | undefined) ?? []
+  const currentColors          = (useFormValue(['colors'])          as ColorItem[]     | undefined) ?? []
+  const currentSizes           = (useFormValue(['sizes'])           as string[]        | undefined) ?? []
+  const currentShoeSizes       = (useFormValue(['shoeSizes'])       as string          | undefined) ?? ''
+  const currentPrice           = (useFormValue(['price'])           as number          | undefined)
+  const currentCompareAt       = (useFormValue(['compareAtPrice'])  as number          | undefined)
+  // Category-related values — managed by the dynamic category section below
+  const currentCategories      = (useFormValue(['categories'])      as string[]        | undefined) ?? []
+  const currentCategoryTypes   = (useFormValue(['categoryTypes'])   as CategoryType[]  | undefined) ?? []
+  const currentMenType         = (useFormValue(['menType'])         as string          | undefined) ?? ''
+  const currentWomenType       = (useFormValue(['womenType'])       as string          | undefined) ?? ''
+  const currentAccessoriesType = (useFormValue(['accessoriesType']) as string          | undefined) ?? ''
 
   // Local controlled state for text/number inputs (so the field doesn't lose
   // focus on every keystroke — we only write to Sanity on blur)
@@ -107,6 +125,7 @@ export function ProductEditor(props: ObjectInputProps) {
   const [newColorHex,    setNewColorHex]      = useState(BRAND_YELLOW)
   const [uploadProgress, setUploadProgress]  = useState<{ done: number; total: number } | null>(null)
   const [isDragging,     setIsDragging]      = useState(false)
+  const [navCategories,  setNavCategories]   = useState<NavCategory[]>([])
 
   // Sync local state when the document updates from outside (undo, initial load)
   useEffect(() => { setLocalShoeSizes(currentShoeSizes) }, [currentShoeSizes])
@@ -116,6 +135,97 @@ export function ProductEditor(props: ObjectInputProps) {
     setOnSale(currentCompareAt != null)
   }, [currentCompareAt])
 
+  // Fetch nav categories from Sanity once on mount.
+  // When Tomiwa publishes a new Navigation with a "Kids" category, the next time
+  // someone opens a product form it will appear here automatically — no code deploy.
+  useEffect(() => {
+    client
+      .fetch<{ links?: NavLink[] }>(
+        `*[_id == "navigation-singleton"][0]{ links[]{ label, href, children[]{ label, href } } }`
+      )
+      .then((nav) => {
+        const links = nav?.links ?? []
+        const cats: NavCategory[] = links
+          .filter((link) => {
+            try {
+              const slug = new URL(link.href, 'http://x').searchParams.get('category')
+              return slug && slug !== 'sale' // sale is computed (compareAt > price), not stored
+            } catch {
+              return false
+            }
+          })
+          .map((link) => {
+            const navSlug    = new URL(link.href, 'http://x').searchParams.get('category')!
+            const storedSlug = navSlug === 'new' ? 'new-in' : navSlug
+            const types = (link.children ?? [])
+              .map((child) => {
+                try {
+                  const typeSlug = new URL(child.href, 'http://x').searchParams.get('type')
+                  return typeSlug ? { label: child.label, slug: typeSlug } : null
+                } catch {
+                  return null
+                }
+              })
+              .filter((t): t is { label: string; slug: string } => t !== null)
+            return { label: link.label, navSlug, storedSlug, types }
+          })
+        setNavCategories(cats)
+      })
+      .catch(() => {}) // silently fail — category section shows "Loading…" if nav is missing
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── Legacy type lookup for backward compat with existing products ──────────
+  // Old products store their type in menType/womenType/accessoriesType.
+  // New products use categoryTypes. We read both so the UI looks correct
+  // regardless of when the product was created.
+  const legacyTypeByStoredSlug: Record<string, string> = {
+    men:         currentMenType,
+    women:       currentWomenType,
+    accessories: currentAccessoriesType,
+  }
+
+  // ── Category toggle ───────────────────────────────────────────────────────
+  function toggleCategory(storedSlug: string) {
+    const isSelected = currentCategories.includes(storedSlug)
+    const nextCategories = isSelected
+      ? currentCategories.filter((c) => c !== storedSlug)
+      : [...currentCategories, storedSlug]
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const patches: any[] = [set(nextCategories, ['categories'])]
+
+    if (isSelected) {
+      // Remove this category's type from the new-style array
+      patches.push(set(currentCategoryTypes.filter((t) => t.category !== storedSlug), ['categoryTypes']))
+      // Clear legacy fields too so old GROQ filters don't pick up stale data
+      if (storedSlug === 'men')         patches.push(unset(['menType']))
+      if (storedSlug === 'women')       patches.push(unset(['womenType']))
+      if (storedSlug === 'accessories') patches.push(unset(['accessoriesType']))
+    }
+
+    onChange(patches)
+  }
+
+  // ── Set product type within a category ───────────────────────────────────
+  function setTypeForCategory(storedSlug: string, typeSlug: string) {
+    // Update (or insert) the entry in the new categoryTypes array
+    const existing = currentCategoryTypes.find((t) => t.category === storedSlug)
+    const nextTypes: CategoryType[] = existing
+      ? currentCategoryTypes.map((t) => t.category === storedSlug ? { ...t, type: typeSlug } : t)
+      : [...currentCategoryTypes, { _key: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, category: storedSlug, type: typeSlug }]
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const patches: any[] = [set(nextTypes, ['categoryTypes'])]
+
+    // Dual-write to legacy fields so existing GROQ carousel filters still work
+    if (storedSlug === 'men')         patches.push(set(typeSlug, ['menType']))
+    if (storedSlug === 'women')       patches.push(set(typeSlug, ['womenType']))
+    if (storedSlug === 'accessories') patches.push(set(typeSlug, ['accessoriesType']))
+
+    onChange(patches)
+  }
+
   // ── Multi-image upload ────────────────────────────────────────────────────
   async function uploadImages(files: File[]) {
     if (!files.length) return
@@ -123,8 +233,10 @@ export function ProductEditor(props: ObjectInputProps) {
     if (!imageFiles.length) return
     setUploadProgress({ done: 0, total: imageFiles.length })
 
-    const cloudName    = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+    // Hardcoded because Sanity Studio's Vite bundler doesn't inject NEXT_PUBLIC_*
+    // env vars — these are intentionally public (unsigned upload, no secret exposed).
+    const cloudName    = 'o9wmvrnu'
+    const uploadPreset = 'tomanni-products'
 
     let done = 0
     const assets = await Promise.all(
@@ -133,10 +245,11 @@ export function ProductEditor(props: ObjectInputProps) {
         body.append('file', file)
         body.append('upload_preset', uploadPreset)
         const res  = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body })
-        const data = await res.json() as { secure_url: string }
+        const data = await res.json() as { secure_url?: string; error?: { message: string } }
+        if (data.error) throw new Error(`Cloudinary error: ${data.error.message}`)
         done++
         setUploadProgress({ done, total: imageFiles.length })
-        return data
+        return data as { secure_url: string }
       })
     )
 
@@ -177,6 +290,27 @@ export function ProductEditor(props: ObjectInputProps) {
       set(img._key === clickedKey, ['productImages', { _key: img._key }, 'isMain'])
     )
     onChange(patches)
+  }
+
+  // ── Delete an image from the pool ────────────────────────────────────────
+  function deleteImage(key: string) {
+    const next = currentProductImages.filter((img) => img._key !== key)
+    // If we just deleted the main image, auto-promote the first remaining one
+    const hadMain = currentProductImages.find((img) => img._key === key)?.isMain
+    if (hadMain && next.length > 0) next[0] = { ...next[0], isMain: true }
+    onChange(set(next, ['productImages']))
+  }
+
+  // ── Reorder images left / right ───────────────────────────────────────────
+  function moveImage(key: string, dir: 'left' | 'right') {
+    const idx = currentProductImages.findIndex((img) => img._key === key)
+    if (idx === -1) return
+    if (dir === 'left'  && idx === 0) return
+    if (dir === 'right' && idx === currentProductImages.length - 1) return
+    const next = [...currentProductImages]
+    const [item] = next.splice(idx, 1)
+    next.splice(dir === 'left' ? idx - 1 : idx + 1, 0, item)
+    onChange(set(next, ['productImages']))
   }
 
   // ── Colours ───────────────────────────────────────────────────────────────
@@ -223,14 +357,10 @@ export function ProductEditor(props: ObjectInputProps) {
     }
   }
 
-  // ── Member lookup ─────────────────────────────────────────────────────────
-  function member(name: string) {
-    return members.find((m) => m.kind === 'field' && m.name === name)
-  }
 
-  const productImagesMember = member('productImages')
-
-  const identityFields   = ['name', 'slug', 'categories', 'menType', 'womenType', 'accessoriesType', 'tags', 'description']
+  // categories / menType / womenType / accessoriesType are intentionally excluded
+  // from MemberField rendering — they are managed by the custom CATEGORY section below.
+  const identityFields   = ['name', 'slug', 'tags', 'description']
   const visibilityFields = ['inStock']
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -248,7 +378,94 @@ export function ProductEditor(props: ObjectInputProps) {
         ))
       }
 
-      {/* ── SECTION 1: IMAGES ── */}
+      {/* ── SECTION 1: CATEGORY ── */}
+      {/* Categories and sub-types come from the live Navigation document.
+          When Tomiwa adds "Kids" to Navigation and publishes, it appears here
+          automatically — no code deploy needed. */}
+      <div style={card}>
+        <p style={heading}>Category</p>
+
+        {navCategories.length === 0 ? (
+          <p style={hint}>Loading categories from Navigation…</p>
+        ) : (
+          <>
+            <span style={label}>Which section does this product belong to?</span>
+            <p style={{ ...hint, marginBottom: 12 }}>
+              A unisex item can belong to both Men and Women.
+            </p>
+
+            {/* Category chips — one per top-level nav link (excluding Sale) */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+              {navCategories.map((cat) => {
+                const selected = currentCategories.includes(cat.storedSlug)
+                return (
+                  <button
+                    key={cat.navSlug}
+                    type="button"
+                    onClick={() => toggleCategory(cat.storedSlug)}
+                    style={{
+                      padding: '7px 18px',
+                      borderRadius: 20,
+                      border: `2px solid ${selected ? BRAND_YELLOW : '#d1d5db'}`,
+                      background: selected ? '#fffbf0' : '#fff',
+                      color: selected ? '#8a6e00' : '#374151',
+                      fontWeight: selected ? 700 : 400,
+                      fontSize: 13,
+                      cursor: 'pointer',
+                      transition: 'all 0.15s',
+                    }}
+                  >
+                    {cat.label}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Sub-type picker — appears for each selected category that has types */}
+            {navCategories
+              .filter((cat) => currentCategories.includes(cat.storedSlug) && cat.types.length > 0)
+              .map((cat) => {
+                // Prefer the new categoryTypes entry; fall back to the legacy field for old products
+                const selectedType =
+                  currentCategoryTypes.find((t) => t.category === cat.storedSlug)?.type
+                  ?? legacyTypeByStoredSlug[cat.storedSlug]
+                  ?? ''
+                return (
+                  <div key={cat.storedSlug} style={{ marginBottom: 16 }}>
+                    <span style={label}>{cat.label} — Sub-category</span>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 6 }}>
+                      {cat.types.map((type) => {
+                        const active = selectedType === type.slug
+                        return (
+                          <button
+                            key={type.slug}
+                            type="button"
+                            onClick={() => setTypeForCategory(cat.storedSlug, type.slug)}
+                            style={{
+                              padding: '6px 14px',
+                              borderRadius: 16,
+                              border: `2px solid ${active ? BRAND_YELLOW : '#d1d5db'}`,
+                              background: active ? BRAND_YELLOW : '#fff',
+                              color: active ? '#fff' : '#374151',
+                              fontWeight: active ? 700 : 400,
+                              fontSize: 12,
+                              cursor: 'pointer',
+                              transition: 'all 0.15s',
+                            }}
+                          >
+                            {type.label}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+                )
+              })}
+          </>
+        )}
+      </div>
+
+      {/* ── SECTION 2: IMAGES ── */}
       <div style={card}>
         <p style={heading}>Images</p>
 
@@ -309,69 +526,121 @@ export function ProductEditor(props: ObjectInputProps) {
           )}
         </label>
 
-        {/* ── Thumbnail strip with "Main Display" picker ── */}
+        {/* ── Thumbnail grid — click to set main, ← → to reorder, × to delete ── */}
         {currentProductImages.length > 0 && (
           <div>
-            <span style={label}>Click a thumbnail to set it as Main Display</span>
+            <span style={label}>
+              Click image to set as Main Display &nbsp;·&nbsp; ← → to reorder &nbsp;·&nbsp; × to delete
+            </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
-              {currentProductImages.map((img) => {
-                const url = img.cloudinaryUrl
+              {currentProductImages.map((img, idx) => {
+                const url    = img.cloudinaryUrl
                   ?? (img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null)
                 const isMain = !!img.isMain
+                const isFirst = idx === 0
+                const isLast  = idx === currentProductImages.length - 1
 
                 return (
-                  <div
-                    key={img._key}
-                    style={{ position: 'relative', cursor: 'pointer' }}
-                    onClick={() => markAsMain(img._key)}
-                    title={isMain ? 'Main Display' : 'Click to set as Main Display'}
-                  >
+                  <div key={img._key} style={{ position: 'relative', userSelect: 'none' }}>
+
+                    {/* Image box — click to mark as main */}
                     <div
+                      onClick={() => markAsMain(img._key)}
+                      title={isMain ? 'Main Display' : 'Click to set as Main Display'}
                       style={{
-                        width: 90,
-                        height: 90,
-                        borderRadius: 6,
+                        width: 96,
+                        height: 96,
+                        borderRadius: 8,
                         overflow: 'hidden',
                         border: isMain ? `3px solid ${BRAND_YELLOW}` : '3px solid #e5e5e5',
                         background: '#f0f0f0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        cursor: 'pointer',
                         transition: 'border-color 0.15s',
+                        position: 'relative',
                       }}
                     >
                       {url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <span style={{ fontSize: 11, color: '#aaa' }}>No image</span>
+                        <span style={{ fontSize: 11, color: '#aaa' }}>No preview</span>
+                      )}
+
+                      {/* ★ MAIN badge */}
+                      {isMain && (
+                        <div style={{
+                          position: 'absolute', bottom: 0, left: 0, right: 0,
+                          textAlign: 'center', background: BRAND_YELLOW, color: '#fff',
+                          fontSize: 9, fontWeight: 700, letterSpacing: '0.06em',
+                          padding: '3px 0',
+                        }}>
+                          ★ MAIN
+                        </div>
                       )}
                     </div>
-                    {isMain && (
-                      <div style={{
-                        position: 'absolute', bottom: 4, left: 0, right: 0,
-                        textAlign: 'center', background: BRAND_YELLOW, color: '#fff',
-                        fontSize: 9, fontWeight: 700, letterSpacing: '0.05em',
-                        padding: '2px 0', borderRadius: '0 0 4px 4px',
-                      }}>
-                        ★ MAIN
-                      </div>
-                    )}
+
+                    {/* × delete button — top-right corner */}
+                    <button
+                      type="button"
+                      onClick={() => deleteImage(img._key)}
+                      title="Remove image"
+                      style={{
+                        position: 'absolute', top: -7, right: -7,
+                        width: 20, height: 20,
+                        borderRadius: '50%',
+                        background: '#333', color: '#fff',
+                        border: '2px solid #fff',
+                        fontSize: 12, lineHeight: 1,
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontWeight: 700,
+                        padding: 0,
+                      }}
+                    >×</button>
+
+                    {/* ← → reorder buttons — below the image */}
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(img._key, 'left')}
+                        disabled={isFirst}
+                        title="Move left"
+                        style={{
+                          width: 24, height: 18,
+                          border: '1px solid #d1d5db',
+                          borderRadius: 4,
+                          background: isFirst ? '#f3f4f6' : '#fff',
+                          color: isFirst ? '#d1d5db' : '#374151',
+                          fontSize: 10, cursor: isFirst ? 'default' : 'pointer',
+                          padding: 0,
+                        }}
+                      >←</button>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(img._key, 'right')}
+                        disabled={isLast}
+                        title="Move right"
+                        style={{
+                          width: 24, height: 18,
+                          border: '1px solid #d1d5db',
+                          borderRadius: 4,
+                          background: isLast ? '#f3f4f6' : '#fff',
+                          color: isLast ? '#d1d5db' : '#374151',
+                          fontSize: 10, cursor: isLast ? 'default' : 'pointer',
+                          padding: 0,
+                        }}
+                      >→</button>
+                    </div>
                   </div>
                 )
               })}
             </div>
-            <p style={{ ...hint, marginTop: 8 }}>
-              Gold border = Main Display (shown on the product page and shop grid). Click any thumbnail to change it.
+            <p style={{ ...hint, marginTop: 10 }}>
+              Gold border = Main Display image shown on the product page and shop grid.
             </p>
-          </div>
-        )}
-
-        {/* Sanity's default array field handles reorder and delete */}
-        {currentProductImages.length > 0 && productImagesMember?.kind === 'field' && (
-          <div style={{ marginTop: 20 }}>
-            <span style={{ ...label, marginBottom: 8 }}>Reorder or delete images</span>
-            <MemberField member={productImagesMember} {...renderProps} />
           </div>
         )}
       </div>

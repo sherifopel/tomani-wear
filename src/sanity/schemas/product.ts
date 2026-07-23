@@ -214,6 +214,25 @@ export const product = defineType({
       type: 'boolean',
       initialValue: true,
     }),
+
+    // ── Dynamic category-type pairs (managed via ProductEditor UI) ────────────
+    // Stores [{ category: 'men', type: 'hoodies' }, { category: 'kids', type: 'shoes' }]
+    // When Tomiwa adds "Kids" to Navigation and publishes, it automatically appears
+    // as a category option here — no code deploy needed.
+    // The legacy menType/womenType/accessoriesType fields remain for GROQ backward compat.
+    defineField({
+      name: 'categoryTypes',
+      title: 'Category Types',
+      type: 'array',
+      of: [{
+        type: 'object',
+        fields: [
+          defineField({ name: 'category', title: 'Category', type: 'string' }),
+          defineField({ name: 'type',     title: 'Type',     type: 'string' }),
+        ],
+      }],
+      hidden: true,
+    }),
   ],
   preview: {
     select: { title: 'name', media: 'productImages.0.image', price: 'price' },

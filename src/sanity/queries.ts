@@ -53,7 +53,7 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
 
 export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   && ($category == "" || $category in coalesce(categories, []) || category == $category || ($category == "new" && ("new-in" in coalesce(categories, []) || newIn == true)) || ($category == "sale" && compareAtPrice > price))
-  && ($type == "" || menType == $type || womenType == $type || accessoriesType == $type)
+  && ($type == "" || menType == $type || womenType == $type || accessoriesType == $type || categoryTypes[category == $category][0].type == $type)
   && ($q == "" || name match $q || description match $q || menType match $q || womenType match $q || accessoriesType match $q)
 ] | order(orderRank asc) {
   _id,
