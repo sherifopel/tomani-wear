@@ -233,8 +233,10 @@ export function ProductEditor(props: ObjectInputProps) {
     if (!imageFiles.length) return
     setUploadProgress({ done: 0, total: imageFiles.length })
 
-    const cloudName    = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!
-    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+    // Hardcoded because Sanity Studio's Vite bundler doesn't inject NEXT_PUBLIC_*
+    // env vars — these are intentionally public (unsigned upload, no secret exposed).
+    const cloudName    = 'o9wmvrnu'
+    const uploadPreset = 'tomanni-products'
 
     let done = 0
     const assets = await Promise.all(
@@ -243,10 +245,11 @@ export function ProductEditor(props: ObjectInputProps) {
         body.append('file', file)
         body.append('upload_preset', uploadPreset)
         const res  = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body })
-        const data = await res.json() as { secure_url: string }
+        const data = await res.json() as { secure_url?: string; error?: { message: string } }
+        if (data.error) throw new Error(`Cloudinary error: ${data.error.message}`)
         done++
         setUploadProgress({ done, total: imageFiles.length })
-        return data
+        return data as { secure_url: string }
       })
     )
 
