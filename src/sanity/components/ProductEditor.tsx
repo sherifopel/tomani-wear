@@ -292,6 +292,27 @@ export function ProductEditor(props: ObjectInputProps) {
     onChange(patches)
   }
 
+  // ── Delete an image from the pool ────────────────────────────────────────
+  function deleteImage(key: string) {
+    const next = currentProductImages.filter((img) => img._key !== key)
+    // If we just deleted the main image, auto-promote the first remaining one
+    const hadMain = currentProductImages.find((img) => img._key === key)?.isMain
+    if (hadMain && next.length > 0) next[0] = { ...next[0], isMain: true }
+    onChange(set(next, ['productImages']))
+  }
+
+  // ── Reorder images left / right ───────────────────────────────────────────
+  function moveImage(key: string, dir: 'left' | 'right') {
+    const idx = currentProductImages.findIndex((img) => img._key === key)
+    if (idx === -1) return
+    if (dir === 'left'  && idx === 0) return
+    if (dir === 'right' && idx === currentProductImages.length - 1) return
+    const next = [...currentProductImages]
+    const [item] = next.splice(idx, 1)
+    next.splice(dir === 'left' ? idx - 1 : idx + 1, 0, item)
+    onChange(set(next, ['productImages']))
+  }
+
   // ── Colours ───────────────────────────────────────────────────────────────
   function addColor() {
     if (!newColorName.trim()) return
@@ -336,12 +357,6 @@ export function ProductEditor(props: ObjectInputProps) {
     }
   }
 
-  // ── Member lookup ─────────────────────────────────────────────────────────
-  function member(name: string) {
-    return members.find((m) => m.kind === 'field' && m.name === name)
-  }
-
-  const productImagesMember = member('productImages')
 
   // categories / menType / womenType / accessoriesType are intentionally excluded
   // from MemberField rendering — they are managed by the custom CATEGORY section below.
@@ -511,69 +526,121 @@ export function ProductEditor(props: ObjectInputProps) {
           )}
         </label>
 
-        {/* ── Thumbnail strip with "Main Display" picker ── */}
+        {/* ── Thumbnail grid — click to set main, ← → to reorder, × to delete ── */}
         {currentProductImages.length > 0 && (
           <div>
-            <span style={label}>Click a thumbnail to set it as Main Display</span>
+            <span style={label}>
+              Click image to set as Main Display &nbsp;·&nbsp; ← → to reorder &nbsp;·&nbsp; × to delete
+            </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
-              {currentProductImages.map((img) => {
-                const url = img.cloudinaryUrl
+              {currentProductImages.map((img, idx) => {
+                const url    = img.cloudinaryUrl
                   ?? (img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null)
                 const isMain = !!img.isMain
+                const isFirst = idx === 0
+                const isLast  = idx === currentProductImages.length - 1
 
                 return (
-                  <div
-                    key={img._key}
-                    style={{ position: 'relative', cursor: 'pointer' }}
-                    onClick={() => markAsMain(img._key)}
-                    title={isMain ? 'Main Display' : 'Click to set as Main Display'}
-                  >
+                  <div key={img._key} style={{ position: 'relative', userSelect: 'none' }}>
+
+                    {/* Image box — click to mark as main */}
                     <div
+                      onClick={() => markAsMain(img._key)}
+                      title={isMain ? 'Main Display' : 'Click to set as Main Display'}
                       style={{
-                        width: 90,
-                        height: 90,
-                        borderRadius: 6,
+                        width: 96,
+                        height: 96,
+                        borderRadius: 8,
                         overflow: 'hidden',
                         border: isMain ? `3px solid ${BRAND_YELLOW}` : '3px solid #e5e5e5',
                         background: '#f0f0f0',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        cursor: 'pointer',
                         transition: 'border-color 0.15s',
+                        position: 'relative',
                       }}
                     >
                       {url ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       ) : (
-                        <span style={{ fontSize: 11, color: '#aaa' }}>No image</span>
+                        <span style={{ fontSize: 11, color: '#aaa' }}>No preview</span>
+                      )}
+
+                      {/* ★ MAIN badge */}
+                      {isMain && (
+                        <div style={{
+                          position: 'absolute', bottom: 0, left: 0, right: 0,
+                          textAlign: 'center', background: BRAND_YELLOW, color: '#fff',
+                          fontSize: 9, fontWeight: 700, letterSpacing: '0.06em',
+                          padding: '3px 0',
+                        }}>
+                          ★ MAIN
+                        </div>
                       )}
                     </div>
-                    {isMain && (
-                      <div style={{
-                        position: 'absolute', bottom: 4, left: 0, right: 0,
-                        textAlign: 'center', background: BRAND_YELLOW, color: '#fff',
-                        fontSize: 9, fontWeight: 700, letterSpacing: '0.05em',
-                        padding: '2px 0', borderRadius: '0 0 4px 4px',
-                      }}>
-                        ★ MAIN
-                      </div>
-                    )}
+
+                    {/* × delete button — top-right corner */}
+                    <button
+                      type="button"
+                      onClick={() => deleteImage(img._key)}
+                      title="Remove image"
+                      style={{
+                        position: 'absolute', top: -7, right: -7,
+                        width: 20, height: 20,
+                        borderRadius: '50%',
+                        background: '#333', color: '#fff',
+                        border: '2px solid #fff',
+                        fontSize: 12, lineHeight: 1,
+                        cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontWeight: 700,
+                        padding: 0,
+                      }}
+                    >×</button>
+
+                    {/* ← → reorder buttons — below the image */}
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginTop: 4 }}>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(img._key, 'left')}
+                        disabled={isFirst}
+                        title="Move left"
+                        style={{
+                          width: 24, height: 18,
+                          border: '1px solid #d1d5db',
+                          borderRadius: 4,
+                          background: isFirst ? '#f3f4f6' : '#fff',
+                          color: isFirst ? '#d1d5db' : '#374151',
+                          fontSize: 10, cursor: isFirst ? 'default' : 'pointer',
+                          padding: 0,
+                        }}
+                      >←</button>
+                      <button
+                        type="button"
+                        onClick={() => moveImage(img._key, 'right')}
+                        disabled={isLast}
+                        title="Move right"
+                        style={{
+                          width: 24, height: 18,
+                          border: '1px solid #d1d5db',
+                          borderRadius: 4,
+                          background: isLast ? '#f3f4f6' : '#fff',
+                          color: isLast ? '#d1d5db' : '#374151',
+                          fontSize: 10, cursor: isLast ? 'default' : 'pointer',
+                          padding: 0,
+                        }}
+                      >→</button>
+                    </div>
                   </div>
                 )
               })}
             </div>
-            <p style={{ ...hint, marginTop: 8 }}>
-              Gold border = Main Display (shown on the product page and shop grid). Click any thumbnail to change it.
+            <p style={{ ...hint, marginTop: 10 }}>
+              Gold border = Main Display image shown on the product page and shop grid.
             </p>
-          </div>
-        )}
-
-        {/* Sanity's default array field handles reorder and delete */}
-        {currentProductImages.length > 0 && productImagesMember?.kind === 'field' && (
-          <div style={{ marginTop: 20 }}>
-            <span style={{ ...label, marginBottom: 8 }}>Reorder or delete images</span>
-            <MemberField member={productImagesMember} {...renderProps} />
           </div>
         )}
       </div>
