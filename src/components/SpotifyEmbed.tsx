@@ -8,7 +8,7 @@ export default function SpotifyEmbed({ trackUrlOrId }: { trackUrlOrId: string })
   const src = `https://open.spotify.com/embed/track/${trackId}?utm_source=generator&theme=0`
 
   return (
-    <div className="absolute bottom-5 right-5 z-10 w-[280px] rounded-xl overflow-hidden shadow-2xl">
+    <div className="absolute top-4 right-4 md:top-auto md:bottom-5 md:right-5 z-20 w-[260px] md:w-[280px] rounded-xl overflow-hidden shadow-2xl">
       <iframe
         src={src}
         width="100%"
