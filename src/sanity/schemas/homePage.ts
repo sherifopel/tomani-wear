@@ -314,14 +314,6 @@ export const homePage = defineType({
             hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
             group: 'settings',
           }),
-          defineField({
-            name: 'spotifyTrackUrl',
-            title: 'Spotify Track ID or Link',
-            description: 'Paste a Spotify track ID (e.g. 4cOdK2wGLETKBW3PvgPWqT) or the full URL (https://open.spotify.com/track/...). Plays the 30-second preview. Leave empty if you uploaded an audio file above — the file takes priority.',
-            type: 'string',
-            hidden: ({ parent }) => Boolean((parent as { audio?: unknown })?.audio),
-            group: 'settings',
-          }),
         ],
 
         preview: {
