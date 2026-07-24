@@ -288,6 +288,32 @@ export const homePage = defineType({
             initialValue: true,
             group: 'settings',
           }),
+          defineField({
+            name: 'audio',
+            title: 'Background Audio',
+            description: 'Optional ambient sound or music that plays with this hero. Starts muted — visitor can click the 🔇 button to unmute. MP3 recommended.',
+            type: 'file',
+            options: { accept: 'audio/mp3,audio/mpeg,audio/wav,audio/ogg,audio/aac' },
+            group: 'settings',
+          }),
+          defineField({
+            name: 'audioStart',
+            title: 'Snippet Start (seconds)',
+            description: 'Where in the track to start playing. 0 = beginning. 30 = start at the 30-second mark.',
+            type: 'number',
+            initialValue: 0,
+            hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
+            group: 'settings',
+          }),
+          defineField({
+            name: 'audioDuration',
+            title: 'Snippet Length (seconds)',
+            description: 'How many seconds to play before looping back to the start point. Default is 30 seconds.',
+            type: 'number',
+            initialValue: 30,
+            hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
+            group: 'settings',
+          }),
         ],
 
         preview: {

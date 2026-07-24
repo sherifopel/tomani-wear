@@ -2,6 +2,7 @@ import Image, { getImageProps } from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import ProductCarousel from '@/components/ProductCarousel'
+import AudioPlayer from '@/components/AudioPlayer'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -52,6 +53,9 @@ export type HomeSectionData = {
   imageXl?:      string
   videoUrl?:        string
   videoDesktopUrl?: string
+  audioUrl?:        string
+  audioStart?:      number
+  audioDuration?:   number
   mobileFocalY:  number
   tabletFocalY:  number
   desktopFocalY: number
@@ -90,7 +94,7 @@ export default function HomeSection({
   priority?: boolean
 }) {
   const {
-    imageMobile, imageTablet, imageDesktop, imageXl, videoUrl, videoDesktopUrl,
+    imageMobile, imageTablet, imageDesktop, imageXl, videoUrl, videoDesktopUrl, audioUrl,
     mobileFocalY,  tabletFocalY,  desktopFocalY,  xlFocalY,
     mobileFocalX,  tabletFocalX,  desktopFocalX,  xlFocalX,
     heights, content, carousel,
@@ -262,6 +266,15 @@ export default function HomeSection({
 
           {/* Gradient — helps text readability on cover images */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
+
+          {/* Audio toggle — only renders if this section has an audio file */}
+          {audioUrl && (
+            <AudioPlayer
+              audioUrl={audioUrl}
+              startAt={section.audioStart ?? 0}
+              duration={section.audioDuration ?? 30}
+            />
+          )}
 
           {/* Text overlay — same CSS variable pattern as Hero.tsx */}
           {content && (content.heading || content.label || content.sub) && (
