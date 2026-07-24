@@ -90,6 +90,7 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
     "audioUrl":        audio.asset->url,
     audioStart,
     audioDuration,
+    audioRepeatDelay,
     "mobileFocalY":  coalesce(focalPoints.mobile,   50),
     "tabletFocalY":  coalesce(focalPoints.tablet,   50),
     "desktopFocalY": coalesce(focalPoints.desktop,  30),

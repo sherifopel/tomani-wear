@@ -56,6 +56,7 @@ export type HomeSectionData = {
   audioUrl?:        string
   audioStart?:      number
   audioDuration?:   number
+  audioRepeatDelay?: number
   mobileFocalY:  number
   tabletFocalY:  number
   desktopFocalY: number
@@ -272,7 +273,8 @@ export default function HomeSection({
             <AudioPlayer
               audioUrl={audioUrl}
               startAt={section.audioStart ?? 0}
-              duration={section.audioDuration ?? 30}
+              duration={section.audioDuration ?? 60}
+              repeatDelay={section.audioRepeatDelay ?? 60}
             />
           )}
 
