@@ -288,6 +288,55 @@ export const homePage = defineType({
             initialValue: true,
             group: 'settings',
           }),
+          defineField({
+            name: 'audio',
+            title: 'Background Audio',
+            description: 'Optional ambient sound or music that plays with this hero. Starts muted — visitor can click the 🔇 button to unmute. MP3 recommended.',
+            type: 'file',
+            options: { accept: 'audio/mp3,audio/mpeg,audio/wav,audio/ogg,audio/aac' },
+            group: 'settings',
+          }),
+          defineField({
+            name: 'audioStart',
+            title: 'Start At (seconds)',
+            description: 'Where in the track to begin. 0 = from the very start. 30 = skip to the 30-second mark.',
+            type: 'number',
+            initialValue: 0,
+            hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
+            group: 'settings',
+          }),
+          defineField({
+            name: 'audioSnippetLength',
+            title: 'How Long to Play',
+            type: 'string',
+            initialValue: '60',
+            options: {
+              layout: 'radio',
+              list: [
+                { title: '30 seconds', value: '30'   },
+                { title: '1 minute',   value: '60'   },
+                { title: '2 minutes',  value: '120'  },
+                { title: 'Full song',  value: 'full' },
+              ],
+            },
+            hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
+            group: 'settings',
+          }),
+          defineField({
+            name: 'audioRepeat',
+            title: 'Repeat',
+            type: 'string',
+            initialValue: 'loop',
+            options: {
+              layout: 'radio',
+              list: [
+                { title: 'Loop — replay after a 30 second pause (hero must still be on screen)', value: 'loop' },
+                { title: 'Play once — stops after the first play',                               value: 'once' },
+              ],
+            },
+            hidden: ({ parent }) => !((parent as { audio?: unknown })?.audio),
+            group: 'settings',
+          }),
         ],
 
         preview: {

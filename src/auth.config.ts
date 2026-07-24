@@ -1,18 +1,15 @@
 import type { NextAuthConfig } from 'next-auth'
 import Google from 'next-auth/providers/google'
-import Resend from 'next-auth/providers/resend'
 
-// Lightweight config — no Prisma, safe to import in proxy.ts
+// Lightweight config — no Prisma, safe to import in proxy.ts (middleware).
+// Resend (email magic link) is NOT here because email providers need a database
+// adapter to store verification tokens — that lives in auth.ts instead.
 export const authConfig = {
   session: { strategy: 'jwt' as const },
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
       clientSecret: process.env.AUTH_GOOGLE_SECRET!,
-    }),
-    Resend({
-      apiKey: process.env.AUTH_RESEND_KEY!,
-      from: 'Tomani Wear <onboarding@resend.dev>',
     }),
   ],
   pages: {
