@@ -48,6 +48,12 @@ export const settings = defineType({
               validation: (Rule) => Rule.required(),
             }),
             defineField({
+              name: 'href',
+              title: 'Link (optional)',
+              type: 'string',
+              description: 'Makes the whole banner clickable. Use a site path like /sign-in or a full URL.',
+            }),
+            defineField({
               name: 'theme',
               title: 'Colour',
               type: 'string',

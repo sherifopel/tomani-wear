@@ -191,7 +191,7 @@ export const NAV_QUERY = groq`*[_id == "navigation-singleton"][0] {
 }`
 
 export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
-  announcementBars[]{ message, theme },
+  announcementBars[]{ message, theme, href },
   announcementBarEnabled,
   footerLinks[]{
     label,
