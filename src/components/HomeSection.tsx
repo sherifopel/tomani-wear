@@ -53,10 +53,10 @@ export type HomeSectionData = {
   imageXl?:      string
   videoUrl?:        string
   videoDesktopUrl?: string
-  audioUrl?:        string
-  audioStart?:      number
-  audioDuration?:   number
-  audioRepeatDelay?: number
+  audioUrl?:           string
+  audioStart?:         number
+  audioSnippetLength?: '30' | '60' | '120' | 'full'
+  audioRepeat?:        'loop' | 'once'
   mobileFocalY:  number
   tabletFocalY:  number
   desktopFocalY: number
@@ -273,8 +273,8 @@ export default function HomeSection({
             <AudioPlayer
               audioUrl={audioUrl}
               startAt={section.audioStart ?? 0}
-              duration={section.audioDuration ?? 60}
-              repeatDelay={section.audioRepeatDelay ?? 60}
+              snippetLength={section.audioSnippetLength === 'full' ? 'full' : Number(section.audioSnippetLength ?? '60')}
+              repeat={section.audioRepeat ?? 'loop'}
             />
           )}
 

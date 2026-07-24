@@ -3,20 +3,20 @@
 import { useRef, useState, useEffect } from 'react'
 
 type Props = {
-  audioUrl:    string
-  startAt:     number  // seconds into the track to begin
-  duration:    number  // how many seconds to play before pausing
-  repeatDelay: number  // silent gap before replaying (only if hero still on screen)
+  audioUrl:      string
+  startAt:       number
+  snippetLength: number | 'full'  // seconds to play, or 'full' = until track ends
+  repeat:        'loop' | 'once'  // loop replays after 30s pause; once stops after first play
 }
 
-export default function AudioPlayer({ audioUrl, startAt, duration, repeatDelay }: Props) {
+export default function AudioPlayer({ audioUrl, startAt, snippetLength, repeat }: Props) {
   const audioRef  = useRef<HTMLAudioElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const isVisible = useRef(true)
   const timerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [muted, setMuted] = useState(true)
 
-  // Track whether the hero section is on screen
+  // Track whether the hero is on screen
   useEffect(() => {
     const el = buttonRef.current
     if (!el) return
@@ -28,7 +28,7 @@ export default function AudioPlayer({ audioUrl, startAt, duration, repeatDelay }
     return () => observer.disconnect()
   }, [])
 
-  // Playback: play for `duration` seconds, pause for `repeatDelay` seconds, repeat if visible
+  // Playback logic
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
@@ -38,20 +38,27 @@ export default function AudioPlayer({ audioUrl, startAt, duration, repeatDelay }
       audio!.play().catch(() => {})
     }
 
-    function onTimeUpdate() {
-      if (audio!.currentTime >= startAt + duration) {
-        // Snippet finished — pause and schedule a replay
-        audio!.pause()
-        audio!.currentTime = startAt
+    function handleEnd() {
+      audio!.pause()
+      audio!.currentTime = startAt
+      if (repeat === 'loop') {
         timerRef.current = setTimeout(() => {
           if (isVisible.current) startSnippet()
-        }, repeatDelay * 1000)
+        }, 30_000) // 30 second pause between loops
+      }
+      // repeat === 'once': just stop, do nothing
+    }
+
+    function onTimeUpdate() {
+      // Only fires for timed snippets (not 'full')
+      if (snippetLength !== 'full' && audio!.currentTime >= startAt + snippetLength) {
+        handleEnd()
       }
     }
 
     audio.addEventListener('timeupdate', onTimeUpdate)
+    audio.addEventListener('ended', handleEnd)
 
-    // Start as soon as metadata is ready (or immediately if already loaded)
     if (audio.readyState >= 1) {
       startSnippet()
     } else {
@@ -60,28 +67,26 @@ export default function AudioPlayer({ audioUrl, startAt, duration, repeatDelay }
 
     return () => {
       audio.removeEventListener('timeupdate', onTimeUpdate)
+      audio.removeEventListener('ended', handleEnd)
       if (timerRef.current) clearTimeout(timerRef.current)
     }
-  }, [startAt, duration, repeatDelay])
+  }, [startAt, snippetLength, repeat])
 
   function toggle() {
     const audio = audioRef.current
     if (!audio) return
     if (muted) {
       audio.muted = false
-      // If play() was blocked on page load, start on first user gesture
-      if (audio.paused) startSnippetFromButton(audio)
+      if (audio.paused) {
+        if (timerRef.current) clearTimeout(timerRef.current)
+        audio.currentTime = startAt
+        audio.play().catch(() => {})
+      }
       setMuted(false)
     } else {
       audio.muted = true
       setMuted(true)
     }
-  }
-
-  function startSnippetFromButton(audio: HTMLAudioElement) {
-    if (timerRef.current) clearTimeout(timerRef.current)
-    audio.currentTime = startAt
-    audio.play().catch(() => {})
   }
 
   return (
@@ -91,7 +96,7 @@ export default function AudioPlayer({ audioUrl, startAt, duration, repeatDelay }
         ref={buttonRef}
         onClick={toggle}
         aria-label={muted ? 'Unmute background audio' : 'Mute background audio'}
-        className="absolute bottom-5 right-5 z-10 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-colors duration-200"
+        className="absolute bottom-5 right-5 z-20 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-colors duration-200"
       >
         {muted ? (
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
