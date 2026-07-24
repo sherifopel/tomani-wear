@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import ProductCarousel from '@/components/ProductCarousel'
 import AudioPlayer from '@/components/AudioPlayer'
+import SpotifyEmbed from '@/components/SpotifyEmbed'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -56,6 +57,7 @@ export type HomeSectionData = {
   audioUrl?:        string
   audioStart?:      number
   audioDuration?:   number
+  spotifyTrackUrl?: string
   mobileFocalY:  number
   tabletFocalY:  number
   desktopFocalY: number
@@ -267,13 +269,18 @@ export default function HomeSection({
           {/* Gradient — helps text readability on cover images */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
 
-          {/* Audio toggle — only renders if this section has an audio file */}
+          {/* Uploaded audio file — muted autoplay with 🔇/🔊 toggle */}
           {audioUrl && (
             <AudioPlayer
               audioUrl={audioUrl}
               startAt={section.audioStart ?? 0}
               duration={section.audioDuration ?? 30}
             />
+          )}
+
+          {/* Spotify embed — shown when no uploaded file, visitor clicks play */}
+          {!audioUrl && section.spotifyTrackUrl && (
+            <SpotifyEmbed trackUrlOrId={section.spotifyTrackUrl} />
           )}
 
           {/* Text overlay — same CSS variable pattern as Hero.tsx */}
