@@ -9,7 +9,7 @@ import { client } from '@/sanity/client'
 import { SETTINGS_QUERY, NAV_QUERY } from '@/sanity/queries'
 import { NAV_LINKS, type NavLink } from '@/lib/nav-links'
 
-type Banner = { message: string; theme?: string }
+type Banner = { message: string; theme?: string; href?: string }
 
 type Settings = {
   announcementBars?: Banner[]
