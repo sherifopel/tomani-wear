@@ -433,9 +433,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               </div>
               {!isLoggedIn && (
                 <div className="text-xs text-gray-500 bg-gray-50 rounded px-3 py-2 leading-relaxed">
-                  <Link href="/sign-in" className="font-medium text-black underline underline-offset-2">Sign in</Link>
+                  <Link href="/sign-in?callbackUrl=/checkout" className="font-medium text-black underline underline-offset-2">Sign in</Link>
                   {' '}or{' '}
-                  <Link href="/sign-in" className="font-medium text-black underline underline-offset-2">create an account</Link>
+                  <Link href="/sign-in?callbackUrl=/checkout" className="font-medium text-black underline underline-offset-2">create an account</Link>
                   {' '}for <span className="font-medium text-green-600">free delivery</span> on every order.
                 </div>
               )}
