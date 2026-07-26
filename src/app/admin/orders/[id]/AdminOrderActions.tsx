@@ -37,7 +37,7 @@ export default function AdminOrderActions({
 
   return (
     <section className="border border-gray-100 rounded-md px-5 py-4">
-      <h2 className="text-xs text-gray-400 mb-4">Update Order</h2>
+      <h2 className="text-xs text-gray-500 mb-4">Update Order</h2>
 
       <div className="flex flex-col gap-4">
         <div>

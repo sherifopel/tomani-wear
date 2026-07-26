@@ -54,14 +54,14 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           >
             {orderNum}
           </h1>
-          <p className="text-xs text-gray-400 mt-1" data-testid="order-detail-date">
+          <p className="text-xs text-gray-500 mt-1" data-testid="order-detail-date">
             Placed {formatDate(order.createdAt)}
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <Link
             href="/account/orders"
-            className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-black transition-colors duration-200"
+            className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-black transition-colors duration-200"
             data-testid="order-detail-back"
           >
             <ArrowLeft size={12} strokeWidth={1.5} />
@@ -78,7 +78,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       {/* ── Items ── */}
       <section className="mb-8">
-        <h2 className="text-xs  text-gray-400 mb-4">Items</h2>
+        <h2 className="text-xs  text-gray-500 mb-4">Items</h2>
         <ul className="flex flex-col divide-y divide-gray-100 border border-gray-100 rounded-md" data-testid="order-detail-items">
           {order.items.map((item) => (
             <li
@@ -107,13 +107,13 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-light truncate" data-testid="order-detail-item-name">{item.name}</p>
                 {item.size && (
-                  <p className="text-xs text-gray-400 mt-0.5" data-testid="order-detail-item-size">Size: {item.size}</p>
+                  <p className="text-xs text-gray-500 mt-0.5" data-testid="order-detail-item-size">Size: {item.size}</p>
                 )}
               </div>
 
               {/* Qty + price */}
               <div className="text-right shrink-0">
-                <p className="text-xs text-gray-400">Qty {item.quantity}</p>
+                <p className="text-xs text-gray-500">Qty {item.quantity}</p>
                 <p className="text-sm font-medium" data-testid="order-detail-item-price">
                   ₦{(item.priceNgn * item.quantity).toLocaleString()}
                 </p>
@@ -125,7 +125,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
       {/* ── Totals ── */}
       <section className="mb-8 border border-gray-100 rounded-md px-5 py-4">
-        <h2 className="text-xs  text-gray-400 mb-4">Payment</h2>
+        <h2 className="text-xs  text-gray-500 mb-4">Payment</h2>
         <div className="flex flex-col gap-2 text-sm">
           <div className="flex justify-between text-gray-500">
             <span>Subtotal</span>
@@ -150,22 +150,22 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
       {/* ── Tracking ── */}
       {order.trackingNumber && (
         <section className="mb-8 border border-gray-100 rounded-md px-5 py-4">
-          <h2 className="text-xs  text-gray-400 mb-2">Tracking</h2>
+          <h2 className="text-xs  text-gray-500 mb-2">Tracking</h2>
           <p className="text-sm font-medium" data-testid="order-detail-tracking">{order.trackingNumber}</p>
-          <p className="text-xs text-gray-400 mt-1">Contact your courier with this reference to track your delivery.</p>
+          <p className="text-xs text-gray-500 mt-1">Contact your courier with this reference to track your delivery.</p>
         </section>
       )}
 
       {/* ── Delivery address ── */}
       {order.address && (
         <section className="mb-8 border border-gray-100 rounded-md px-5 py-4">
-          <h2 className="text-xs  text-gray-400 mb-4">Delivery Address</h2>
+          <h2 className="text-xs  text-gray-500 mb-4">Delivery Address</h2>
           <address className="not-italic text-sm text-gray-600 leading-relaxed" data-testid="order-detail-address">
             {order.customerName && <p className="font-medium text-black">{order.customerName}</p>}
             <p>{order.address}</p>
             {order.city && <p>{order.city}{order.state ? `, ${order.state}` : ''}</p>}
             {order.country && <p>{order.country}</p>}
-            {order.customerPhone && <p className="mt-1 text-gray-400">{order.customerPhone}</p>}
+            {order.customerPhone && <p className="mt-1 text-gray-500">{order.customerPhone}</p>}
           </address>
         </section>
       )}

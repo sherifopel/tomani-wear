@@ -3,7 +3,7 @@ export const metadata = { title: 'Contact Us — Tomanni' }
 export default function ContactPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px]  text-gray-400 mb-3">Get in Touch</p>
+      <p className="text-[10px]  text-gray-500 mb-3">Get in Touch</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-4">Contact Us</h1>
       <p className="text-sm text-gray-500 leading-relaxed mb-12">
         Our support team is here to help. Reach us through any of the channels below.

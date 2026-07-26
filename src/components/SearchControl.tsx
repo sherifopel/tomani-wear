@@ -71,7 +71,7 @@ export default function SearchControl() {
             enterKeyHint="search"
             autoComplete="off"
             placeholder="Search the store…"
-            className="flex-1 min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400"
+            className="flex-1 min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-500"
             data-testid="search-input"
           />
 
@@ -80,7 +80,7 @@ export default function SearchControl() {
               type="button"
               onClick={() => { setQuery(''); inputRef.current?.focus() }}
               aria-label="Clear search"
-              className="text-gray-400 hover:text-black transition-colors shrink-0"
+              className="text-gray-500 hover:text-black transition-colors shrink-0"
             >
               <X className="h-3.5 w-3.5" strokeWidth={1.5} />
             </button>

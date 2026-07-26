@@ -50,14 +50,14 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
         </p>
 
         {userEmail && (
-          <p className="text-sm text-gray-400 mb-8" data-testid="order-confirmation-email">
+          <p className="text-sm text-gray-500 mb-8" data-testid="order-confirmation-email">
             We&apos;ll send shipping updates to{' '}
             <span className="text-black font-medium">{userEmail}</span>
           </p>
         )}
 
         {!userEmail && (
-          <p className="text-sm text-gray-400 mb-8">
+          <p className="text-sm text-gray-500 mb-8">
             We&apos;ll be in touch with shipping updates.
           </p>
         )}
@@ -66,14 +66,14 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
         <div className="border border-gray-100 rounded-md px-6 py-5 mb-10 text-left">
           {order && (
             <div className="flex items-center justify-between mb-3" data-testid="order-confirmation-number">
-              <span className="text-[11px]  text-gray-400">Order number</span>
+              <span className="text-[11px]  text-gray-500">Order number</span>
               <span className="text-sm font-semibold tracking-wider">{order}</span>
             </div>
           )}
           {paystackRef && (
             <div className="flex items-center justify-between border-t border-gray-100 pt-3" data-testid="order-confirmation-ref">
-              <span className="text-[11px]  text-gray-400">Payment ref</span>
-              <span className="text-xs text-gray-400 font-mono">{paystackRef}</span>
+              <span className="text-[11px]  text-gray-500">Payment ref</span>
+              <span className="text-xs text-gray-500 font-mono">{paystackRef}</span>
             </div>
           )}
         </div>

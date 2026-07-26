@@ -11,9 +11,9 @@ const TERMS = [
 export default function TermsPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px]  text-gray-400 mb-3">Legal</p>
+      <p className="text-[10px]  text-gray-500 mb-3">Legal</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-4">Terms & Conditions</h1>
-      <p className="text-xs text-gray-400 mb-10">Last updated: July 2026</p>
+      <p className="text-xs text-gray-500 mb-10">Last updated: July 2026</p>
 
       <div className="flex flex-col gap-5">
         {TERMS.map((term, i) => (
@@ -25,7 +25,7 @@ export default function TermsPage() {
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-100">
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-500">
           Questions?{' '}
           <a
             href="/contact"

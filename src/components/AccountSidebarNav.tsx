@@ -39,14 +39,14 @@ export default function AccountSidebarNav({ orderCount, latestOrderStatus, varia
               key={href}
               href={href}
               className={`group flex flex-col py-3 border-b border-gray-100 last:border-0 transition-colors ${
-                active ? 'text-black' : 'text-gray-400 hover:text-black'
+                active ? 'text-black' : 'text-gray-500 hover:text-black'
               }`}
             >
               <span className={`text-sm ${active ? 'font-semibold' : 'font-normal'}`}>
                 {label}
               </span>
               {meta && (
-                <span className="text-[10px] mt-0.5 text-gray-300 group-hover:text-gray-400 transition-colors">
+                <span className="text-[10px] mt-0.5 text-gray-300 group-hover:text-gray-500 transition-colors">
                   {meta}
                 </span>
               )}
@@ -70,7 +70,7 @@ export default function AccountSidebarNav({ orderCount, latestOrderStatus, varia
             className={`text-sm pb-2 border-b-2 transition-colors ${
               active
                 ? 'text-black border-black font-semibold'
-                : 'text-gray-400 border-transparent hover:text-black hover:border-gray-300'
+                : 'text-gray-500 border-transparent hover:text-black hover:border-gray-300'
             }`}
           >
             {label}

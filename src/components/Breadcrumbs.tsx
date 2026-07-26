@@ -11,7 +11,7 @@ export default function Breadcrumbs({
 }) {
   return (
     <nav
-      className="hidden md:flex items-center gap-2 text-xs text-gray-400 py-4"
+      className="hidden md:flex items-center gap-2 text-xs text-gray-500 py-4"
       data-testid={testId}
     >
       {crumbs.map((crumb, i) => (

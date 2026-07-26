@@ -73,7 +73,7 @@ export default function MiniCart() {
             <div>
               <p className="text-xs font-light  leading-snug">{item.name}</p>
               {item.size && (
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-500 mt-0.5">
                   Size: {item.size}{item.colorName && ` · ${item.colorName}`}
                 </p>
               )}
@@ -109,7 +109,7 @@ export default function MiniCart() {
 
   const emptyState = (
     <div className="flex-1 flex flex-col items-center justify-center gap-4 px-6 py-8">
-      <p className="text-sm text-gray-400 ">Your bag is empty</p>
+      <p className="text-sm text-gray-500 ">Your bag is empty</p>
       <Link
         href="/products"
         onClick={closeMiniCart}
@@ -126,7 +126,7 @@ export default function MiniCart() {
         <span>Subtotal</span>
         <span>₦{totalPrice.toLocaleString()}</span>
       </div>
-      <p className="text-xs text-gray-400">Shipping calculated at checkout</p>
+      <p className="text-xs text-gray-500">Shipping calculated at checkout</p>
       <Link
         href="/cart"
         onClick={closeMiniCart}
@@ -167,7 +167,7 @@ export default function MiniCart() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100 shrink-0">
           <p className="text-xs  font-medium">
-            Your Bag{totalItems > 0 && <span className="ml-2 text-gray-400">({totalItems})</span>}
+            Your Bag{totalItems > 0 && <span className="ml-2 text-gray-500">({totalItems})</span>}
           </p>
           <button onClick={closeMiniCart} aria-label="Close bag" className="p-1 rounded hover:bg-gray-100 transition-colors">
             <X size={16} strokeWidth={1.5} />
@@ -192,7 +192,7 @@ export default function MiniCart() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 shrink-0">
           <p className="text-xs  font-medium">
-            Your Bag{totalItems > 0 && <span className="ml-2 text-gray-400">({totalItems})</span>}
+            Your Bag{totalItems > 0 && <span className="ml-2 text-gray-500">({totalItems})</span>}
           </p>
           <button onClick={closeMiniCart} aria-label="Close bag" className="p-1 rounded hover:bg-gray-100 transition-colors duration-200">
             <X size={18} strokeWidth={1.5} />

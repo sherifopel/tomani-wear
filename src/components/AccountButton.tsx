@@ -50,12 +50,12 @@ export default function AccountButton() {
               />
             ) : (
               <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                <User size={14} strokeWidth={1.5} className="text-gray-400" />
+                <User size={14} strokeWidth={1.5} className="text-gray-500" />
               </div>
             )}
             <div className="min-w-0">
               <p className="text-xs font-medium truncate">{session?.user?.name ?? 'My Account'}</p>
-              <p className="text-[11px] text-gray-400 truncate">{session?.user?.email}</p>
+              <p className="text-[11px] text-gray-500 truncate">{session?.user?.email}</p>
             </div>
           </div>
           <Link href="/account/profile" onClick={close} data-testid="account-link-my-account"
@@ -166,12 +166,12 @@ export default function AccountButton() {
                 />
               ) : (
                 <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
-                  <User size={16} strokeWidth={1.5} className="text-gray-400" />
+                  <User size={16} strokeWidth={1.5} className="text-gray-500" />
                 </div>
               )}
               <div className="min-w-0">
                 <p className="text-sm font-medium truncate">{session?.user?.name ?? 'Welcome back'}</p>
-                <p className="text-xs text-gray-400 truncate">{session?.user?.email}</p>
+                <p className="text-xs text-gray-500 truncate">{session?.user?.email}</p>
               </div>
             </div>
             <Link href="/account/profile" onClick={close} data-testid="account-sheet-my-account"

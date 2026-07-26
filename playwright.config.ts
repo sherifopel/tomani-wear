@@ -37,6 +37,7 @@ export default defineConfig({
         { key: 'pdp',      label: 'Product Detail Page', matchers: ['@pdp'] },
         { key: 'cart',     label: 'Cart',                matchers: ['@cart'] },
         { key: 'checkout', label: 'Checkout',            matchers: ['@checkout'] },
+        { key: 'a11y',     label: 'Accessibility',       matchers: ['@a11y'] },
       ],
     } satisfies ReporterOptions],
     ['html', { open: 'never' }],

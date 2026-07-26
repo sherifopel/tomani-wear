@@ -60,7 +60,7 @@ function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React
   return (
     <div className="flex items-center justify-between mb-1.5">
       <label htmlFor={htmlFor} className={labelClass}>{children}</label>
-      <span className="text-[12px] text-gray-400">Required</span>
+      <span className="text-[12px] text-gray-500">Required</span>
     </div>
   )
 }
@@ -346,7 +346,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
           <div data-testid="checkout-section-payment">
             <h2 className="text-2xl font-light mb-6">Payment</h2>
             <div className="flex flex-col gap-5">
-              <p className="text-xs text-gray-400 leading-relaxed">
+              <p className="text-xs text-gray-500 leading-relaxed">
                 You'll be taken to Paystack to complete your payment. Your card details are never stored by Tomanni.
               </p>
               <button
@@ -357,7 +357,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               >
                 {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
               </button>
-              <p className="text-center text-[10px] text-gray-400">
+              <p className="text-center text-[10px] text-gray-500">
                 Secured by Paystack · 256-bit SSL encryption
               </p>
             </div>
@@ -371,7 +371,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
             <h2 className="text-2xl font-light" data-testid="checkout-section-summary">
               Order Summary
             </h2>
-            <Link href="/cart" className="text-[11px] text-gray-400 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
+            <Link href="/cart" className="text-[11px] text-gray-500 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
               Edit cart
             </Link>
           </div>
@@ -393,9 +393,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-light leading-snug truncate" data-testid="checkout-item-name">{item.name}</p>
-                    {item.size && <p className="text-xs text-gray-400 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>}
+                    {item.size && <p className="text-xs text-gray-500 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>}
                     <div className="flex items-center justify-between mt-0.5">
-                      <p className="text-xs text-gray-400" data-testid="checkout-item-qty">Qty: {item.quantity}</p>
+                      <p className="text-xs text-gray-500" data-testid="checkout-item-qty">Qty: {item.quantity}</p>
                       <p className="text-sm font-medium" data-testid="checkout-item-price">₦{(item.price * item.quantity).toLocaleString()}</p>
                     </div>
                   </div>
@@ -413,7 +413,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
                   <button
                     type="button"
                     onClick={() => setApplied(null)}
-                    className="text-xs text-gray-400 hover:text-black transition-colors duration-150 underline underline-offset-2"
+                    className="text-xs text-gray-500 hover:text-black transition-colors duration-150 underline underline-offset-2"
                     data-testid="checkout-promo-remove"
                   >
                     Remove

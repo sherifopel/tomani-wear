@@ -31,7 +31,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
     <div className="max-w-2xl mx-auto px-6 py-12">
       <Link
         href="/admin/orders"
-        className="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-black transition-colors mb-8"
+        className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-black transition-colors mb-8"
       >
         <ArrowLeft size={12} strokeWidth={1.5} />
         All Orders
@@ -40,7 +40,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
       <div className="flex items-start justify-between mb-8">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">{orderNum}</h1>
-          <p className="text-xs text-gray-400 mt-1">Placed {formatDate(order.createdAt)}</p>
+          <p className="text-xs text-gray-500 mt-1">Placed {formatDate(order.createdAt)}</p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <span className={`text-[10px] px-3 py-1 rounded-full font-medium ${
@@ -56,7 +56,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
       {/* Customer */}
       <section className="mb-6 border border-gray-100 rounded-md px-5 py-4">
-        <h2 className="text-xs text-gray-400 mb-3">Customer</h2>
+        <h2 className="text-xs text-gray-500 mb-3">Customer</h2>
         <div className="text-sm space-y-1">
           {order.customerName  && <p className="font-medium">{order.customerName}</p>}
           {order.customerEmail && <p className="text-gray-500">{order.customerEmail}</p>}
@@ -73,7 +73,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
 
       {/* Items */}
       <section className="mb-6 border border-gray-100 rounded-md overflow-hidden">
-        <h2 className="text-xs text-gray-400 px-5 pt-4 mb-3">Items</h2>
+        <h2 className="text-xs text-gray-500 px-5 pt-4 mb-3">Items</h2>
         <ul className="divide-y divide-gray-50">
           {order.items.map(item => (
             <li key={item.id} className="flex items-center gap-4 px-5 py-3">
@@ -85,10 +85,10 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-light truncate">{item.name}</p>
-                {item.size && <p className="text-xs text-gray-400">Size: {item.size}</p>}
+                {item.size && <p className="text-xs text-gray-500">Size: {item.size}</p>}
               </div>
               <div className="text-right shrink-0">
-                <p className="text-xs text-gray-400">×{item.quantity}</p>
+                <p className="text-xs text-gray-500">×{item.quantity}</p>
                 <p className="text-sm font-medium">₦{(item.priceNgn * item.quantity).toLocaleString()}</p>
               </div>
             </li>

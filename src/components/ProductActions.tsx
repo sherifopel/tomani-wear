@@ -19,7 +19,7 @@ type Props = {
 const btnClass = (inStock: boolean, justAdded: boolean) =>
   `flex-1 py-4 text-xs font-medium uppercase tracking-wider transition-colors duration-200 ${
     !inStock
-      ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+      ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
       : justAdded
       ? 'bg-[var(--brand-yellow)] text-black'
       : 'bg-black text-white border border-black btn-wipe'
@@ -86,7 +86,7 @@ export default function ProductActions({
       {sizes.length > 0 && (
         <div data-testid="pdp-size-selector" className="flex flex-col" ref={sizeRef}>
           <p className="text-xs  mb-3 font-medium">
-            Size {selectedSize && <span className="text-gray-400 normal-case tracking-normal font-normal">— {selectedSize}</span>}
+            Size {selectedSize && <span className="text-gray-500 normal-case tracking-normal font-normal">— {selectedSize}</span>}
           </p>
           <div className="flex flex-wrap gap-2">
             {sizes.map((size) => (
