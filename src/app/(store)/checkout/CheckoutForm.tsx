@@ -202,7 +202,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
       .finally(() => setLoading(false))
   }
 
-  function validate(): boolean {
+  const FIELD_ORDER: Array<keyof FormState> = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'country']
+
+  function validate(): Partial<FormState> {
     const e: Partial<FormState> = {}
     if (!form.fullName.trim()) e.fullName = 'Please enter your full name'
     if (!form.email.trim()) {
@@ -220,7 +222,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
     if (!form.state.trim()) e.state = 'Please enter your state'
     if (!form.country.trim()) e.country = 'Please enter your country'
     setErrors(e)
-    return Object.keys(e).length === 0
+    return e
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -233,7 +235,14 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validate()) return
+    const errs = validate()
+    if (Object.keys(errs).length > 0) {
+      const firstError = FIELD_ORDER.find(f => errs[f])
+      if (firstError) {
+        document.getElementById(firstError)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      return
+    }
 
     initializePayment({
       onSuccess,
