@@ -17,43 +17,11 @@ const inputClass = `
 
 const labelClass = 'text-[12px] text-black'
 
-// ── Delivery zones (shipping from Lagos) ────────────────────────────────────
-// Normalised state names are matched case-insensitively against user input.
-const DELIVERY_ZONES: Array<{ states: string[]; fee: number; label: string }> = [
-  {
-    fee:    2500,
-    label:  'Lagos (same city)',
-    states: ['lagos'],
-  },
-  {
-    fee:    7000,
-    label:  'Remote delivery',
-    states: ['adamawa', 'bauchi', 'borno', 'gombe', 'taraba', 'yobe'],
-  },
-  {
-    fee:    4000,
-    label:  'Interstate delivery',
-    states: [
-      'ogun', 'oyo', 'osun', 'ondo', 'ekiti',
-      'delta', 'edo', 'rivers', 'anambra', 'imo', 'abia',
-      'cross river', 'akwa ibom', 'bayelsa', 'enugu', 'ebonyi',
-      'abuja', 'fct', 'federal capital territory',
-      'kwara', 'kogi', 'niger', 'benue', 'plateau', 'nasarawa',
-      'kano', 'kaduna', 'katsina', 'sokoto', 'kebbi', 'zamfara', 'jigawa',
-    ],
-  },
-]
+// Registered users get free delivery. Guests pay a flat ₦7,500 fee.
+const GUEST_DELIVERY_FEE = 7_500
 
-function getDeliveryFee(state: string, totalPrice: number): number | null {
-  if (totalPrice >= 50000) return 0  // free nationwide on orders over ₦50,000
-  const s = state.trim().toLowerCase()
-  if (!s) return null
-  for (const zone of DELIVERY_ZONES) {
-    if (zone.states.some(z => s === z || s.startsWith(z) || z.startsWith(s))) {
-      return zone.fee
-    }
-  }
-  return 4000 // default interstate for any unrecognised state
+function getDeliveryFee(isLoggedIn: boolean): number {
+  return isLoggedIn ? 0 : GUEST_DELIVERY_FEE
 }
 
 function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
@@ -116,10 +84,11 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   if (items.length === 0) return null
 
+  const isLoggedIn      = !!session?.user
   const discountAmount  = applied ? Math.round(totalPrice * applied.percentage / 100) : 0
   const discountedPrice = totalPrice - discountAmount
-  const deliveryFee     = getDeliveryFee(form.state, discountedPrice)
-  const grandTotal      = discountedPrice + (deliveryFee ?? 0)
+  const deliveryFee     = getDeliveryFee(isLoggedIn)
+  const grandTotal      = discountedPrice + deliveryFee
 
   const paystackConfig = {
     reference: `TW-${Date.now()}`,
@@ -458,8 +427,18 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               )}
               <div className="flex justify-between text-gray-500" data-testid="checkout-delivery">
                 <span>Delivery</span>
-                <span>{deliveryFee === null ? 'Enter your state' : deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}</span>
+                <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>
+                  {deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}
+                </span>
               </div>
+              {!isLoggedIn && (
+                <div className="text-xs text-gray-500 bg-gray-50 rounded px-3 py-2 leading-relaxed">
+                  <Link href="/sign-in" className="font-medium text-black underline underline-offset-2">Sign in</Link>
+                  {' '}or{' '}
+                  <Link href="/sign-in" className="font-medium text-black underline underline-offset-2">create an account</Link>
+                  {' '}for <span className="font-medium text-green-600">free delivery</span> on every order.
+                </div>
+              )}
               <div className="flex justify-between font-medium text-base border-t border-gray-100 pt-3" data-testid="checkout-total">
                 <span>Total</span><span>₦{grandTotal.toLocaleString()}</span>
               </div>
