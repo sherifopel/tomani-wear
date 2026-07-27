@@ -5,12 +5,12 @@ export const metadata = { title: 'Shipping & Returns — Tomanni' }
 export default function ReturnsPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px]  text-gray-400 mb-3">Help & Support</p>
+      <p className="text-[10px]  text-gray-500 mb-3">Help & Support</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-12">Shipping & Returns</h1>
 
       {/* ── Shipping ── */}
       <section className="mb-10">
-        <h2 className="text-[10px]  text-gray-400 mb-5">Shipping</h2>
+        <h2 className="text-[10px]  text-gray-500 mb-5">Shipping</h2>
 
         <p className="text-sm text-gray-600 leading-relaxed mb-5">
           Orders are processed within <strong className="text-black font-medium">1–3 business days</strong>.
@@ -31,7 +31,7 @@ export default function ReturnsPage() {
 
       {/* ── Returns ── */}
       <section className="mb-10">
-        <h2 className="text-[10px]  text-gray-400 mb-5">Returns</h2>
+        <h2 className="text-[10px]  text-gray-500 mb-5">Returns</h2>
 
         <p className="text-sm text-gray-600 leading-relaxed mb-5">
           We accept returns within <strong className="text-black font-medium">14 days of delivery</strong>.
@@ -47,13 +47,13 @@ export default function ReturnsPage() {
           ))}
         </ul>
 
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-gray-500">
           Items marked <strong className="text-black font-medium">Final Sale</strong> cannot be returned.
         </p>
       </section>
 
       <div className="pt-8 border-t border-gray-100">
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-500">
           Need to return something?{' '}
           <Link
             href="/contact"

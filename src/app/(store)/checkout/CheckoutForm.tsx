@@ -17,50 +17,18 @@ const inputClass = `
 
 const labelClass = 'text-[12px] text-black'
 
-// ── Delivery zones (shipping from Lagos) ────────────────────────────────────
-// Normalised state names are matched case-insensitively against user input.
-const DELIVERY_ZONES: Array<{ states: string[]; fee: number; label: string }> = [
-  {
-    fee:    2500,
-    label:  'Lagos (same city)',
-    states: ['lagos'],
-  },
-  {
-    fee:    7000,
-    label:  'Remote delivery',
-    states: ['adamawa', 'bauchi', 'borno', 'gombe', 'taraba', 'yobe'],
-  },
-  {
-    fee:    4000,
-    label:  'Interstate delivery',
-    states: [
-      'ogun', 'oyo', 'osun', 'ondo', 'ekiti',
-      'delta', 'edo', 'rivers', 'anambra', 'imo', 'abia',
-      'cross river', 'akwa ibom', 'bayelsa', 'enugu', 'ebonyi',
-      'abuja', 'fct', 'federal capital territory',
-      'kwara', 'kogi', 'niger', 'benue', 'plateau', 'nasarawa',
-      'kano', 'kaduna', 'katsina', 'sokoto', 'kebbi', 'zamfara', 'jigawa',
-    ],
-  },
-]
+// Registered users get free delivery. Guests pay a flat ₦7,500 fee.
+const GUEST_DELIVERY_FEE = 7_500
 
-function getDeliveryFee(state: string, totalPrice: number): number | null {
-  if (totalPrice >= 50000) return 0  // free nationwide on orders over ₦50,000
-  const s = state.trim().toLowerCase()
-  if (!s) return null
-  for (const zone of DELIVERY_ZONES) {
-    if (zone.states.some(z => s === z || s.startsWith(z) || z.startsWith(s))) {
-      return zone.fee
-    }
-  }
-  return 4000 // default interstate for any unrecognised state
+function getDeliveryFee(isLoggedIn: boolean): number {
+  return isLoggedIn ? 0 : GUEST_DELIVERY_FEE
 }
 
 function RequiredLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between mb-1.5">
       <label htmlFor={htmlFor} className={labelClass}>{children}</label>
-      <span className="text-[12px] text-gray-400">Required</span>
+      <span className="text-[12px] text-gray-500">Required</span>
     </div>
   )
 }
@@ -116,10 +84,11 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   if (items.length === 0) return null
 
+  const isLoggedIn      = !!session?.user
   const discountAmount  = applied ? Math.round(totalPrice * applied.percentage / 100) : 0
   const discountedPrice = totalPrice - discountAmount
-  const deliveryFee     = getDeliveryFee(form.state, discountedPrice)
-  const grandTotal      = discountedPrice + (deliveryFee ?? 0)
+  const deliveryFee     = getDeliveryFee(isLoggedIn)
+  const grandTotal      = discountedPrice + deliveryFee
 
   const paystackConfig = {
     reference: `TW-${Date.now()}`,
@@ -233,7 +202,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
       .finally(() => setLoading(false))
   }
 
-  function validate(): boolean {
+  const FIELD_ORDER: Array<keyof FormState> = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'country']
+
+  function validate(): Partial<FormState> {
     const e: Partial<FormState> = {}
     if (!form.fullName.trim()) e.fullName = 'Please enter your full name'
     if (!form.email.trim()) {
@@ -251,7 +222,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
     if (!form.state.trim()) e.state = 'Please enter your state'
     if (!form.country.trim()) e.country = 'Please enter your country'
     setErrors(e)
-    return Object.keys(e).length === 0
+    return e
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -264,7 +235,14 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validate()) return
+    const errs = validate()
+    if (Object.keys(errs).length > 0) {
+      const firstError = FIELD_ORDER.find(f => errs[f])
+      if (firstError) {
+        document.getElementById(firstError)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      return
+    }
 
     initializePayment({
       onSuccess,
@@ -346,7 +324,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
           <div data-testid="checkout-section-payment">
             <h2 className="text-2xl font-light mb-6">Payment</h2>
             <div className="flex flex-col gap-5">
-              <p className="text-xs text-gray-400 leading-relaxed">
+              <p className="text-xs text-gray-500 leading-relaxed">
                 You'll be taken to Paystack to complete your payment. Your card details are never stored by Tomanni.
               </p>
               <button
@@ -357,7 +335,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               >
                 {loading ? 'Processing…' : `Pay ₦${grandTotal.toLocaleString()} with Paystack`}
               </button>
-              <p className="text-center text-[10px] text-gray-400">
+              <p className="text-center text-[10px] text-gray-500">
                 Secured by Paystack · 256-bit SSL encryption
               </p>
             </div>
@@ -371,7 +349,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
             <h2 className="text-2xl font-light" data-testid="checkout-section-summary">
               Order Summary
             </h2>
-            <Link href="/cart" className="text-[11px] text-gray-400 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
+            <Link href="/cart" className="text-[11px] text-gray-500 hover:text-black underline underline-offset-2 transition-colors duration-150" data-testid="checkout-edit-cart">
               Edit cart
             </Link>
           </div>
@@ -393,9 +371,9 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-light leading-snug truncate" data-testid="checkout-item-name">{item.name}</p>
-                    {item.size && <p className="text-xs text-gray-400 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>}
+                    {item.size && <p className="text-xs text-gray-500 mt-0.5" data-testid="checkout-item-size">Size: {item.size}</p>}
                     <div className="flex items-center justify-between mt-0.5">
-                      <p className="text-xs text-gray-400" data-testid="checkout-item-qty">Qty: {item.quantity}</p>
+                      <p className="text-xs text-gray-500" data-testid="checkout-item-qty">Qty: {item.quantity}</p>
                       <p className="text-sm font-medium" data-testid="checkout-item-price">₦{(item.price * item.quantity).toLocaleString()}</p>
                     </div>
                   </div>
@@ -413,7 +391,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
                   <button
                     type="button"
                     onClick={() => setApplied(null)}
-                    className="text-xs text-gray-400 hover:text-black transition-colors duration-150 underline underline-offset-2"
+                    className="text-xs text-gray-500 hover:text-black transition-colors duration-150 underline underline-offset-2"
                     data-testid="checkout-promo-remove"
                   >
                     Remove
@@ -458,8 +436,18 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               )}
               <div className="flex justify-between text-gray-500" data-testid="checkout-delivery">
                 <span>Delivery</span>
-                <span>{deliveryFee === null ? 'Enter your state' : deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}</span>
+                <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>
+                  {deliveryFee === 0 ? 'Free' : `₦${deliveryFee.toLocaleString()}`}
+                </span>
               </div>
+              {!isLoggedIn && (
+                <div className="text-xs text-gray-500 bg-gray-50 rounded px-3 py-2 leading-relaxed">
+                  <Link href="/sign-in?callbackUrl=/checkout" className="font-medium text-black underline underline-offset-2">Sign in</Link>
+                  {' '}or{' '}
+                  <Link href="/sign-in?callbackUrl=/checkout" className="font-medium text-black underline underline-offset-2">create an account</Link>
+                  {' '}for <span className="font-medium text-green-600">free delivery</span> on every order.
+                </div>
+              )}
               <div className="flex justify-between font-medium text-base border-t border-gray-100 pt-3" data-testid="checkout-total">
                 <span>Total</span><span>₦{grandTotal.toLocaleString()}</span>
               </div>

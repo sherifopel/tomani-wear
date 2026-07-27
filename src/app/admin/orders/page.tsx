@@ -26,13 +26,13 @@ export default async function AdminOrdersPage() {
     <div className="max-w-5xl mx-auto px-6 py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-xl font-semibold tracking-tight">Orders</h1>
-        <span className="text-xs text-gray-400">{orders.length} total</span>
+        <span className="text-xs text-gray-500">{orders.length} total</span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-100 text-left text-xs text-gray-400">
+            <tr className="border-b border-gray-100 text-left text-xs text-gray-500">
               <th className="pb-3 font-normal">Order</th>
               <th className="pb-3 font-normal">Customer</th>
               <th className="pb-3 font-normal">Date</th>
@@ -48,7 +48,7 @@ export default async function AdminOrdersPage() {
                 <td className="py-3 font-medium">{orderNumber(order.id)}</td>
                 <td className="py-3 text-gray-600">
                   <div>{order.customerName ?? '—'}</div>
-                  <div className="text-xs text-gray-400">{order.customerEmail ?? ''}</div>
+                  <div className="text-xs text-gray-500">{order.customerEmail ?? ''}</div>
                 </td>
                 <td className="py-3 text-gray-500">{formatDate(order.createdAt)}</td>
                 <td className="py-3 font-medium">₦{order.totalNgn.toLocaleString()}</td>
@@ -67,7 +67,7 @@ export default async function AdminOrdersPage() {
                 <td className="py-3 text-right">
                   <Link
                     href={`/admin/orders/${order.id}`}
-                    className="text-xs text-gray-400 hover:text-black transition-colors underline underline-offset-2"
+                    className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
                   >
                     Manage
                   </Link>
@@ -78,7 +78,7 @@ export default async function AdminOrdersPage() {
         </table>
 
         {orders.length === 0 && (
-          <p className="text-center text-xs text-gray-400 py-16">No orders yet.</p>
+          <p className="text-center text-xs text-gray-500 py-16">No orders yet.</p>
         )}
       </div>
     </div>

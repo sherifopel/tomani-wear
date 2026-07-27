@@ -151,7 +151,7 @@ export default function FilterDropdown({
 
           {/* Category options */}
           <div className="px-2 py-4">
-            <p className="px-4 pb-2 text-[10px]  text-gray-400">Category</p>
+            <p className="px-4 pb-2 text-[10px]  text-gray-500">Category</p>
             <ul>{options}</ul>
           </div>
         </div>

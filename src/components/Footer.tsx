@@ -164,7 +164,7 @@ export default async function Footer() {
             </div>
           )}
 
-          <p className="text-[10px]  text-gray-400" data-testid="footer-copyright">
+          <p className="text-[10px]  text-gray-500" data-testid="footer-copyright">
             © {new Date().getFullYear()} Tomanni Official. All rights reserved.
           </p>
         </div>

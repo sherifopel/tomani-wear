@@ -30,7 +30,7 @@ export default function NotFound() {
             </h1>
 
             <p
-              className="mt-5 text-sm text-gray-400 max-w-sm leading-relaxed"
+              className="mt-5 text-sm text-gray-500 max-w-sm leading-relaxed"
               data-testid="not-found-message"
             >
               Uh oh, looks like the page you are looking for has moved or no longer exists.

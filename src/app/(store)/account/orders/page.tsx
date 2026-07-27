@@ -36,7 +36,7 @@ export default async function OrdersPage() {
       {/* ── Orders list ──────────────────────────────────────────────── */}
       {orders.length === 0 ? (
         <div className="text-center py-16" data-testid="orders-empty">
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-gray-500 mb-6">
             Your orders will appear here once you&apos;ve made a purchase.
           </p>
           <Link
@@ -68,7 +68,7 @@ export default async function OrdersPage() {
                       {statusLabel(order.status)}
                     </span>
                   </div>
-                  <p className="text-[11px] text-gray-400" data-testid="orders-order-date">
+                  <p className="text-[11px] text-gray-500" data-testid="orders-order-date">
                     {formatDate(order.createdAt)} · {order.items.length} item{order.items.length !== 1 ? 's' : ''}
                   </p>
                 </div>

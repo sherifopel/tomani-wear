@@ -54,9 +54,9 @@ export default function ProfileForm({ user }: Props) {
           type="email"
           value={user.email}
           readOnly
-          className="border border-gray-100 px-4 py-3 text-sm text-gray-400 bg-gray-50 cursor-not-allowed"
+          className="border border-gray-100 px-4 py-3 text-sm text-gray-500 bg-gray-50 cursor-not-allowed"
         />
-        <p className="text-[11px] text-gray-400">Email is linked to your login and cannot be changed here.</p>
+        <p className="text-[11px] text-gray-500">Email is linked to your login and cannot be changed here.</p>
       </div>
 
       {/* Phone */}

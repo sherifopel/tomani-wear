@@ -71,7 +71,7 @@ export default function SignInForm({ callbackUrl }: { callbackUrl: string }) {
 
         <div className="flex items-center gap-3 mb-6">
           <hr className="flex-1 border-neutral-200" />
-          <span className="text-xs text-neutral-400 ">or</span>
+          <span className="text-xs text-neutral-500 ">or</span>
           <hr className="flex-1 border-neutral-200" />
         </div>
 
@@ -120,7 +120,7 @@ export default function SignInForm({ callbackUrl }: { callbackUrl: string }) {
           </form>
         )}
 
-        <p className="text-xs text-neutral-400 text-center mt-8">
+        <p className="text-xs text-neutral-500 text-center mt-8">
           By signing in, you agree to our{' '}
           <a href="/privacy" className="underline underline-offset-2">
             Privacy Policy

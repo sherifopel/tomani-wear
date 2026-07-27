@@ -140,7 +140,7 @@ export default async function ProductsPage({
               <SortDropdown current={sort} category={category} type={type} query={searchQuery} />
             </div>
           </div>
-          <p className="text-xs text-gray-400 mt-3 text-center" data-testid="plp-count">
+          <p className="text-xs text-gray-500 mt-3 text-center" data-testid="plp-count">
             Showing {products.length} {products.length === 1 ? 'product' : 'products'}
           </p>
         </div>
@@ -151,7 +151,7 @@ export default async function ProductsPage({
         <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4" data-testid="plp-empty">
           {searchQuery ? (
             <>
-              <p className="text-sm text-gray-400">No products found</p>
+              <p className="text-sm text-gray-500">No products found</p>
               <p className="max-w-sm text-center text-sm text-gray-500">
                 Try a different search term or browse the full collection.
               </p>
@@ -165,11 +165,11 @@ export default async function ProductsPage({
             </>
           ) : (
             <>
-              <p className="text-[11px] tracking-[0.2em] uppercase text-gray-400">
+              <p className="text-[11px] tracking-[0.2em] uppercase text-gray-500">
                 {pageTitle}
               </p>
               <h2 className="text-3xl font-light tracking-wide text-black">Coming Soon</h2>
-              <p className="text-sm text-gray-400 max-w-xs text-center leading-relaxed">
+              <p className="text-sm text-gray-500 max-w-xs text-center leading-relaxed">
                 We&apos;re working on something for this collection. Check back soon.
               </p>
               <Link
@@ -232,7 +232,7 @@ export default async function ProductsPage({
                   </p>
                   {product.compareAtPrice && product.compareAtPrice > product.price ? (
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 line-through" data-testid="plp-product-compare-price">₦{product.compareAtPrice.toLocaleString()}</span>
+                      <span className="text-xs text-gray-500 line-through" data-testid="plp-product-compare-price">₦{product.compareAtPrice.toLocaleString()}</span>
                       <span className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">₦{product.price.toLocaleString()}</span>
                     </div>
                   ) : (

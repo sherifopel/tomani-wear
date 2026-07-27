@@ -17,7 +17,7 @@ export default function CartPage() {
       <div className="max-w-4xl mx-auto px-6 py-10" data-testid="cart-empty">
         <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
         <div className="min-h-[50vh] flex flex-col items-center justify-center gap-6">
-          <p className="text-sm  text-gray-400">Your cart is empty</p>
+          <p className="text-sm  text-gray-500">Your cart is empty</p>
           <Link
             href="/products"
             className="px-8 py-3 bg-black text-white border border-black text-xs  btn-wipe"
@@ -40,7 +40,7 @@ export default function CartPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-medium text-center">Shopping Cart</h1>
         <div className="flex items-center gap-2 mt-1">
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-500">
             {totalItems} {totalItems === 1 ? 'item' : 'items'}
           </p>
           {isPreview && (
@@ -48,7 +48,7 @@ export default function CartPage() {
               <span className="text-gray-300">·</span>
               <button
                 onClick={clearCart}
-                className="text-xs text-gray-400 hover:text-black transition-colors duration-200 underline underline-offset-2"
+                className="text-xs text-gray-500 hover:text-black transition-colors duration-200 underline underline-offset-2"
                 data-testid="cart-clear-all"
               >
                 Clear cart
@@ -91,7 +91,7 @@ export default function CartPage() {
                   <p className="text-sm font-light  leading-snug" data-testid="cart-item-name">
                     {item.name}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1" data-testid="cart-item-size">
+                  <p className="text-xs text-gray-500 mt-1" data-testid="cart-item-size">
                     Size: {item.size}
                     {item.colorName && ` · ${item.colorName}`}
                   </p>
@@ -139,7 +139,7 @@ export default function CartPage() {
         <div className="hidden md:block mt-10 md:mt-0 bg-gray-50 p-6 space-y-4" data-testid="cart-order-summary">
           <p className="text-xs  font-medium" data-testid="cart-summary-heading">Order Summary</p>
 
-          <div className="flex justify-between text-xs text-gray-400" data-testid="cart-summary-shipping-row">
+          <div className="flex justify-between text-xs text-gray-500" data-testid="cart-summary-shipping-row">
             <span>Shipping</span>
             <span data-testid="cart-shipping">Calculated at checkout</span>
           </div>

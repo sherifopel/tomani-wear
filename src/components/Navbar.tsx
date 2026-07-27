@@ -63,7 +63,7 @@ export default async function Navbar() {
       {/* Category nav — desktop only */}
       <nav
         data-testid="nav-links"
-        className="hidden md:flex border-b border-gray-100 bg-gray-100 px-6 py-3 items-center justify-center gap-10"
+        className="hidden md:flex border-b border-gray-100 bg-white px-6 py-3 items-center justify-center gap-10"
       >
         {/* Compact-mode logo */}
         <Link
@@ -92,7 +92,7 @@ export default async function Navbar() {
               className={`nav-link-underline text-[14px] font-light transition-colors whitespace-nowrap ${
                 link.accent
                   ? 'text-[var(--brand-red)] hover:opacity-70'
-                  : 'hover:text-gray-400'
+                  : 'hover:text-gray-500'
               }`}
             >
               {link.label}

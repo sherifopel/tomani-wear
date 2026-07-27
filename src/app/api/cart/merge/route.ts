@@ -31,6 +31,7 @@ export async function POST(req: NextRequest) {
         },
         update: {
           quantity: item.quantity,
+          imageUrl: item.image ?? null,
         },
         create: {
           userId,
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
           priceNgn:  item.price,
           size:      item.size ?? '',
           quantity:  item.quantity,
+          imageUrl:  item.image ?? null,
         },
       })
     )
@@ -54,6 +56,7 @@ export async function POST(req: NextRequest) {
     price:     row.priceNgn,
     size:      row.size ?? '',
     quantity:  row.quantity,
+    image:     row.imageUrl ?? undefined,
   }))
 
   return NextResponse.json(merged)

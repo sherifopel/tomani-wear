@@ -113,7 +113,7 @@ export default function ProductInteractive({
         ₦{price.toLocaleString()}
       </span>
       {onSale && compareAtPrice && (
-        <span className="text-sm text-gray-400 line-through" data-testid="pdp-compare-price">
+        <span className="text-sm text-gray-500 line-through" data-testid="pdp-compare-price">
           ₦{compareAtPrice.toLocaleString()}
         </span>
       )}
@@ -299,7 +299,7 @@ export default function ProductInteractive({
               <p className="text-xs  mb-3 font-medium" data-testid="pdp-colour-label">
                 Colour
                 {activeColorIndex !== null && (
-                  <span className="text-gray-400 normal-case tracking-normal font-normal ml-1">
+                  <span className="text-gray-500 normal-case tracking-normal font-normal ml-1">
                     — {colors![activeColorIndex].colorName}
                   </span>
                 )}

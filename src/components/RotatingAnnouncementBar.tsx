@@ -32,7 +32,6 @@ export default function RotatingAnnouncementBar({ banners }: { banners: Banner[]
       className={`mx-auto block max-w-[34rem] leading-relaxed ${hasRotated ? 'animate-[announcement-slide_400ms_ease-out]' : ''}`}
     >
       {active.message}
-      {active.href && <span className="ml-2 underline underline-offset-2">→</span>}
     </span>
   )
 

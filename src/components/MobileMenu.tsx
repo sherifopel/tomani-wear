@@ -85,7 +85,7 @@ export default function MobileMenu({ links }: { links: NavLink[] }) {
                       data-testid={`mobile-menu-link-${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                       onClick={() => setOpen(false)}
                       className={`flex-1 py-5 text-sm font-medium transition-colors ${
-                        link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-400'
+                        link.accent ? 'text-[var(--brand-red)]' : 'hover:text-gray-500'
                       }`}
                     >
                       {link.label}
@@ -96,7 +96,7 @@ export default function MobileMenu({ links }: { links: NavLink[] }) {
                       <button
                         aria-label={isExpanded ? `Close ${link.label}` : `Open ${link.label}`}
                         onClick={() => toggle(link.href)}
-                        className="touch-manipulation p-3 -mr-3 text-gray-400 active:text-black"
+                        className="touch-manipulation p-3 -mr-3 text-gray-500 active:text-black"
                       >
                         {isExpanded
                           ? <Minus size={16} strokeWidth={1.5} />

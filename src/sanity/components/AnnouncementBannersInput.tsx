@@ -7,7 +7,7 @@ const THEMES = [
   { label: 'Light Grey & Red', value: 'grey-red' },
 ]
 
-type Banner = { _key: string; _type: string; message?: string; theme?: string }
+type Banner = { _key: string; _type: string; message?: string; theme?: string; href?: string }
 
 export function AnnouncementBannersInput(props: ArrayOfObjectsInputProps) {
   const { value = [], onChange, readOnly } = props
@@ -31,42 +31,57 @@ export function AnnouncementBannersInput(props: ArrayOfObjectsInputProps) {
       {banners.map((banner, i) => (
         <div
           key={banner._key}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px', border: '1px solid #e5e7eb', borderRadius: 4, background: '#fff' }}
+          style={{ border: '1px solid #e5e7eb', borderRadius: 4, background: '#fff', overflow: 'hidden' }}
         >
-          <span style={{ fontSize: 11, color: '#9ca3af', minWidth: 14 }}>{i + 1}</span>
+          {/* Row 1 — message + theme + remove */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 12px' }}>
+            <span style={{ fontSize: 11, color: '#9ca3af', minWidth: 14 }}>{i + 1}</span>
 
-          <input
-            value={banner.message ?? ''}
-            onChange={e => updateField(banner._key, 'message', e.target.value)}
-            placeholder="Banner message…"
-            disabled={readOnly}
-            style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, background: 'transparent' }}
-          />
+            <input
+              value={banner.message ?? ''}
+              onChange={e => updateField(banner._key, 'message', e.target.value)}
+              placeholder="Banner message…"
+              disabled={readOnly}
+              style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, background: 'transparent' }}
+            />
 
-          <div style={{ display: 'flex', gap: 14, fontSize: 12, flexShrink: 0 }}>
-            {THEMES.map(t => (
-              <label key={t.value} style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                <input
-                  type="radio"
-                  name={`theme-${banner._key}`}
-                  value={t.value}
-                  checked={(banner.theme ?? 'black-white') === t.value}
-                  onChange={() => updateField(banner._key, 'theme', t.value)}
-                  disabled={readOnly}
-                />
-                {t.label}
-              </label>
-            ))}
+            <div style={{ display: 'flex', gap: 14, fontSize: 12, flexShrink: 0 }}>
+              {THEMES.map(t => (
+                <label key={t.value} style={{ display: 'flex', alignItems: 'center', gap: 4, cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                  <input
+                    type="radio"
+                    name={`theme-${banner._key}`}
+                    value={t.value}
+                    checked={(banner.theme ?? 'black-white') === t.value}
+                    onChange={() => updateField(banner._key, 'theme', t.value)}
+                    disabled={readOnly}
+                  />
+                  {t.label}
+                </label>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => removeBanner(banner._key)}
+              disabled={readOnly}
+              style={{ color: '#ef4444', fontSize: 14, border: 'none', background: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
+            >
+              ✕
+            </button>
           </div>
 
-          <button
-            type="button"
-            onClick={() => removeBanner(banner._key)}
-            disabled={readOnly}
-            style={{ color: '#ef4444', fontSize: 14, border: 'none', background: 'none', cursor: 'pointer', padding: '0 4px', lineHeight: 1 }}
-          >
-            ✕
-          </button>
+          {/* Row 2 — optional link */}
+          <div style={{ borderTop: '1px solid #f3f4f6', padding: '6px 12px 6px 36px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ fontSize: 11, color: '#9ca3af', flexShrink: 0 }}>Link (optional)</span>
+            <input
+              value={banner.href ?? ''}
+              onChange={e => updateField(banner._key, 'href', e.target.value)}
+              placeholder="/sign-in or https://…"
+              disabled={readOnly}
+              style={{ flex: 1, border: 'none', outline: 'none', fontSize: 13, background: 'transparent', color: banner.href ? '#2563eb' : undefined }}
+            />
+          </div>
         </div>
       ))}
 

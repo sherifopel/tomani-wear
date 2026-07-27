@@ -5,7 +5,7 @@ export default function WishlistPage() {
     <div>
       <h1 className="text-xl font-semibold tracking-tight mb-8">Wishlist</h1>
       <div className="border border-dashed border-gray-200 px-6 py-16 text-center">
-        <p className="text-sm text-gray-400 mb-1">Wishlist coming soon.</p>
+        <p className="text-sm text-gray-500 mb-1">Wishlist coming soon.</p>
         <p className="text-xs text-gray-300 mb-6">
           Save items here and come back to them anytime.
         </p>

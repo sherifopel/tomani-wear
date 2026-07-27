@@ -133,6 +133,7 @@ model CartItem {
   priceNgn  Int
   size      String?
   quantity  Int
+  imageUrl  String?
   createdAt DateTime @default(now())
 
   @@unique([userId, productId, size])

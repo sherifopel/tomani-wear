@@ -30,7 +30,7 @@ const FAQS = [
 export default function FAQPage() {
   return (
     <div className="max-w-2xl mx-auto px-6 py-14 md:py-20">
-      <p className="text-[10px]  text-gray-400 mb-3">Help & Support</p>
+      <p className="text-[10px]  text-gray-500 mb-3">Help & Support</p>
       <h1 className="text-2xl font-semibold tracking-tight mb-12">
         Frequently Asked Questions
       </h1>
@@ -45,7 +45,7 @@ export default function FAQPage() {
       </div>
 
       <div className="mt-12 pt-8 border-t border-gray-100">
-        <p className="text-xs text-gray-400">
+        <p className="text-xs text-gray-500">
           Still have questions?{' '}
           <a
             href="/contact"
