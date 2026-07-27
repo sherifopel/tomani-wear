@@ -23,6 +23,8 @@
     "@sanity/orderable-document-list": "^2.0.6",
     "@sanity/vision": "^6.1.0",
     "@types/pg": "^8.20.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "embla-carousel-autoplay": "^8.6.0",

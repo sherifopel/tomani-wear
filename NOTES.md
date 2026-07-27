@@ -787,3 +787,95 @@ Fix: gave both `<h1>` elements the same `pdp-name` testid, and added `:visible` 
 **React Context for global UI state** — `CurrencyContext` shares currency + formatPrice across the whole app. Like Express middleware that stamps `req.currency` on every request — any route handler (component) can read it without the caller passing it in.
 
 **SVG `preserveAspectRatio="xMidYMid slice"`** — scales an SVG to fill its container, cropping the excess. Identical to `object-fit: cover`. Essential when your SVG's natural ratio (e.g. 2:1 flag) doesn't match the container (1:1 circle).
+
+---
+
+## Session 10 — Ambient Audio, Sanity Custom Components & Accessibility
+
+### What we built
+
+**Ambient audio player on hero sections**
+- Each home section in Sanity can now have an optional audio file, with controls for: start time, snippet length (30s / 60s / 120s / full), and repeat behaviour (loop / once)
+- `AudioPlayer.tsx` — a `'use client'` component with a mute/unmute toggle button in the bottom-right corner of the hero
+- Browser autoplay policy means audio always starts muted (browsers block autoplay with sound). The user taps the 🔇 icon to unmute — that tap counts as a user gesture so the browser allows it
+- `timeupdate` event (fires ~4×/sec) detects when the snippet should end; `ended` event fires when the full track finishes naturally
+- `IntersectionObserver` on the button: if the hero scrolls off screen, the 30-second replay timer does NOT fire — saves the user from hearing audio unexpectedly
+- **Mobile z-index bug fix**: the button (`z-10`) and the text overlay (`z-10`) shared the same stacking order. The text overlay was later in the DOM, so even though it didn't visually cover the button, it captured all touch events. Fix: bumped button to `z-20`
+
+**Sanity custom component lesson — `AnnouncementBannersInput`**
+- The announcement bar had a custom React component (`AnnouncementBannersInput.tsx`) that completely replaced Sanity's default field renderer
+- Adding a new field (`href`) to the schema did nothing — because the custom component hardcoded which fields it showed. Sanity's schema is just a type definition; the custom component decides what actually appears in Studio
+- Fix: add the `href` input row directly inside `AnnouncementBannersInput.tsx`, alongside message and theme
+
+**Clickable announcement banners**
+- Added `href?: string` to the Banner type in both schema and custom component
+- `RotatingAnnouncementBar.tsx`: when `href` is set, the entire bar renders as a `<Link>` instead of a `<div>`
+- GROQ query updated to fetch `href` alongside message and theme
+
+**WCAG 2.1 AA accessibility audit + automated test suite**
+- Added `@axe-core/playwright` — runs axe accessibility checks in Playwright tests
+- `accessibility.page.ts` PO: `navigate()` + `assertNoA11yViolations()` — scans with tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`
+- `accessibility.spec.ts` — tests 6 pages × 2 viewports (desktop + mobile) = 12 tests; plus 1 smoke test
+- Reporter section added: `{ key: 'a11y', label: 'Accessibility', matchers: ['@a11y'] }`
+- Contrast fixes across 39 files: `text-gray-400` → `text-gray-500` (contrast ratio goes from 2.6:1 to 5.7:1 — WCAG AA requires 4.5:1); nav background `bg-gray-100` → `bg-white`
+
+### Key concepts learned
+
+**Browser autoplay policy** — browsers block audio that starts without a user gesture (tap or click). The workaround: start audio muted (`<audio muted autoPlay />`), then unmute on the first tap. The mute toggle itself is the user gesture, which satisfies the browser's requirement.
+
+**DOM order in z-index ties** — when two sibling elements have the same `z-index`, the one that appears **later in the HTML** sits on top. This is rarely visible on desktop (pointer events follow the cursor accurately) but on mobile all touch events go to the topmost element at that coordinate. Fix: give the element that needs to receive touches a higher z-index.
+
+**Sanity custom components bypass the schema renderer** — Sanity's Studio reads your schema to know what fields exist, but if you register a custom `components.input`, that component takes full control of rendering. No amount of schema changes will make new fields appear until you update the component too.
+
+**WCAG contrast ratios** — WCAG 2.1 AA requires:
+- Normal text: 4.5:1 minimum ratio against background
+- Large text (18px+ or 14px+ bold): 3:1 minimum
+- `text-gray-400` (#9ca3af on white) = 2.56:1 → **fail**
+- `text-gray-500` (#6b7280 on white) = 4.6:1 → **pass**
+Tool: WebAIM Contrast Checker. Check every muted/placeholder text colour before shipping.
+
+**axe-core vs manual audit** — axe catches structural issues (contrast, missing alt text, missing labels, ARIA errors) automatically. It does NOT catch UX issues (confusing navigation, poor copy, bad tab order that's technically valid). Use both: axe for compliance, human review for usability.
+
+---
+
+## Session 11 — Checkout Polish, Guest Delivery Fee & Cart Image Fix
+
+### What we built
+
+**Guest delivery fee — conversion incentive**
+- Guests pay ₦7,500 flat delivery fee; registered users get free delivery on every order
+- Simple `getDeliveryFee(isLoggedIn: boolean)` function replaces the old zone-based system
+- Order Summary shows a nudge for guests: "Sign in or create an account for free delivery"
+- The nudge links to `/sign-in?callbackUrl=/checkout` — after signing in, user is automatically redirected back to checkout. The sign-in page already supported `callbackUrl` query param; no extra code needed there
+
+**Why this works as a conversion tool** — the guest sees the ₦7,500 fee at the exact moment of highest purchase intent (checkout). The "Sign in for free delivery" nudge removes a real cost with zero friction. This is the same mechanic used by ASOS, Zara, and other large retailers.
+
+**Product images in checkout order summary**
+- Root cause: `CartItem` database table had no `imageUrl` column. When a logged-in user's cart loaded from the database, every item came back with `image: undefined` → checkout showed grey placeholders
+- Fix: added `imageUrl String?` to the Prisma `CartItem` model, ran migration, updated `/api/cart/merge` to save and return the image field
+- Items added to cart while logged in were already in localStorage with images (fine); items loaded from DB after login had no image (broken). The migration fixes it going forward — existing DB rows need to be re-added to get images
+
+**Mobile scroll-to-first-error on checkout**
+- When the user taps Pay with empty fields, the page now scrolls smoothly to the first invalid field
+- Implementation: refactored `validate()` to return the errors map (instead of just `true/false`), so `handleSubmit` can read which fields failed without waiting for React state to update
+- Field priority order: `fullName → email → phone → address → city → state → country`
+- `document.getElementById(firstError)?.scrollIntoView({ behavior: 'smooth', block: 'center' })` brings the field to the centre of the screen
+
+**Test discount code `TEST10`**
+- Created via a Prisma seed script (`scripts/seed-test-discount.ts`)
+- 10% off, 9,999 uses, no expiry — effectively unlimited for testing
+- Lives in the shared Supabase DB so it works in both local dev and production (but only you know the code)
+
+### Key concepts learned
+
+**`callbackUrl` query param in NextAuth** — the sign-in page reads `?callbackUrl=/checkout` from the URL and redirects there after a successful login. This is built into NextAuth — you just need to pass the right URL. Pattern: any link that sends a user to sign in should include `?callbackUrl=<where they were>` so they land back where they started.
+
+**Prisma schema migration flow** — when you add a column to a model:
+1. Edit `prisma/schema.prisma` (add the field)
+2. `npx prisma migrate dev --name description` — creates and applies the SQL migration, updates the DB
+3. `npx prisma generate` — regenerates the TypeScript client so your code knows about the new column
+4. Update any API routes that read/write that model
+
+**Why `validate()` should return the errors map** — if `validate()` only returns `boolean`, the caller can't know *which* fields failed without re-checking. Returning the errors object means one source of truth: the caller gets the errors, sets them in state, AND uses them for scroll targeting — all from one function call.
+
+**Database columns vs localStorage** — localStorage is per-browser. The database is per-user. When you're logged in, your cart comes from the DB. If the DB doesn't store a field (like `imageUrl`), it's gone the moment the cart is loaded from the server — even if it was in localStorage before. Always check: "if this data comes from the DB, does the DB schema have a column for it?"
