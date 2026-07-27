@@ -5,13 +5,10 @@ import { NextRequest, NextResponse } from 'next/server'
 // One Redis client shared across all rate limiters in this process.
 // Falls back gracefully when env vars are not set (local dev without Upstash).
 function makeRedis() {
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
-    return null
-  }
-  return new Redis({
-    url:   process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  })
+  const url   = process.env.UPSTASH_REDIS_REST_URL   ?? process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN
+  if (!url || !token) return null
+  return new Redis({ url, token })
 }
 
 const redis = makeRedis()
