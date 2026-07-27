@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
+import { limiters, checkRateLimit } from '@/lib/rate-limit'
 
 async function verifyPaystackPayment(reference: string, expectedAmountKobo: number) {
   const res = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
@@ -17,6 +18,11 @@ async function verifyPaystackPayment(reference: string, expectedAmountKobo: numb
 
 export async function POST(req: NextRequest) {
   try {
+    if (limiters) {
+      const blocked = await checkRateLimit(req, limiters.orders)
+      if (blocked) return blocked
+    }
+
     const session = await auth()
 
     const body = await req.json()

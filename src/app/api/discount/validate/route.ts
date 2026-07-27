@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { limiters, checkRateLimit } from '@/lib/rate-limit'
 
 export async function POST(req: NextRequest) {
   try {
+    if (limiters) {
+      const blocked = await checkRateLimit(req, limiters.discount)
+      if (blocked) return blocked
+    }
+
     const { code } = await req.json()
 
     if (!code || typeof code !== 'string') {
