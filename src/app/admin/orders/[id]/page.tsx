@@ -104,6 +104,11 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         orderId={order.id}
         currentStatus={order.status}
         currentTracking={order.trackingNumber ?? ''}
+        currentPhone={order.customerPhone ?? ''}
+        currentAddress={order.address ?? ''}
+        currentCity={order.city ?? ''}
+        currentState={order.state ?? ''}
+        currentCountry={order.country ?? 'Nigeria'}
       />
     </div>
   )

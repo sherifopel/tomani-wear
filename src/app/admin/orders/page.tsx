@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { statusLabel, statusColour } from '@/lib/orderStatus'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
+import AcknowledgeButton from './AcknowledgeButton'
 
 function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
 function formatDate(date: Date) {
@@ -59,7 +60,15 @@ export default async function AdminOrdersPage() {
             {orders.map(order => (
               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
                 <td className="py-3 font-medium whitespace-nowrap">{orderNumber(order.id)}</td>
-                <td className="py-3 text-gray-700 truncate pr-2">{order.customerName ?? '—'}</td>
+                <td className="py-3 pr-2">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="truncate text-gray-700">{order.customerName ?? '—'}</span>
+                    {order.userId
+                      ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Member</span>
+                      : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">Guest</span>
+                    }
+                  </div>
+                </td>
                 <td className="py-3 text-gray-500 truncate pr-2 text-xs">{order.customerEmail ?? '—'}</td>
                 <td className="py-3 text-gray-500 whitespace-nowrap">{formatDate(order.createdAt)}</td>
                 <td className="py-3 font-medium whitespace-nowrap">₦{order.totalNgn.toLocaleString()}</td>
@@ -76,12 +85,15 @@ export default async function AdminOrdersPage() {
                   </span>
                 </td>
                 <td className="py-3 text-right">
-                  <Link
-                    href={`/admin/orders/${order.id}`}
-                    className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
-                  >
-                    Manage
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
+                    >
+                      Manage
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}

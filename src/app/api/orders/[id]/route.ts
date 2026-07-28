@@ -1,23 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase())
-
-function isAdmin(email: string | null | undefined) {
-  return !!email && ADMIN_EMAILS.includes(email.toLowerCase())
-}
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params
-  const session = await auth()
-
-  if (!isAdmin(session?.user?.email)) {
+  if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
+  const { id } = await params
   const body = await req.json()
-  const { status, trackingNumber } = body
+  const { status, trackingNumber, address, city, state, country, customerPhone } = body
 
   const validStatuses = ['processing', 'dispatched', 'delivered', 'cancelled', 'returned']
   if (status && !validStatuses.includes(status)) {
@@ -29,6 +21,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     data: {
       ...(status         !== undefined && { status }),
       ...(trackingNumber !== undefined && { trackingNumber }),
+      ...(address        !== undefined && { address }),
+      ...(city           !== undefined && { city }),
+      ...(state          !== undefined && { state }),
+      ...(country        !== undefined && { country }),
+      ...(customerPhone  !== undefined && { customerPhone }),
     },
   })
 
