@@ -50,6 +50,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
       </div>
 
+      {/* References */}
+      <section className="mb-6 border border-gray-100 rounded-md divide-y divide-gray-100">
+        {order.paystackRef && (
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-xs text-gray-400">Paystack ref</span>
+            <span className="text-xs font-mono font-medium text-gray-700">{order.paystackRef}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between px-5 py-3">
+          <span className="text-xs text-gray-400">Internal ID</span>
+          <span className="text-xs font-mono text-gray-400">{order.id}</span>
+        </div>
+      </section>
+
       {/* Customer */}
       <section className="mb-6 border border-gray-100 rounded-md px-5 py-4">
         <h2 className="text-xs text-gray-500 mb-3">Customer</h2>
