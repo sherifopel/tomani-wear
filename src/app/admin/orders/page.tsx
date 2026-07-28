@@ -21,8 +21,8 @@ export default async function AdminOrdersPage() {
   })
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-12">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <div className="flex items-center justify-between mb-6 sm:mb-8">
         <h1 className="text-xl font-semibold tracking-tight">Orders</h1>
         <div className="flex items-center gap-4">
           <span className="text-xs text-gray-500">{orders.length} total</span>
@@ -34,17 +34,70 @@ export default async function AdminOrdersPage() {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {orders.length === 0 && (
+        <p className="text-center text-xs text-gray-500 py-16">No orders yet.</p>
+      )}
+
+      {/* Mobile: card list */}
+      <div className="sm:hidden space-y-3">
+        {orders.map(order => (
+          <div key={order.id} className="border border-gray-100 rounded-md px-4 py-4">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="min-w-0">
+                <p className="text-xs font-mono font-semibold text-gray-800 truncate">{displayRef(order.paystackRef, order.id)}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <p className="text-sm font-medium truncate">{order.customerName ?? '—'}</p>
+                  {order.userId
+                    ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Member</span>
+                    : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">Guest</span>
+                  }
+                </div>
+                {order.customerEmail && (
+                  <p className="text-xs text-gray-400 truncate mt-0.5">{order.customerEmail}</p>
+                )}
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="text-sm font-semibold">₦{order.totalNgn.toLocaleString()}</p>
+                <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(order.createdAt)}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 mb-3">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
+                order.paymentStatus === 'paid' ? 'text-green-600 bg-green-50' : 'text-amber-600 bg-amber-50'
+              }`}>
+                {order.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
+              </span>
+              <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${statusColour(order.status)}`}>
+                {statusLabel(order.status)}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4 pt-3 border-t border-gray-50">
+              {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
+              <Link
+                href={`/admin/orders/${order.id}`}
+                className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
+              >
+                Manage
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop: table */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
           <colgroup>
-            <col style={{ width: '110px' }} />
+            <col style={{ width: '130px' }} />
             <col style={{ width: '150px' }} />
             <col style={{ width: '200px' }} />
             <col style={{ width: '100px' }} />
             <col style={{ width: '110px' }} />
             <col style={{ width: '80px' }} />
             <col style={{ width: '100px' }} />
-            <col style={{ width: '70px' }} />
+            <col style={{ width: '120px' }} />
           </colgroup>
           <thead>
             <tr className="border-b border-gray-100 text-left text-xs text-gray-500">
@@ -61,7 +114,7 @@ export default async function AdminOrdersPage() {
           <tbody className="divide-y divide-gray-50">
             {orders.map(order => (
               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                <td className="py-3 font-medium whitespace-nowrap text-xs">{displayRef(order.paystackRef, order.id)}</td>
+                <td className="py-3 font-medium whitespace-nowrap text-xs font-mono">{displayRef(order.paystackRef, order.id)}</td>
                 <td className="py-3 pr-2">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="truncate text-gray-700">{order.customerName ?? '—'}</span>
@@ -72,7 +125,7 @@ export default async function AdminOrdersPage() {
                   </div>
                 </td>
                 <td className="py-3 text-gray-500 truncate pr-2 text-xs">{order.customerEmail ?? '—'}</td>
-                <td className="py-3 text-gray-500 whitespace-nowrap">{formatDate(order.createdAt)}</td>
+                <td className="py-3 text-gray-500 whitespace-nowrap text-xs">{formatDate(order.createdAt)}</td>
                 <td className="py-3 font-medium whitespace-nowrap">₦{order.totalNgn.toLocaleString()}</td>
                 <td className="py-3">
                   <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium whitespace-nowrap ${
@@ -101,10 +154,6 @@ export default async function AdminOrdersPage() {
             ))}
           </tbody>
         </table>
-
-        {orders.length === 0 && (
-          <p className="text-center text-xs text-gray-500 py-16">No orders yet.</p>
-        )}
       </div>
     </div>
   )
