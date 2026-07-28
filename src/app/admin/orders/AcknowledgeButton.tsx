@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 
-export default function AcknowledgeButton({ orderId }: { orderId: string }) {
+export default function AcknowledgeButton({ orderId, variant = 'compact' }: {
+  orderId: string
+  variant?: 'compact' | 'full'
+}) {
   const [state, setState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   async function send() {
@@ -16,17 +19,21 @@ export default function AcknowledgeButton({ orderId }: { orderId: string }) {
     setTimeout(() => setState('idle'), 3000)
   }
 
-  if (state === 'sent')    return <span className="text-xs text-green-600">Sent ✓</span>
-  if (state === 'error')   return <span className="text-xs text-red-500">Failed</span>
-  if (state === 'sending') return <span className="text-xs text-gray-400">Sending…</span>
+  const base = variant === 'full'
+    ? 'text-xs px-4 py-2 rounded-full border font-medium transition-colors'
+    : 'text-[11px] px-2.5 py-1 rounded-full border font-medium transition-colors'
+
+  if (state === 'sent')    return <span className={`${base} border-green-200 text-green-600`}>Sent ✓</span>
+  if (state === 'error')   return <span className={`${base} border-red-200 text-red-500`}>Failed</span>
+  if (state === 'sending') return <span className={`${base} border-gray-200 text-gray-400`}>Sending…</span>
 
   return (
     <button
       onClick={send}
-      className="text-xs text-gray-400 hover:text-black transition-colors"
       title="Send order acknowledgement email to customer"
+      className={`${base} border-gray-300 text-gray-700 hover:border-black hover:text-black`}
     >
-      Acknowledge
+      {variant === 'full' ? 'Send Acknowledgement Email' : 'Acknowledge'}
     </button>
   )
 }
