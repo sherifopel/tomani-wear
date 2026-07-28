@@ -3,10 +3,11 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import { CartProvider } from '@/context/CartContext'
+import AuthProvider from '@/components/AuthProvider'
 
 // Root not-found.tsx only gets the root layout (no navbar/footer).
 // The store layout lives in (store)/layout.tsx and doesn't wrap this file,
-// so we import Navbar, Footer and CartProvider directly.
+// so we import Navbar, Footer, CartProvider and AuthProvider directly.
 
 const CRUMBS = [
   { label: 'Home', href: '/' },
@@ -15,6 +16,7 @@ const CRUMBS = [
 
 export default function NotFound() {
   return (
+    <AuthProvider>
     <CartProvider>
       <Navbar />
       <main className="flex-1">
@@ -57,5 +59,6 @@ export default function NotFound() {
       </main>
       <Footer />
     </CartProvider>
+    </AuthProvider>
   )
 }
