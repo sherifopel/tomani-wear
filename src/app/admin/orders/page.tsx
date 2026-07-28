@@ -117,7 +117,7 @@ export default async function AdminOrdersPage() {
                     href={`/admin/orders/${order.id}`}
                     className="text-xs font-semibold text-black hover:opacity-60 transition-opacity"
                   >
-                    Manage →
+                    View
                   </Link>
                 </div>
               </div>
@@ -180,9 +180,9 @@ export default async function AdminOrdersPage() {
                       {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
                       <Link
                         href={`/admin/orders/${order.id}`}
-                        className="text-xs font-medium text-gray-600 hover:text-black transition-colors whitespace-nowrap"
+                        className="text-xs font-semibold text-zinc-900 hover:opacity-60 transition-opacity whitespace-nowrap"
                       >
-                        Manage →
+                        View
                       </Link>
                     </div>
                   </td>
