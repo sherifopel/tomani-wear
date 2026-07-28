@@ -52,14 +52,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Payment verification failed: ${reason}` }, { status: 402 })
     }
 
-    // Guest checkout — no DB record, still gets a confirmation page
-    if (!session?.user?.id) {
-      const orderNumber = `TW-${Date.now().toString(36).toUpperCase()}`
-      return NextResponse.json({ success: true, orderNumber })
-    }
-
     const orderData = {
-      userId:         session.user.id,
+      userId:         session?.user?.id ?? null,
       totalNgn:       Math.round(totalAmount),
       paystackRef:    paystackReference,
       status:         'processing',
