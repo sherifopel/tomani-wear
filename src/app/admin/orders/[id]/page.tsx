@@ -104,10 +104,45 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             </li>
           ))}
         </ul>
-        <div className="flex justify-between font-semibold px-5 py-4 border-t border-gray-100 text-sm">
-          <span>Total</span>
-          <span>₦{order.totalNgn.toLocaleString()}</span>
-        </div>
+        {/* Price breakdown */}
+        {(() => {
+          const subtotal  = order.items.reduce((s, i) => s + i.priceNgn * i.quantity, 0)
+          const discount  = order.discountAmount ?? 0
+          const delivery  = order.totalNgn - subtotal + discount
+          const isGuest   = order.userId === null
+          return (
+            <div className="border-t border-gray-100 divide-y divide-gray-50 text-sm">
+              {discount > 0 && (
+                <>
+                  <div className="flex justify-between px-5 py-2.5 text-gray-500">
+                    <span>Subtotal</span>
+                    <span>₦{subtotal.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between px-5 py-2.5 text-green-600">
+                    <span>Discount</span>
+                    <span>−₦{discount.toLocaleString()}</span>
+                  </div>
+                </>
+              )}
+              <div className="flex justify-between px-5 py-2.5 text-gray-500">
+                <span className="flex items-center gap-1.5">
+                  Delivery
+                  {isGuest
+                    ? <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-400">Guest</span>
+                    : <span className="text-[10px] px-1.5 py-0.5 rounded bg-green-50 text-green-600">Member — Free</span>
+                  }
+                </span>
+                <span className={isGuest ? '' : 'text-green-600'}>
+                  {isGuest ? `₦${delivery.toLocaleString()}` : 'Free'}
+                </span>
+              </div>
+              <div className="flex justify-between px-5 py-3 font-semibold">
+                <span>Total</span>
+                <span>₦{order.totalNgn.toLocaleString()}</span>
+              </div>
+            </div>
+          )
+        })()}
       </section>
 
 

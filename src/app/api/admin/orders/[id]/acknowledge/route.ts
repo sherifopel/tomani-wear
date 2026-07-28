@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
 import { sendOrderAcknowledgement } from '@/lib/email'
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: 'Unauthorised' }, { status: 401 })
   }
@@ -17,11 +17,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     await sendOrderAcknowledgement({
-      to:           order.customerEmail,
-      customerName: order.customerName,
-      paystackRef:  order.paystackRef,
-      totalNgn:     order.totalNgn,
-      items:        order.items,
+      to:             order.customerEmail,
+      customerName:   order.customerName,
+      paystackRef:    order.paystackRef,
+      totalNgn:       order.totalNgn,
+      discountAmount: order.discountAmount,
+      isGuest:        order.userId === null,
+      items:          order.items,
     })
     return NextResponse.json({ success: true })
   } catch (err) {

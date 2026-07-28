@@ -16,15 +16,15 @@ export default function AcknowledgeButton({ orderId }: { orderId: string }) {
     setTimeout(() => setState('idle'), 3000)
   }
 
-  if (state === 'sent')    return <span className="text-xs text-green-600">Sent ✓</span>
-  if (state === 'error')   return <span className="text-xs text-red-500">Failed</span>
-  if (state === 'sending') return <span className="text-xs text-gray-400">Sending…</span>
+  if (state === 'sent')    return <span className="text-[11px] px-2.5 py-1 rounded border border-green-200 text-green-600 font-medium">Sent ✓</span>
+  if (state === 'error')   return <span className="text-[11px] px-2.5 py-1 rounded border border-red-200 text-red-500 font-medium">Failed</span>
+  if (state === 'sending') return <span className="text-[11px] px-2.5 py-1 rounded border border-gray-200 text-gray-400">Sending…</span>
 
   return (
     <button
       onClick={send}
-      className="text-xs text-gray-400 hover:text-black transition-colors"
       title="Send order acknowledgement email to customer"
+      className="text-[11px] px-2.5 py-1 rounded border border-gray-200 text-gray-600 hover:border-black hover:text-black transition-colors font-medium"
     >
       Acknowledge
     </button>
