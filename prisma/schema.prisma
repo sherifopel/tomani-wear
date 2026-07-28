@@ -76,6 +76,8 @@ model Address {
   country   String   @default("Nigeria")
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Order {
@@ -99,6 +101,10 @@ model Order {
   items          OrderItem[]
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([paystackRef])
+  @@index([status])
 }
 
 model DiscountCode {
@@ -122,6 +128,8 @@ model OrderItem {
   size      String?
   quantity  Int
   imageUrl  String?
+
+  @@index([orderId])
 }
 
 model CartItem {
