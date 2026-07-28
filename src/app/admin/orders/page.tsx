@@ -5,7 +5,9 @@ import { statusLabel, statusColour } from '@/lib/orderStatus'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
 import AcknowledgeButton from './AcknowledgeButton'
 
-function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
+function displayRef(paystackRef: string | null, id: string) {
+  return paystackRef ?? `TW-${id.slice(-6).toUpperCase()}`
+}
 function formatDate(date: Date) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 }
@@ -59,7 +61,7 @@ export default async function AdminOrdersPage() {
           <tbody className="divide-y divide-gray-50">
             {orders.map(order => (
               <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                <td className="py-3 font-medium whitespace-nowrap">{orderNumber(order.id)}</td>
+                <td className="py-3 font-medium whitespace-nowrap text-xs">{displayRef(order.paystackRef, order.id)}</td>
                 <td className="py-3 pr-2">
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="truncate text-gray-700">{order.customerName ?? '—'}</span>

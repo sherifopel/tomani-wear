@@ -102,8 +102,7 @@ export async function POST(req: NextRequest) {
       order = await prisma.order.create({ data: orderData })
     }
 
-    const orderNumber = `TW-${order.id.slice(-6).toUpperCase()}`
-    return NextResponse.json({ success: true, orderNumber, orderId: order.id })
+    return NextResponse.json({ success: true, orderNumber: order.paystackRef ?? order.id, orderId: order.id })
 
   } catch (err) {
     console.error('Order creation failed:', err)

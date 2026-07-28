@@ -7,7 +7,9 @@ import { statusLabel, statusColour } from '@/lib/orderStatus'
 import AdminOrderActions from './AdminOrderActions'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
 
-function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
+function displayRef(paystackRef: string | null, id: string) {
+  return paystackRef ?? `TW-${id.slice(-6).toUpperCase()}`
+}
 function formatDate(date: Date) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
@@ -19,7 +21,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const order = await prisma.order.findUnique({ where: { id }, include: { items: true } })
   if (!order) notFound()
 
-  const orderNum = orderNumber(order.id)
+  const orderNum = displayRef(order.paystackRef, order.id)
 
   return (
     <div className="max-w-2xl mx-auto px-6 py-12">
@@ -47,6 +49,20 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
           </span>
         </div>
       </div>
+
+      {/* References */}
+      <section className="mb-6 border border-gray-100 rounded-md divide-y divide-gray-100">
+        {order.paystackRef && (
+          <div className="flex items-center justify-between px-5 py-3">
+            <span className="text-xs text-gray-400">Paystack ref</span>
+            <span className="text-xs font-mono font-medium text-gray-700">{order.paystackRef}</span>
+          </div>
+        )}
+        <div className="flex items-center justify-between px-5 py-3">
+          <span className="text-xs text-gray-400">Internal ID</span>
+          <span className="text-xs font-mono text-gray-400">{order.id}</span>
+        </div>
+      </section>
 
       {/* Customer */}
       <section className="mb-6 border border-gray-100 rounded-md px-5 py-4">
@@ -94,10 +110,6 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </div>
       </section>
 
-      {/* Payment ref */}
-      {order.paystackRef && (
-        <p className="text-xs text-gray-300 mb-6">Paystack ref: {order.paystackRef}</p>
-      )}
 
       {/* Admin actions — update status + tracking number */}
       <AdminOrderActions

@@ -9,20 +9,19 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
 
   const { id } = await params
-  const order = await prisma.order.findUnique({ where: { id } })
+  const order = await prisma.order.findUnique({ where: { id }, include: { items: true } })
 
   if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 })
   if (!order.customerEmail) return NextResponse.json({ error: 'No email address on this order' }, { status: 400 })
-
-  const orderNumber = `TW-${order.id.slice(-6).toUpperCase()}`
+  if (!order.paystackRef) return NextResponse.json({ error: 'No payment reference on this order' }, { status: 400 })
 
   try {
     await sendOrderAcknowledgement({
       to:           order.customerEmail,
       customerName: order.customerName,
-      orderNumber,
-      totalNgn:     order.totalNgn,
       paystackRef:  order.paystackRef,
+      totalNgn:     order.totalNgn,
+      items:        order.items,
     })
     return NextResponse.json({ success: true })
   } catch (err) {
