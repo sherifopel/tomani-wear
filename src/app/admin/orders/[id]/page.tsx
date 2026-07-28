@@ -15,14 +15,14 @@ function formatDate(date: Date) {
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
-function statusTopBorder(status: string): string {
+function headerStyle(status: string): { bg: string; text: string; sub: string } {
   switch (status) {
-    case 'processing': return 'border-t-amber-400'
-    case 'dispatched': return 'border-t-blue-400'
-    case 'delivered':  return 'border-t-emerald-400'
-    case 'cancelled':  return 'border-t-red-400'
-    case 'returned':   return 'border-t-purple-400'
-    default:           return 'border-t-zinc-300'
+    case 'processing': return { bg: 'bg-gradient-to-br from-amber-100 via-orange-50 to-amber-50',  text: 'text-amber-950',  sub: 'text-amber-700/60' }
+    case 'dispatched': return { bg: 'bg-gradient-to-br from-blue-100 via-sky-50 to-blue-50',        text: 'text-blue-950',   sub: 'text-blue-700/60'  }
+    case 'delivered':  return { bg: 'bg-gradient-to-br from-emerald-100 via-green-50 to-emerald-50',text: 'text-emerald-950',sub: 'text-emerald-700/60'}
+    case 'cancelled':  return { bg: 'bg-gradient-to-br from-red-100 via-rose-50 to-red-50',         text: 'text-red-950',    sub: 'text-red-700/60'   }
+    case 'returned':   return { bg: 'bg-gradient-to-br from-purple-100 via-violet-50 to-purple-50', text: 'text-purple-950', sub: 'text-purple-700/60' }
+    default:           return { bg: 'bg-gradient-to-br from-zinc-100 to-zinc-50',                   text: 'text-zinc-900',   sub: 'text-zinc-500'     }
   }
 }
 
@@ -38,6 +38,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   const discount  = order.discountAmount ?? 0
   const delivery  = order.totalNgn - subtotal + discount
   const isGuest   = order.userId === null
+  const header    = headerStyle(order.status)
 
   return (
     <div className="min-h-screen bg-zinc-100">
@@ -62,27 +63,23 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         </Link>
 
         {/* Hero header card */}
-        <div className={`bg-zinc-900 rounded-2xl border-t-4 ${statusTopBorder(order.status)} overflow-hidden mb-6`}>
-          <div className="px-6 sm:px-8 py-7 sm:py-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 relative">
-            {/* Background decoration */}
-            <div className="absolute right-0 top-0 w-48 h-48 rounded-full bg-white/[0.02] translate-x-16 -translate-y-16 pointer-events-none" />
-            <div className="absolute right-16 bottom-0 w-32 h-32 rounded-full bg-white/[0.02] translate-y-12 pointer-events-none" />
-
-            <div className="relative">
-              <p className="text-zinc-500 text-[10px] uppercase tracking-widest mb-2">Order</p>
-              <h1 className="text-2xl sm:text-4xl font-mono font-black text-white tracking-tight">{orderNum}</h1>
-              <p className="text-zinc-500 text-xs mt-3">Placed {formatDate(order.createdAt)}</p>
+        <div className={`${header.bg} rounded-2xl overflow-hidden mb-6 shadow-sm`}>
+          <div className="px-6 sm:px-8 py-7 sm:py-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
+            <div>
+              <p className={`text-[10px] uppercase tracking-widest mb-2 font-bold ${header.sub}`}>Order</p>
+              <h1 className={`text-2xl sm:text-4xl font-mono font-black tracking-tight ${header.text}`}>{orderNum}</h1>
+              <p className={`text-xs mt-3 ${header.sub}`}>Placed {formatDate(order.createdAt)}</p>
             </div>
 
-            <div className="relative flex flex-wrap items-center gap-2">
-              <span className={`text-xs px-4 py-1.5 rounded-full font-bold ring-1 ${
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`text-xs px-4 py-1.5 rounded-full font-bold ${
                 order.paymentStatus === 'paid'
-                  ? 'bg-emerald-500/20 text-emerald-400 ring-emerald-500/30'
-                  : 'bg-amber-500/20 text-amber-400 ring-amber-500/30'
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-amber-600 text-white'
               }`}>
                 {order.paymentStatus === 'paid' ? 'Paid' : 'Pending'}
               </span>
-              <span className={`text-xs px-4 py-1.5 rounded-full font-bold ${statusColour(order.status)}`}>
+              <span className={`text-xs px-4 py-1.5 rounded-full font-bold bg-white/70 ${header.text}`}>
                 {statusLabel(order.status)}
               </span>
             </div>
