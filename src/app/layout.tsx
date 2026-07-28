@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
-import AuthProvider from "@/components/AuthProvider";
 import PostHogProvider from "@/components/PostHogProvider";
 import MetaPixel from "@/components/MetaPixel";
 import { Analytics } from "@vercel/analytics/next";
@@ -61,11 +60,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
           <PostHogProvider>
-            <AuthProvider>
               <div className="overflow-x-clip flex flex-col flex-1">
-                {children}
-              </div>
-            </AuthProvider>
+              {children}
+            </div>
           </PostHogProvider>
           <MetaPixel />
           <Analytics />
