@@ -208,7 +208,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
             {order.customerEmail && (
               <div className="bg-white rounded-2xl shadow-sm px-5 py-5">
                 <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Communication</h2>
-                <AcknowledgeButton orderId={order.id} variant="full" />
+                <AcknowledgeButton orderId={order.id} variant="full" acknowledged={!!order.acknowledgedAt} />
               </div>
             )}
 

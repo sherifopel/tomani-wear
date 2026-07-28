@@ -112,7 +112,7 @@ export default async function AdminOrdersPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
+                  {order.customerEmail && <AcknowledgeButton orderId={order.id} acknowledged={!!order.acknowledgedAt} />}
                   <Link
                     href={`/admin/orders/${order.id}`}
                     className="text-xs font-semibold text-black hover:opacity-60 transition-opacity"
@@ -177,7 +177,7 @@ export default async function AdminOrdersPage() {
                   </td>
                   <td className="px-3 py-4">
                     <div className="flex items-center justify-end gap-3">
-                      {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
+                      {order.customerEmail && <AcknowledgeButton orderId={order.id} acknowledged={!!order.acknowledgedAt} />}
                       <Link
                         href={`/admin/orders/${order.id}`}
                         className="text-xs font-semibold text-zinc-900 hover:opacity-60 transition-opacity whitespace-nowrap"

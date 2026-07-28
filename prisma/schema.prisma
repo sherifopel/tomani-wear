@@ -99,6 +99,7 @@ model Order {
   state          String?
   country        String?
   items          OrderItem[]
+  acknowledgedAt DateTime?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
