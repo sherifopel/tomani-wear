@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { statusLabel, statusColour } from '@/lib/orderStatus'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
+import AcknowledgeButton from './AcknowledgeButton'
 
 function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
 function formatDate(date: Date) {
@@ -84,12 +85,15 @@ export default async function AdminOrdersPage() {
                   </span>
                 </td>
                 <td className="py-3 text-right">
-                  <Link
-                    href={`/admin/orders/${order.id}`}
-                    className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
-                  >
-                    Manage
-                  </Link>
+                  <div className="flex items-center justify-end gap-3">
+                    {order.customerEmail && <AcknowledgeButton orderId={order.id} />}
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="text-xs text-gray-500 hover:text-black transition-colors underline underline-offset-2"
+                    >
+                      Manage
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))}
