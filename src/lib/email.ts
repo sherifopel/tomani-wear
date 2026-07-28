@@ -186,7 +186,7 @@ const STATUS_MESSAGES: Record<string, { headline: string; body: string; color: s
   },
   returned: {
     headline: 'Your return has been processed',
-    body:     'We've received and processed your return. Please allow a few days for any refund to appear.',
+    body:     'We have received and processed your return. Please allow a few days for any refund to appear.',
     color:    '#7c3aed',
   },
   processing: {
