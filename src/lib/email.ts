@@ -1,8 +1,7 @@
 import { Resend } from 'resend'
 
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
+const resendKey = process.env.RESEND_API_KEY ?? process.env.AUTH_RESEND_KEY
+const resend = resendKey ? new Resend(resendKey) : null
 
 type OrderItem = {
   name: string
@@ -24,7 +23,7 @@ export async function sendOrderAcknowledgement({
   totalNgn: number
   items: OrderItem[]
 }) {
-  if (!resend) throw new Error('RESEND_API_KEY is not configured')
+  if (!resend) throw new Error('No Resend API key configured (RESEND_API_KEY or AUTH_RESEND_KEY)')
 
   const firstName = customerName?.split(' ')[0] ?? 'there'
   const amount    = `₦${totalNgn.toLocaleString('en-NG')}`
