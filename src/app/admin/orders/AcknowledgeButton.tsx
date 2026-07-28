@@ -24,9 +24,9 @@ export default function AcknowledgeButton({ orderId }: { orderId: string }) {
     <button
       onClick={send}
       className="text-xs text-gray-400 hover:text-black transition-colors"
-      title="Send order confirmation email to customer"
+      title="Send order acknowledgement email to customer"
     >
-      Email
+      Acknowledge
     </button>
   )
 }
