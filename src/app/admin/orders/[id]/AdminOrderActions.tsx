@@ -50,14 +50,16 @@ export default function AdminOrderActions({
     setTimeout(() => setSaved(false), 3000)
   }
 
-  const inputClass = 'w-full px-3 py-2.5 border border-gray-200 rounded text-sm focus:outline-none focus:border-black transition-colors'
-  const labelClass = 'text-xs text-gray-500 block mb-1.5'
+  const inputClass = 'w-full px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm focus:outline-none focus:border-zinc-800 focus:bg-white transition-colors'
+  const labelClass = 'text-[10px] font-bold text-zinc-400 uppercase tracking-wider block mb-1.5'
 
   return (
-    <section className="border border-gray-100 rounded-md px-5 py-4">
-      <h2 className="text-xs text-gray-500 mb-4">Update Order</h2>
+    <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+      <div className="px-5 pt-5 pb-2">
+        <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Update Order</h2>
+      </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="px-5 pb-5 flex flex-col gap-4">
 
         <div>
           <label className={labelClass}>Order Status</label>
@@ -67,13 +69,14 @@ export default function AdminOrderActions({
         </div>
 
         <div>
-          <label className={labelClass}>Tracking Number <span className="text-gray-300">(optional)</span></label>
+          <label className={labelClass}>
+            Tracking Number <span className="text-zinc-300 normal-case font-normal">(optional)</span>
+          </label>
           <input type="text" value={tracking} onChange={e => setTracking(e.target.value)} placeholder="e.g. GIG-123456789" className={inputClass} />
         </div>
 
-        <div className="border-t border-gray-100 pt-4">
-          <p className="text-xs text-gray-400 mb-3">Delivery Address</p>
-
+        <div className="border-t border-zinc-100 pt-4">
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-3">Delivery Address</p>
           <div className="flex flex-col gap-3">
             <div>
               <label className={labelClass}>Phone</label>
@@ -103,12 +106,16 @@ export default function AdminOrderActions({
         <button
           onClick={save}
           disabled={saving}
-          className="w-full py-3 bg-black text-white text-xs rounded border border-black btn-wipe disabled:opacity-50"
+          className={`w-full py-3 rounded-xl text-xs font-bold tracking-wide transition-all disabled:opacity-50 ${
+            saved
+              ? 'bg-emerald-500 text-white'
+              : 'bg-zinc-900 text-white hover:bg-zinc-700'
+          }`}
         >
-          {saving ? 'Saving…' : saved ? 'Saved ✓' : 'Save Changes'}
+          {saving ? 'Saving…' : saved ? '✓ Saved' : 'Save Changes'}
         </button>
 
       </div>
-    </section>
+    </div>
   )
 }
