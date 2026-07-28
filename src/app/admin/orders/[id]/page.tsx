@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { statusLabel, statusColour } from '@/lib/orderStatus'
 import AdminOrderActions from './AdminOrderActions'
+import AcknowledgeButton from '../AcknowledgeButton'
 import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 function displayRef(paystackRef: string | null, id: string) {
@@ -145,6 +146,13 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         })()}
       </section>
 
+
+      {/* Acknowledge */}
+      {order.customerEmail && (
+        <div className="mb-6">
+          <AcknowledgeButton orderId={order.id} variant="full" />
+        </div>
+      )}
 
       {/* Admin actions — update status + tracking number */}
       <AdminOrderActions

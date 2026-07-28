@@ -48,8 +48,8 @@ export default async function AdminOrdersPage() {
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <p className="text-sm font-medium truncate">{order.customerName ?? '—'}</p>
                   {order.userId
-                    ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Member</span>
-                    : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">Guest</span>
+                    ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 font-medium">👑 Member</span>
+                    : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Guest</span>
                   }
                 </div>
                 {order.customerEmail && (
@@ -90,14 +90,14 @@ export default async function AdminOrdersPage() {
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-sm" style={{ tableLayout: 'fixed' }}>
           <colgroup>
-            <col style={{ width: '130px' }} />
-            <col style={{ width: '150px' }} />
+            <col style={{ width: '160px' }} />
+            <col style={{ width: '160px' }} />
             <col style={{ width: '200px' }} />
             <col style={{ width: '100px' }} />
+            <col style={{ width: '90px' }} />
+            <col style={{ width: '70px' }} />
             <col style={{ width: '110px' }} />
-            <col style={{ width: '80px' }} />
-            <col style={{ width: '100px' }} />
-            <col style={{ width: '120px' }} />
+            <col style={{ width: '160px' }} />
           </colgroup>
           <thead>
             <tr className="border-b border-gray-100 text-left text-xs text-gray-500">
@@ -119,8 +119,8 @@ export default async function AdminOrdersPage() {
                   <div className="flex items-center gap-1.5 min-w-0">
                     <span className="truncate text-gray-700">{order.customerName ?? '—'}</span>
                     {order.userId
-                      ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Member</span>
-                      : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-medium">Guest</span>
+                      ? <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-600 font-medium">👑 Member</span>
+                      : <span className="shrink-0 text-[9px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 font-medium">Guest</span>
                     }
                   </div>
                 </td>
