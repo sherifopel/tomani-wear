@@ -1,10 +1,8 @@
-import { auth } from '@/auth'
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { statusLabel, statusColour } from '@/lib/orderStatus'
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase())
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
 function formatDate(date: Date) {
@@ -12,10 +10,7 @@ function formatDate(date: Date) {
 }
 
 export default async function AdminOrdersPage() {
-  const session = await auth()
-  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
-    redirect('/')
-  }
+  if (!(await isAdminAuthenticated())) redirect('/admin/login')
 
   const orders = await prisma.order.findMany({
     orderBy: { createdAt: 'desc' },
@@ -26,7 +21,14 @@ export default async function AdminOrdersPage() {
     <div className="max-w-5xl mx-auto px-6 py-12">
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-xl font-semibold tracking-tight">Orders</h1>
-        <span className="text-xs text-gray-500">{orders.length} total</span>
+        <div className="flex items-center gap-4">
+          <span className="text-xs text-gray-500">{orders.length} total</span>
+          <form action="/api/admin/logout" method="POST">
+            <button type="submit" className="text-xs text-gray-400 hover:text-black transition-colors">
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
 
       <div className="overflow-x-auto">

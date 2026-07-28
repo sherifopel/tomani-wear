@@ -1,4 +1,3 @@
-import { auth } from '@/auth'
 import { redirect, notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
@@ -6,8 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { statusLabel, statusColour } from '@/lib/orderStatus'
 import AdminOrderActions from './AdminOrderActions'
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map(e => e.trim().toLowerCase())
+import { isAdminAuthenticated } from '@/lib/admin-auth'
 
 function orderNumber(id: string) { return `TW-${id.slice(-6).toUpperCase()}` }
 function formatDate(date: Date) {
@@ -16,11 +14,7 @@ function formatDate(date: Date) {
 
 export default async function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const session = await auth()
-
-  if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email.toLowerCase())) {
-    redirect('/')
-  }
+  if (!(await isAdminAuthenticated())) redirect('/admin/login')
 
   const order = await prisma.order.findUnique({ where: { id }, include: { items: true } })
   if (!order) notFound()
