@@ -50,6 +50,7 @@ export default function AdminLoginPage() {
               placeholder="Enter password"
               required
               autoFocus
+              suppressHydrationWarning
               className="w-full px-4 py-3 border border-gray-200 text-sm focus:outline-none focus:border-black transition-colors"
             />
           </div>

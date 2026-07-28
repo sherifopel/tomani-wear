@@ -5,9 +5,8 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 import { CartProvider } from '@/context/CartContext'
 import AuthProvider from '@/components/AuthProvider'
 
-// Root not-found.tsx only gets the root layout (no navbar/footer).
-// The store layout lives in (store)/layout.tsx and doesn't wrap this file,
-// so we import Navbar, Footer, CartProvider and AuthProvider directly.
+// Root not-found.tsx only gets the root layout (no navbar/footer from store group).
+// We import AuthProvider, CartProvider, Navbar and Footer directly here.
 
 const CRUMBS = [
   { label: 'Home', href: '/' },
@@ -17,48 +16,48 @@ const CRUMBS = [
 export default function NotFound() {
   return (
     <AuthProvider>
-    <CartProvider>
-      <Navbar />
-      <main className="flex-1">
-        <div className="max-w-7xl mx-auto px-6" data-testid="not-found-page">
-          <Breadcrumbs crumbs={CRUMBS} testId="not-found-breadcrumb" />
+      <CartProvider>
+        <Navbar />
+        <main className="flex-1">
+          <div className="max-w-7xl mx-auto px-6" data-testid="not-found-page">
+            <Breadcrumbs crumbs={CRUMBS} testId="not-found-breadcrumb" />
 
-          <div className="flex flex-col items-center text-center py-20 md:py-28">
-            <h1
-              className="text-2xl md:text-3xl font-bold tracking-[0.2em]"
-              data-testid="not-found-heading"
-            >
-              404 Error — Page Not Found
-            </h1>
-
-            <p
-              className="mt-5 text-sm text-gray-500 max-w-sm leading-relaxed"
-              data-testid="not-found-message"
-            >
-              Uh oh, looks like the page you are looking for has moved or no longer exists.
-            </p>
-
-            <div className="mt-10 flex flex-col sm:flex-row gap-4" data-testid="not-found-ctas">
-              <Link
-                href="/"
-                data-testid="not-found-home-cta"
-                className="px-10 py-3.5 bg-black text-white text-xs  rounded border border-black btn-wipe"
+            <div className="flex flex-col items-center text-center py-20 md:py-28">
+              <h1
+                className="text-2xl md:text-3xl font-bold tracking-[0.2em]"
+                data-testid="not-found-heading"
               >
-                Back to Home
-              </Link>
-              <Link
-                href="/products"
-                data-testid="not-found-shop-cta"
-                className="px-10 py-3.5 bg-white text-black text-xs  rounded border border-black btn-wipe-white"
+                404 Error — Page Not Found
+              </h1>
+
+              <p
+                className="mt-5 text-sm text-gray-500 max-w-sm leading-relaxed"
+                data-testid="not-found-message"
               >
-                Shop All
-              </Link>
+                Uh oh, looks like the page you are looking for has moved or no longer exists.
+              </p>
+
+              <div className="mt-10 flex flex-col sm:flex-row gap-4" data-testid="not-found-ctas">
+                <Link
+                  href="/"
+                  data-testid="not-found-home-cta"
+                  className="px-10 py-3.5 bg-black text-white text-xs rounded border border-black btn-wipe"
+                >
+                  Back to Home
+                </Link>
+                <Link
+                  href="/products"
+                  data-testid="not-found-shop-cta"
+                  className="px-10 py-3.5 bg-white text-black text-xs rounded border border-black btn-wipe-white"
+                >
+                  Shop All
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </CartProvider>
+        </main>
+        <Footer />
+      </CartProvider>
     </AuthProvider>
   )
 }
