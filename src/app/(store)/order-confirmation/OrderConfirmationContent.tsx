@@ -63,20 +63,14 @@ export default function OrderConfirmationContent({ paystackRef, order, userName,
         )}
 
         {/* Order details card */}
-        <div className="border border-gray-100 rounded-md px-6 py-5 mb-10 text-left">
-          {order && (
-            <div className="flex items-center justify-between mb-3" data-testid="order-confirmation-number">
-              <span className="text-[11px]  text-gray-500">Order number</span>
-              <span className="text-sm font-semibold tracking-wider">{order}</span>
+        {(paystackRef || order) && (
+          <div className="border border-gray-100 rounded-md px-6 py-5 mb-10 text-left" data-testid="order-confirmation-number">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500">Order reference</span>
+              <span className="text-sm font-semibold tracking-wider">{paystackRef ?? order}</span>
             </div>
-          )}
-          {paystackRef && (
-            <div className="flex items-center justify-between border-t border-gray-100 pt-3" data-testid="order-confirmation-ref">
-              <span className="text-[11px]  text-gray-500">Payment ref</span>
-              <span className="text-xs text-gray-500 font-mono">{paystackRef}</span>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
