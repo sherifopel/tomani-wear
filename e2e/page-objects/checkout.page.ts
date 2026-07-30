@@ -189,10 +189,10 @@ export const assertPayButtonVisible = async (page: Page) => {
   Log.ok('pay button visible')
 }
 
-export const assertDeliveryFree = async (page: Page) => {
+export const assertGuestDeliveryFee = async (page: Page) => {
   const { summary } = checkoutSelectors(page)
-  await expect(summary.delivery).toContainText('Free')
-  Log.ok('delivery shown as Free')
+  await expect(summary.delivery).toContainText('₦7,500')
+  Log.ok('guest delivery fee shown as ₦7,500')
 }
 
 export const assertTotalAmount = async (page: Page, expected: string) => {
@@ -249,7 +249,8 @@ export const assertMobileEmptyFormErrors = async (page: Page) => {
 
 export const assertCheckoutSmoke = async (page: Page) => {
   await assertFormVisible(page)
-  await assertTotalAmount(page, '₦55,000')
+  await assertGuestDeliveryFee(page)
+  await assertTotalAmount(page, '₦62,500')
   await assertPayButtonVisible(page)
   Log.ok('checkout smoke passed')
 }
