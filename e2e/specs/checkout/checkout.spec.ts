@@ -38,12 +38,12 @@ test.describe('Checkout — form fields', { tag: ['@tomanni', '@checkout', '@des
     await checkoutPage.assertPayButtonVisible(page)
   })
 
-  test('Should show delivery as Free', async ({ page }) => {
-    await checkoutPage.assertDeliveryFree(page)
+  test('Should show the guest delivery fee', async ({ page }) => {
+    await checkoutPage.assertGuestDeliveryFee(page)
   })
 
-  test('Order total should match the cart item price', async ({ page }) => {
-    await checkoutPage.assertTotalAmount(page, '₦55,000')
+  test('Order total should include the guest delivery fee', async ({ page }) => {
+    await checkoutPage.assertTotalAmount(page, '₦62,500')
   })
 })
 

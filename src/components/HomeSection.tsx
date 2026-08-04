@@ -229,7 +229,7 @@ export default function HomeSection({
             <>
               {/* Mobile — video › image */}
               {videoUrl ? (
-                <video src={videoUrl} autoPlay muted loop playsInline
+                <video src={videoUrl} autoPlay muted loop playsInline preload="none"
                   className="home-section-banner-img absolute inset-0 w-full h-full block md:hidden" />
               ) : imageMobile ? (
                 <Image src={imageMobile} alt={content?.heading ?? ''} fill sizes="100vw" priority={priority}
@@ -241,7 +241,7 @@ export default function HomeSection({
                 <Image src={tabletSrc} alt={content?.heading ?? ''} fill sizes="100vw"
                   className="home-section-banner-img hidden md:block lg:hidden" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
-                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline preload="none"
                   className="home-section-banner-img absolute inset-0 w-full h-full hidden md:block lg:hidden" />
               ) : null}
 
@@ -250,7 +250,7 @@ export default function HomeSection({
                 <Image src={desktopSrc} alt={content?.heading ?? ''} fill sizes="1505px" priority={priority}
                   className="home-section-banner-img hidden lg:block xl:hidden" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
-                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline preload="none"
                   className="home-section-banner-img absolute inset-0 w-full h-full hidden lg:block xl:hidden" />
               ) : null}
 
@@ -259,7 +259,7 @@ export default function HomeSection({
                 <Image src={xlSrc} alt={content?.heading ?? ''} fill sizes="1920px"
                   className="home-section-banner-img hidden xl:block" />
               ) : (videoDesktopUrl ?? videoUrl) ? (
-                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline
+                <video src={videoDesktopUrl ?? videoUrl} autoPlay muted loop playsInline preload="none"
                   className="home-section-banner-img absolute inset-0 w-full h-full hidden xl:block" />
               ) : null}
             </>
