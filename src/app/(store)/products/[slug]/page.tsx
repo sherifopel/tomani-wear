@@ -4,7 +4,8 @@ import type { Metadata } from 'next'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
-import Breadcrumbs from '@/components/Breadcrumbs'
+import Breadcrumbs      from '@/components/Breadcrumbs'
+import ProductReviews   from '@/components/ProductReviews'
 
 type Product = {
   _id: string
@@ -131,6 +132,8 @@ export default async function ProductPage({
           description={product.description}
         />
       </div>
+
+      <ProductReviews slug={product.slug} />
     </div>
   )
 }
