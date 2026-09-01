@@ -35,10 +35,11 @@ export default async function AdminOrdersPage() {
 
       {/* Top bar */}
       <div className="bg-white border-b border-gray-100 px-4 sm:px-8 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <span className="text-xs font-semibold tracking-[0.2em] text-black">TOMANNI</span>
           <span className="text-gray-200">|</span>
-          <span className="text-xs text-gray-500">Admin</span>
+          <span className="text-xs text-black font-medium">Orders</span>
+          <Link href="/admin/reviews" className="text-xs text-gray-500 hover:text-black transition-colors">Reviews</Link>
         </div>
         <form action="/api/admin/logout" method="POST">
           <button type="submit" className="text-xs text-gray-400 hover:text-black transition-colors">

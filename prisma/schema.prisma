@@ -157,3 +157,16 @@ model WishlistItem {
 
   @@unique([userId, productId])
 }
+
+model Review {
+  id          String   @id @default(cuid())
+  productSlug String
+  name        String
+  email       String
+  rating      Int      // 1–5
+  comment     String?
+  status      String   @default("pending") // "pending" | "approved"
+  createdAt   DateTime @default(now())
+
+  @@index([productSlug, status])
+}
