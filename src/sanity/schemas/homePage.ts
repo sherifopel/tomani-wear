@@ -19,6 +19,8 @@ const focalPointsFields = [
   defineField({ name: 'imageXlCloudinaryUrl',      title: 'XL Cloudinary URL',      type: 'string', hidden: true, readOnly: true }),
   defineField({ name: 'video',        title: 'Video — Mobile',         description: 'Portrait video for phones. Plays on loop instead of the Mobile image.',           type: 'file', options: { accept: 'video/mp4,video/webm' } }),
   defineField({ name: 'videoDesktop', title: 'Video — Tablet & Desktop', description: 'Landscape video for wider screens. Use a blur-letterbox version to show the full subject.', type: 'file', options: { accept: 'video/mp4,video/webm' } }),
+  defineField({ name: 'videoCloudinaryUrl',        title: 'Video Cloudinary URL',         type: 'string', hidden: true, readOnly: true }),
+  defineField({ name: 'videoDesktopCloudinaryUrl', title: 'Video Desktop Cloudinary URL', type: 'string', hidden: true, readOnly: true }),
   defineField({ name: 'mobile',   title: 'Mobile focal Y',   type: 'number', initialValue: 50 }),
   defineField({ name: 'tablet',   title: 'Tablet focal Y',   type: 'number', initialValue: 50 }),
   defineField({ name: 'desktop',  title: 'Desktop focal Y',  type: 'number', initialValue: 30 }),
