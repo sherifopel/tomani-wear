@@ -44,17 +44,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: cors(origin) })
   }
   try {
-    const { code, discount, maxUses, expiresAt } = await req.json()
-    if (!code || !discount) {
+    const { code, type, discount, maxUses, expiresAt } = await req.json()
+    const codeType = type === 'free_delivery' ? 'free_delivery' : 'percentage'
+    if (!code) {
       return NextResponse.json(
-        { error: 'code and discount are required' },
+        { error: 'code is required' },
+        { status: 400, headers: cors(origin) }
+      )
+    }
+    if (codeType === 'percentage' && !discount) {
+      return NextResponse.json(
+        { error: 'discount percentage is required for percentage codes' },
         { status: 400, headers: cors(origin) }
       )
     }
     const created = await prisma.discountCode.create({
       data: {
         code:      code.trim().toUpperCase(),
-        discount:  Number(discount),
+        type:      codeType,
+        discount:  codeType === 'free_delivery' ? 0 : Number(discount),
         maxUses:   Number(maxUses ?? 5),
         expiresAt: expiresAt ? new Date(expiresAt) : null,
       },

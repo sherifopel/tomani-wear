@@ -31,6 +31,13 @@ export const limiters = redis
         limiter: Ratelimit.slidingWindow(10, '60s'),
         prefix:  'rl:orders',
       }),
+
+      // 3 review submissions per IP per 10 minutes
+      reviews: new Ratelimit({
+        redis,
+        limiter: Ratelimit.slidingWindow(3, '10m'),
+        prefix:  'rl:reviews',
+      }),
     }
   : null
 

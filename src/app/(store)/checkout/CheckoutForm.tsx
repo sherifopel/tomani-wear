@@ -58,7 +58,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
   const [promoInput,   setPromoInput]   = useState('')
   const [promoLoading, setPromoLoading] = useState(false)
   const [promoError,   setPromoError]   = useState('')
-  const [applied, setApplied] = useState<{ code: string; percentage: number; amount: number } | null>(null)
+  const [applied, setApplied] = useState<{ code: string; type: string; percentage: number; amount: number } | null>(null)
 
   // Pre-fill all fields from session + saved delivery details on first load.
   // Uses || so that any field the user has already typed into is never overwritten.
@@ -87,7 +87,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
   const isLoggedIn      = !!session?.user
   const discountAmount  = applied ? Math.round(totalPrice * applied.percentage / 100) : 0
   const discountedPrice = totalPrice - discountAmount
-  const deliveryFee     = getDeliveryFee(isLoggedIn)
+  const deliveryFee     = applied?.type === 'free_delivery' ? 0 : getDeliveryFee(isLoggedIn)
   const grandTotal      = discountedPrice + deliveryFee
 
   const paystackConfig = {
@@ -134,7 +134,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
       const data = await res.json()
       if (data.valid) {
         const amount = Math.round(totalPrice * data.percentage / 100)
-        setApplied({ code: data.code, percentage: data.percentage, amount })
+        setApplied({ code: data.code, type: data.type, percentage: data.percentage, amount })
         setPromoInput('')
       } else {
         setPromoError(data.message ?? 'Invalid code')
@@ -386,7 +386,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               {applied ? (
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-green-600 font-medium" data-testid="checkout-promo-applied">
-                    {applied.code} — {applied.percentage}% off
+                    {applied.type === 'free_delivery' ? `${applied.code} — Free delivery` : `${applied.code} — ${applied.percentage}% off`}
                   </span>
                   <button
                     type="button"
@@ -428,7 +428,7 @@ export default function CheckoutForm({ savedDetails }: { savedDetails: SavedDeta
               <div className="flex justify-between text-gray-500" data-testid="checkout-subtotal">
                 <span>Subtotal</span><span>₦{totalPrice.toLocaleString()}</span>
               </div>
-              {applied && (
+              {applied && applied.type !== 'free_delivery' && (
                 <div className="flex justify-between text-green-600" data-testid="checkout-discount">
                   <span>Discount ({applied.percentage}%)</span>
                   <span>−₦{discountAmount.toLocaleString()}</span>

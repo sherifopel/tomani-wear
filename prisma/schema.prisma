@@ -111,7 +111,8 @@ model Order {
 model DiscountCode {
   id          String    @id @default(cuid())
   code        String    @unique
-  discount    Int       // percentage, e.g. 30 = 30% off
+  type        String    @default("percentage") // "percentage" | "free_delivery"
+  discount    Int       @default(0)            // percentage, e.g. 30 = 30% off (0 for free_delivery)
   maxUses     Int       @default(5)
   usedCount   Int       @default(0)
   active      Boolean   @default(true)

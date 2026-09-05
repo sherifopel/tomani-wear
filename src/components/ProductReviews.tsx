@@ -102,7 +102,7 @@ export default async function ProductReviews({ slug }: { slug: string }) {
   })
 
   return (
-    <section className="max-w-7xl mx-auto px-6 pb-20" data-testid="pdp-reviews">
+    <section id="reviews" className="max-w-7xl mx-auto px-6 pb-20" data-testid="pdp-reviews">
       <div className="border-t border-gray-100 pt-12">
 
         <div className="max-w-2xl">

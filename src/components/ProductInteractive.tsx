@@ -28,6 +28,8 @@ type Props = {
   price: number
   category?: string
   description?: string
+  reviewAverage?: number
+  reviewCount?: number
 }
 
 function objectPosition(hotspot?: { x: number; y: number }): string {
@@ -80,6 +82,8 @@ export default function ProductInteractive({
   price,
   category,
   description,
+  reviewAverage = 0,
+  reviewCount   = 0,
 }: Props) {
   const [activeColorIndex, setActiveColorIndex] = useState<number | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -118,6 +122,28 @@ export default function ProductInteractive({
         </span>
       )}
     </div>
+  )
+
+  const starsBlock = reviewCount > 0 && (
+    <a
+      href="#reviews"
+      className="flex items-center gap-1.5 group w-fit"
+      aria-label={`${reviewAverage.toFixed(1)} out of 5 stars, ${reviewCount} review${reviewCount !== 1 ? 's' : ''}`}
+      data-testid="pdp-review-summary"
+    >
+      <span className="flex" aria-hidden="true">
+        {[1, 2, 3, 4, 5].map(s => (
+          <span
+            key={s}
+            className="text-sm leading-none"
+            style={{ color: s <= Math.round(reviewAverage) ? 'var(--brand-yellow)' : '#D1D5DB' }}
+          >★</span>
+        ))}
+      </span>
+      <span className="text-xs text-gray-500 group-hover:text-black transition-colors">
+        {reviewAverage.toFixed(1)} ({reviewCount})
+      </span>
+    </a>
   )
 
   return (
@@ -178,6 +204,7 @@ export default function ProductInteractive({
             {name}
           </h1>
           <div className="mt-2">{priceBlock}</div>
+          {starsBlock && <div className="mt-2">{starsBlock}</div>}
         </div>
 
         {/* ── LEFT: image gallery ───────────────────────────────────────────── */}
@@ -290,6 +317,9 @@ export default function ProductInteractive({
 
           {/* Price — desktop only */}
           <div className="hidden md:flex">{priceBlock}</div>
+
+          {/* Star rating — desktop only */}
+          {starsBlock && <div className="hidden md:block">{starsBlock}</div>}
 
           <div className="border-t border-gray-100" />
 

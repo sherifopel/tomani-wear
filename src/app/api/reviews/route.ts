@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { limiters, checkRateLimit } from '@/lib/rate-limit'
 
 // ── GET /api/reviews?slug=xxx ─────────────────────────────────────────────────
 
@@ -23,6 +24,11 @@ export async function GET(req: NextRequest) {
 // ── POST /api/reviews ─────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  if (limiters) {
+    const blocked = await checkRateLimit(req, limiters.reviews)
+    if (blocked) return blocked
+  }
+
   const body = await req.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
 

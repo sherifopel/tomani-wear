@@ -17,6 +17,7 @@ const AUTH = { Authorization: `Bearer ${SECRET}`, 'Content-Type': 'application/j
 type DiscountCode = {
   id: string
   code: string
+  type: string
   discount: number
   maxUses: number
   usedCount: number
@@ -186,10 +187,11 @@ export default function DiscountCodesTool() {
   const [saving, setSaving]     = useState(false)
 
   // New code form state
-  const [newCode, setNewCode]       = useState('')
+  const [newCode, setNewCode]         = useState('')
+  const [newType, setNewType]         = useState<'percentage' | 'free_delivery'>('percentage')
   const [newDiscount, setNewDiscount] = useState('30')
-  const [newMaxUses, setNewMaxUses]  = useState('5')
-  const [newExpiry, setNewExpiry]   = useState('')
+  const [newMaxUses, setNewMaxUses]   = useState('5')
+  const [newExpiry, setNewExpiry]     = useState('')
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -210,7 +212,7 @@ export default function DiscountCodesTool() {
   async function createCode(e: React.FormEvent) {
     e.preventDefault()
     if (!newCode.trim()) { setFormError('Code name is required'); return }
-    if (!newDiscount || Number(newDiscount) < 1 || Number(newDiscount) > 100) {
+    if (newType === 'percentage' && (!newDiscount || Number(newDiscount) < 1 || Number(newDiscount) > 100)) {
       setFormError('Discount must be between 1 and 100')
       return
     }
@@ -222,7 +224,8 @@ export default function DiscountCodesTool() {
         headers: AUTH,
         body: JSON.stringify({
           code:      newCode,
-          discount:  Number(newDiscount),
+          type:      newType,
+          discount:  newType === 'free_delivery' ? 0 : Number(newDiscount),
           maxUses:   Number(newMaxUses),
           expiresAt: newExpiry || null,
         }),
@@ -230,6 +233,7 @@ export default function DiscountCodesTool() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'Failed to create')
       setNewCode('')
+      setNewType('percentage')
       setNewDiscount('30')
       setNewMaxUses('5')
       setNewExpiry('')
@@ -291,6 +295,18 @@ export default function DiscountCodesTool() {
               />
             </div>
             <div style={fieldWrap}>
+              <label style={labelStyle}>Type</label>
+              <select
+                style={{ ...inputStyle, width: 160 }}
+                value={newType}
+                onChange={e => setNewType(e.target.value as 'percentage' | 'free_delivery')}
+              >
+                <option value="percentage">Percentage off</option>
+                <option value="free_delivery">Free delivery</option>
+              </select>
+            </div>
+            {newType === 'percentage' && (
+            <div style={fieldWrap}>
               <label style={labelStyle}>Discount %</label>
               <input
                 style={{ ...inputStyle, width: 80 }}
@@ -301,6 +317,7 @@ export default function DiscountCodesTool() {
                 onChange={e => setNewDiscount(e.target.value)}
               />
             </div>
+            )}
             <div style={fieldWrap}>
               <label style={labelStyle}>Max Uses</label>
               <input
@@ -358,7 +375,11 @@ export default function DiscountCodesTool() {
                 {codes.map(c => (
                   <tr key={c.id}>
                     <td style={td}><span style={codePill}>{c.code}</span></td>
-                    <td style={td}><strong>{c.discount}%</strong> off</td>
+                    <td style={td}>
+                      {c.type === 'free_delivery'
+                        ? <span style={{ color: '#1a5c30', fontWeight: 600 }}>Free delivery</span>
+                        : <><strong>{c.discount}%</strong> off</>}
+                    </td>
                     <td style={{ ...td, fontVariantNumeric: 'tabular-nums' }}>
                       {c.usedCount} / {c.maxUses}
                       <span style={{ color: '#bbb', marginLeft: 4, fontSize: 11 }}>
