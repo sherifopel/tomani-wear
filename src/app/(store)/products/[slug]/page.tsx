@@ -6,6 +6,7 @@ import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
 import Breadcrumbs      from '@/components/Breadcrumbs'
 import ProductReviews   from '@/components/ProductReviews'
+import { prisma }       from '@/lib/prisma'
 
 type Product = {
   _id: string
@@ -73,9 +74,19 @@ export default async function ProductPage({
   await connection()
 
   const { slug } = await params
-  const product: Product | null = await client.fetch(PRODUCT_BY_SLUG_QUERY, { slug })
+  const [product, reviewStats] = await Promise.all([
+    client.fetch<Product | null>(PRODUCT_BY_SLUG_QUERY, { slug }),
+    prisma.review.aggregate({
+      where:  { productSlug: slug, status: 'approved' },
+      _count: { id: true },
+      _avg:   { rating: true },
+    }),
+  ])
 
   if (!product) notFound()
+
+  const reviewCount   = reviewStats._count.id
+  const reviewAverage = reviewStats._avg.rating ?? 0
 
   const onSale = !!(product.compareAtPrice && product.compareAtPrice > product.price)
 
@@ -97,6 +108,15 @@ export default async function ProductPage({
         : 'https://schema.org/OutOfStock',
       seller: { '@type': 'Organization', name: 'Tomanni' },
     },
+    ...(reviewCount > 0 && {
+      aggregateRating: {
+        '@type':       'AggregateRating',
+        ratingValue:   reviewAverage.toFixed(1),
+        reviewCount,
+        bestRating:    5,
+        worstRating:   1,
+      },
+    }),
   }
 
   return (
@@ -130,6 +150,8 @@ export default async function ProductPage({
           price={product.price}
           category={product.category}
           description={product.description}
+          reviewAverage={reviewAverage}
+          reviewCount={reviewCount}
         />
       </div>
 
