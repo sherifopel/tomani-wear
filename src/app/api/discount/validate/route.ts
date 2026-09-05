@@ -33,11 +33,12 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({
-      valid:      true,
-      percentage: discount.discount,
-      codeId:     discount.id,
-      code:       discount.code,
-      remaining:  discount.maxUses - discount.usedCount,
+      valid:        true,
+      type:         discount.type,
+      percentage:   discount.type === 'percentage' ? discount.discount : 0,
+      codeId:       discount.id,
+      code:         discount.code,
+      remaining:    discount.maxUses - discount.usedCount,
     })
   } catch {
     return NextResponse.json({ valid: false, message: 'Something went wrong' }, { status: 500 })
