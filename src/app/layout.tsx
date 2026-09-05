@@ -3,8 +3,11 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 import PostHogProvider from "@/components/PostHogProvider";
 import MetaPixel from "@/components/MetaPixel";
+import FloatingAudioPlayer from "@/components/FloatingAudioPlayer";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { client } from "@/sanity/client";
+import { SETTINGS_QUERY } from "@/sanity/queries";
 
 // Montserrat: clean, modern fashion font — free Google Fonts alternative to Gotham.
 // We load only the weights we actually use; Next.js self-hosts and caches them.
@@ -48,11 +51,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await client.fetch(SETTINGS_QUERY)
+  const showMusic = settings?.siteMusicEnabled && settings?.siteMusicUrl
+
   return (
     <html
       lang="en"
@@ -64,6 +70,7 @@ export default function RootLayout({
               {children}
             </div>
           </PostHogProvider>
+          {showMusic && <FloatingAudioPlayer audioUrl={settings.siteMusicUrl} />}
           <MetaPixel />
           <Analytics />
           <SpeedInsights />

@@ -11,6 +11,7 @@ export const settings = defineType({
   groups: [
     { name: 'announcement', title: 'Announcement' },
     { name: 'footer', title: 'Footer' },
+    { name: 'music', title: 'Site Music' },
   ],
   fields: [
     defineField({
@@ -120,6 +121,22 @@ export const settings = defineType({
           },
         },
       ],
+    }),
+    defineField({
+      name: 'siteMusicEnabled',
+      title: 'Enable Background Music',
+      type: 'boolean',
+      initialValue: false,
+      group: 'music',
+      description: 'Turn this on to play background music while customers browse the site.',
+    }),
+    defineField({
+      name: 'siteMusicFile',
+      title: 'Music Track',
+      type: 'file',
+      group: 'music',
+      options: { accept: 'audio/mpeg,audio/wav,audio/ogg,audio/mp4' },
+      description: 'Upload an MP3. Plays on loop while shoppers browse. Starts muted — customer unmutes with the button.',
     }),
     defineField({
       name: 'socialLinks',

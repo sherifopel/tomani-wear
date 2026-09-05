@@ -201,4 +201,6 @@ export const SETTINGS_QUERY = groq`*[_id == "global-settings"][0] {
     platform,
     url
   },
+  siteMusicEnabled,
+  "siteMusicUrl": siteMusicFile.asset->url,
 }`
