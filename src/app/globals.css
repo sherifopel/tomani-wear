@@ -118,6 +118,16 @@ header[data-transparent="true"] svg {
   to   { opacity: 1; clip-path: inset(0 0 0 0%   round 9999px); }
 }
 
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
 @keyframes announcement-slide {
   0% {
     opacity: 0;

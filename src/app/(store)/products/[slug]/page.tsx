@@ -4,9 +4,8 @@ import type { Metadata } from 'next'
 import { client } from '@/sanity/client'
 import { PRODUCT_BY_SLUG_QUERY } from '@/sanity/queries'
 import ProductInteractive, { type GalleryImage, type ColorOption } from '@/components/ProductInteractive'
-import Breadcrumbs      from '@/components/Breadcrumbs'
-import ProductReviews   from '@/components/ProductReviews'
-import { prisma }       from '@/lib/prisma'
+import Breadcrumbs from '@/components/Breadcrumbs'
+import { prisma }  from '@/lib/prisma'
 
 type Product = {
   _id: string
@@ -127,7 +126,7 @@ export default async function ProductPage({
       />
 
       {/* Main layout: handled by ProductInteractive (client component for interactivity) */}
-      <div className="max-w-7xl mx-auto px-6 pb-16">
+      <div className="px-6 pb-16">
         <Breadcrumbs
           testId="pdp-breadcrumb"
           crumbs={[
@@ -154,8 +153,6 @@ export default async function ProductPage({
           reviewCount={reviewCount}
         />
       </div>
-
-      <ProductReviews slug={product.slug} />
     </div>
   )
 }
