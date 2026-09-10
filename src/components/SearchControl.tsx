@@ -45,6 +45,15 @@ export default function SearchControl() {
         <Search className="h-[15px] w-[15px] md:h-5 md:w-5" strokeWidth={1.5} />
       </button>
 
+      {/* Backdrop — invisible full-screen layer so tapping outside dismisses on mobile */}
+      {expanded && (
+        <div
+          className="fixed inset-0 z-[140]"
+          onClick={() => setExpanded(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Oval — floats over the logo on all screen sizes */}
       {expanded && (
         <form

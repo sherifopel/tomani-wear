@@ -89,21 +89,22 @@ body {
 }
 
 /* ── Transparent header — hero sections ──────────────────────────────────── */
-/* When a hero sentinel is in the viewport, StickyHeader sets data-transparent.
-   These rules flip all icon/text colours to white so they read on dark images. */
-header[data-transparent="true"] {
-  color: white;
-}
-header[data-transparent="true"] nav,
-header[data-transparent="true"] [data-testid="nav-main-row"] {
+/* Scope ONLY to the visible nav elements — NOT the mobile menu panel, which
+   sits on a white background and would become invisible with white text.     */
+header[data-transparent="true"] [data-testid="nav-main-row"],
+header[data-transparent="true"] [data-testid="nav-links"] {
   background-color: transparent;
   border-color: transparent;
-}
-header[data-transparent="true"] a,
-header[data-transparent="true"] button:not([class*="bg-"]) {
   color: white;
 }
-header[data-transparent="true"] svg {
+header[data-transparent="true"] [data-testid="nav-main-row"] a,
+header[data-transparent="true"] [data-testid="nav-main-row"] button:not([class*="bg-"]),
+header[data-transparent="true"] [data-testid="nav-links"] a,
+header[data-transparent="true"] [data-testid="nav-links"] button:not([class*="bg-"]) {
+  color: white;
+}
+header[data-transparent="true"] [data-testid="nav-main-row"] svg,
+header[data-transparent="true"] [data-testid="nav-links"] svg {
   color: white;
 }
 
