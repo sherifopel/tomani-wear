@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { limiters, checkRateLimit } from '@/lib/rate-limit'
-import { notifyNewReview } from '@/lib/whatsapp'
+import { sendReviewNotification } from '@/lib/email'
 
 // ── GET /api/reviews?slug=xxx ─────────────────────────────────────────────────
 
@@ -58,9 +58,10 @@ export async function POST(req: NextRequest) {
   })
 
   // Fire-and-forget — don't let notification failure break the review submission
-  notifyNewReview({
+  sendReviewNotification({
     productSlug:   review.productSlug,
     reviewerName:  review.name,
+    reviewerEmail: review.email,
     rating:        review.rating,
     comment:       review.comment,
   }).catch(() => {})

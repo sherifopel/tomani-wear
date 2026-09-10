@@ -1,45 +1,41 @@
-// CallMeBot free WhatsApp notification API — https://www.callmebot.com/blog/free-api-whatsapp-messages/
+// Telegram Bot notification system — replaces the CallMeBot approach.
 //
-// Setup (one-time per number):
-//   1. Save +34 644 59 78 93 as "CallMeBot" in WhatsApp
-//   2. Send the message: I allow callmebot to send me messages
-//   3. They reply with your API key
+// Setup (one-time):
+//   1. Message @BotFather on Telegram → /newbot → get your token
+//   2. Each recipient starts a chat with the bot and sends any message
+//   3. Visit https://api.telegram.org/bot{TOKEN}/getUpdates to find each chat ID
 //
-// Env var (comma-separated, one entry per recipient):
-//   CALLMEBOT_NUMBERS = "447700900000:abc123,2348012345678:xyz789"
-//   Format: internationalPhone:apiKey  (no + prefix, no spaces)
+// Env vars:
+//   TELEGRAM_BOT_TOKEN  = 123456789:ABCdef...
+//   TELEGRAM_CHAT_IDS   = 123456789,987654321   (comma-separated, one per recipient)
 
-function getRecipients() {
-  const env = process.env.CALLMEBOT_NUMBERS
-  if (!env) return []
-  return env
-    .split(',')
-    .map(s => s.trim())
-    .filter(Boolean)
-    .map(s => {
-      const [phone, apiKey] = s.split(':')
-      return { phone: phone?.trim(), apiKey: apiKey?.trim() }
-    })
-    .filter(r => r.phone && r.apiKey) as { phone: string; apiKey: string }[]
+async function sendToChat(token: string, chatId: string, text: string) {
+  const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ chat_id: chatId, text, parse_mode: 'HTML' }),
+  })
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Telegram error ${res.status}: ${err}`)
+  }
 }
 
-async function sendToNumber(phone: string, apiKey: string, text: string) {
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${phone}&text=${encodeURIComponent(text)}&apikey=${apiKey}`
-  const res = await fetch(url)
-  if (!res.ok) throw new Error(`CallMeBot ${res.status} for ${phone}`)
-}
-
-// ── Generic base — use this to add new alert types ────────────────────────────
+// ── Generic base ──────────────────────────────────────────────────────────────
 
 export async function sendWhatsApp(message: string) {
-  const recipients = getRecipients()
-  if (recipients.length === 0) return
-  await Promise.allSettled(
-    recipients.map(({ phone, apiKey }) => sendToNumber(phone, apiKey, message))
-  )
+  const token   = process.env.TELEGRAM_BOT_TOKEN
+  const chatIds = process.env.TELEGRAM_CHAT_IDS
+
+  if (!token || !chatIds) return  // not configured — silently skip
+
+  const ids = chatIds.split(',').map(s => s.trim()).filter(Boolean)
+  if (ids.length === 0) return
+
+  await Promise.allSettled(ids.map(id => sendToChat(token, id, message)))
 }
 
-// ── Named alert functions — one per event type ────────────────────────────────
+// ── Named alert functions ─────────────────────────────────────────────────────
 
 export async function notifyNewReview({
   productSlug,
@@ -54,7 +50,7 @@ export async function notifyNewReview({
 }) {
   const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating)
   const lines = [
-    `🛍 New Tomanni review`,
+    `🛍 <b>New Tomanni review</b>`,
     `Product: ${productSlug}`,
     `From: ${reviewerName}`,
     `Rating: ${stars} (${rating}/5)`,
@@ -77,7 +73,7 @@ export async function notifyNewOrder({
   itemCount: number
 }) {
   const lines = [
-    `🎉 New Tomanni order!`,
+    `🎉 <b>New Tomanni order!</b>`,
     `Ref: ${orderRef}`,
     `Customer: ${customerName ?? 'Guest'}`,
     `Items: ${itemCount}`,
@@ -98,7 +94,7 @@ export async function notifyPaymentFailed({
   totalNgn: number
 }) {
   const lines = [
-    `⚠️ Payment failed`,
+    `⚠️ <b>Payment failed</b>`,
     `Ref: ${orderRef}`,
     `Customer: ${customerName ?? 'Guest'}`,
     `Amount: ₦${totalNgn.toLocaleString('en-NG')}`,
@@ -116,7 +112,7 @@ export async function notifyNewCustomer({
   email: string
 }) {
   const lines = [
-    `👤 New Tomanni customer`,
+    `👤 <b>New Tomanni customer</b>`,
     `Name: ${customerName ?? 'Unknown'}`,
     `Email: ${email}`,
   ].join('\n')
