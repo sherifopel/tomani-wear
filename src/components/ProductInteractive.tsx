@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Image from 'next/image'
-import ProductActions from '@/components/ProductActions'
+import ProductActions   from '@/components/ProductActions'
+import ReviewsDrawer    from '@/components/ReviewsDrawer'
 
 export type GalleryImage = {
   url: string
@@ -87,7 +88,10 @@ export default function ProductInteractive({
 }: Props) {
   const [activeColorIndex, setActiveColorIndex] = useState<number | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
-  const [isZoomed, setIsZoomed] = useState(false)
+  const [isZoomed,         setIsZoomed]         = useState(false)
+  const [reviewsOpen,      setReviewsOpen]       = useState(false)
+  const openReviews  = useCallback(() => setReviewsOpen(true),  [])
+  const closeReviews = useCallback(() => setReviewsOpen(false), [])
 
   const hasColors = colors && colors.length > 0
 
@@ -125,10 +129,10 @@ export default function ProductInteractive({
   )
 
   const starsBlock = reviewCount > 0 && (
-    <a
-      href="#reviews"
+    <button
+      onClick={openReviews}
       className="flex items-center gap-1.5 group w-fit"
-      aria-label={`${reviewAverage.toFixed(1)} out of 5 stars, ${reviewCount} review${reviewCount !== 1 ? 's' : ''}`}
+      aria-label={`${reviewAverage.toFixed(1)} out of 5 stars, ${reviewCount} review${reviewCount !== 1 ? 's' : ''} — tap to read`}
       data-testid="pdp-review-summary"
     >
       <span className="flex" aria-hidden="true">
@@ -143,7 +147,7 @@ export default function ProductInteractive({
       <span className="text-xs text-gray-500 group-hover:text-black transition-colors">
         {reviewAverage.toFixed(1)} ({reviewCount})
       </span>
-    </a>
+    </button>
   )
 
   return (
@@ -373,8 +377,28 @@ export default function ProductInteractive({
               {description}
             </p>
           )}
+
+          {/* Reviews row — Whistles-style chevron trigger */}
+          <button
+            onClick={openReviews}
+            data-testid="pdp-reviews-trigger"
+            className="w-full flex items-center justify-between py-4 border-t border-gray-100 text-sm hover:opacity-70 transition-opacity"
+          >
+            <span>
+              Reviews
+              {reviewCount > 0 && (
+                <span className="ml-2 text-xs text-gray-400">({reviewCount})</span>
+              )}
+            </span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
         </div>
       </div>
+
+      {/* Reviews drawer */}
+      <ReviewsDrawer open={reviewsOpen} onClose={closeReviews} slug={slug} />
     </>
   )
 }

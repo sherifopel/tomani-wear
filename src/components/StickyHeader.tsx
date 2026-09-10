@@ -33,6 +33,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 const ENTER_THRESHOLD = 100
 const EXIT_DELTA      = 50
@@ -51,6 +52,8 @@ export default function StickyHeader({
 }) {
   const [compact, setCompact] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [transparent, setTransparent] = useState(false)
+  const pathname = usePathname()
 
   const compactRef     = useRef(false)
   const lastY          = useRef(0)
@@ -122,6 +125,21 @@ export default function StickyHeader({
     return () => document.removeEventListener('mobilemenu', handler)
   }, [])
 
+  // Transparent mode — active when a hero sentinel element exists in the DOM
+  // and the page hasn't scrolled yet. Re-checks on every route change.
+  useEffect(() => {
+    function update() {
+      const hasSentinel = !!document.querySelector('[data-hero-sentinel]')
+      setTransparent(hasSentinel && window.scrollY < 10)
+    }
+    const raf = requestAnimationFrame(update)
+    window.addEventListener('scroll', update, { passive: true })
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', update)
+    }
+  }, [pathname])
+
   const isDesktop = typeof window !== 'undefined' && window.innerWidth >= DESKTOP_BP
   const suppressCompact = compact && !menuOpen
   const collapseMainRow = suppressCompact && isDesktop
@@ -142,7 +160,8 @@ export default function StickyHeader({
       ref={headerRef}
       data-testid="nav-header"
       data-compact={suppressCompact}
-      className="sticky top-0 z-[101] bg-white group"
+      data-transparent={transparent}
+      className={`fixed top-0 left-0 right-0 z-[101] group transition-colors duration-300 ${transparent ? 'bg-transparent' : 'bg-white'}`}
     >
 
       {/* ── Announcement bar ──────────────────────────────────────────────
@@ -150,7 +169,7 @@ export default function StickyHeader({
           menu is open (banner must stay visible above the menu panel). */}
       {announcementBar && (
         <div
-          style={{ maxHeight: (suppressCompact && isDesktop) ? '0' : '3rem' }}
+          style={{ maxHeight: (transparent || (suppressCompact && isDesktop)) ? '0' : '3rem' }}
           className="overflow-hidden transition-[max-height] duration-300 ease-in-out"
         >
           {announcementBar}

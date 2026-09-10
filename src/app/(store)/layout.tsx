@@ -14,7 +14,7 @@ export default function StoreLayout({
       <CartProvider>
         <Navbar />
         <div className="flex-1 flex flex-col">
-          <main className="flex-1">
+          <main className="flex-1" style={{ paddingTop: 'var(--header-height, 84px)' }}>
             {children}
           </main>
           <Footer />

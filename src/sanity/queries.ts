@@ -24,10 +24,18 @@ export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && ("new-in" in c
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
+  "hoverImage": coalesce(
+    productImages[isMain != true][0].cloudinaryUrl,
+    productImages[1].cloudinaryUrl,
+    productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
+    productImages[1].image.asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
-  "productType": coalesce(menType, womenType, accessoriesType)
+  "productType": coalesce(menType, womenType, accessoriesType),
+  sizes,
+  shoeSizes
 }`
 
 export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) {
@@ -45,10 +53,18 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
+  "hoverImage": coalesce(
+    productImages[isMain != true][0].cloudinaryUrl,
+    productImages[1].cloudinaryUrl,
+    productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
+    productImages[1].image.asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
-  "productType": coalesce(menType, womenType, accessoriesType)
+  "productType": coalesce(menType, womenType, accessoriesType),
+  sizes,
+  shoeSizes
 }`
 
 export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
@@ -70,10 +86,18 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
+  "hoverImage": coalesce(
+    productImages[isMain != true][0].cloudinaryUrl,
+    productImages[1].cloudinaryUrl,
+    productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
+    productImages[1].image.asset->url + ${IMG_CARD}
+  ),
   description,
   category,
   _createdAt,
-  "productType": coalesce(menType, womenType, accessoriesType)
+  "productType": coalesce(menType, womenType, accessoriesType),
+  sizes,
+  shoeSizes
 }`
 
 
@@ -130,12 +154,23 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
         price,
         compareAtPrice,
         inStock,
+        "productType": coalesce(menType, womenType, accessoriesType),
+        sizes,
+        shoeSizes,
         "image": coalesce(
-          productImages[isMain == true][0].image.asset->url,
-          productImages[0].image.asset->url,
-          image.asset->url,
-          gallery[0].asset->url
-        ) + ${IMG_CARD}
+          productImages[isMain == true][0].cloudinaryUrl,
+          productImages[0].cloudinaryUrl,
+          productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
+          productImages[0].image.asset->url + ${IMG_CARD},
+          image.asset->url + ${IMG_CARD},
+          gallery[0].asset->url + ${IMG_CARD}
+        ),
+        "hoverImage": coalesce(
+          productImages[isMain != true][0].cloudinaryUrl,
+          productImages[1].cloudinaryUrl,
+          productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
+          productImages[1].image.asset->url + ${IMG_CARD}
+        )
       }
     }
   }

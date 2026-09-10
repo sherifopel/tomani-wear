@@ -2,7 +2,7 @@ import Image, { getImageProps } from 'next/image'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
 import ProductCarousel from '@/components/ProductCarousel'
-import AudioPlayer from '@/components/AudioPlayer'
+import FilterableGrid from '@/components/FilterableGrid'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -14,6 +14,10 @@ type Product = {
   compareAtPrice?: number | null
   inStock?: boolean
   image?: string | null
+  hoverImage?: string | null
+  productType?: string | null
+  sizes?: string[] | null
+  shoeSizes?: string | null
 }
 
 type Heights = {
@@ -181,11 +185,17 @@ export default function HomeSection({
 
   const rawProducts = carousel?.products?.slice(0, carousel.limit ?? 8) ?? []
   const carouselProducts = rawProducts.map((p, i) => ({
-    id:    i + 1,
-    name:  p.name,
-    price: p.price,
-    image: p.image ?? '',
-    href:  `/products/${p.slug}`,
+    id:         i + 1,
+    productId:  p._id,
+    name:       p.name,
+    slug:       p.slug,
+    price:      p.price,
+    image:      p.image ?? '',
+    hoverImage: p.hoverImage ?? undefined,
+    href:       `/products/${p.slug}`,
+    inStock:    p.inStock,
+    sizes:      p.sizes,
+    shoeSizes:  p.shoeSizes,
   }))
 
   return (
@@ -265,18 +275,13 @@ export default function HomeSection({
             </>
           )}
 
-          {/* Gradient — helps text readability on cover images */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
+          {/* Sentinel — tells StickyHeader to go transparent while this section is at the top */}
+          <div data-hero-sentinel aria-hidden="true" className="absolute top-0 inset-x-0 h-px pointer-events-none" />
 
-          {/* Uploaded audio file — muted autoplay with 🔇/🔊 toggle */}
-          {audioUrl && (
-            <AudioPlayer
-              audioUrl={audioUrl}
-              startAt={section.audioStart ?? 0}
-              snippetLength={section.audioSnippetLength === 'full' ? 'full' : Number(section.audioSnippetLength ?? '60')}
-              repeat={section.audioRepeat ?? 'loop'}
-            />
-          )}
+          {/* Gradients — bottom for text, top so the transparent header remains legible */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent pointer-events-none" />
+          <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-black/40 to-transparent pointer-events-none" />
+
 
           {/* Text overlay — same CSS variable pattern as Hero.tsx */}
           {content && (content.heading || content.label || content.sub) && (
@@ -330,19 +335,19 @@ export default function HomeSection({
 
       {/* ── Product carousel ──────────────────────────────────────────────── */}
       {carouselProducts.length > 0 && (
-        <div data-testid="home-featured-products" className="snap-section bg-[#f9f9f9] border-t border-gray-200">
+        <div data-testid="home-featured-products" className="snap-section bg-white">
 
-          {/* Heading row — always padded */}
-          <div className="pt-6 pb-4 px-6 md:pt-10 md:pb-6 md:px-10 max-w-7xl mx-auto flex items-center justify-between">
+          {/* Heading row — 24px gutter on both sides, full viewport width */}
+          <div className="pt-8 pb-4 px-6 flex items-center justify-between">
             {carousel?.title && (
-              <h2 className="text-[28px] font-light ">
+              <h2 className="text-[18px] font-normal uppercase leading-[28px] border-b border-black pb-[3px]">
                 {carousel.title}
               </h2>
             )}
             {carousel?.viewAllLink && (
               <Link
                 href={carousel.viewAllLink}
-                className="text-xs  underline underline-offset-4 hover:opacity-60 transition-opacity"
+                className="text-[12px] leading-[12px] font-normal text-[#434343] hover:opacity-60 transition-opacity"
               >
                 View All
               </Link>
@@ -350,34 +355,11 @@ export default function HomeSection({
           </div>
 
           {carousel?.style === 'grid' ? (
-            /* Edge-to-edge grid — tiles are full-width with hairline gaps */
-            <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-0.5">
-                {carouselProducts.map((p) => (
-                  <Link key={p.href} href={p.href} className="group block bg-white">
-                    <div className="relative aspect-[3/4] overflow-hidden">
-                      {p.image && (
-                        <Image
-                          src={p.image}
-                          alt={p.name}
-                          fill
-                          sizes="(max-width: 768px) 50vw, 25vw"
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      )}
-                    </div>
-                    <div className="px-3 py-2">
-                      <p className="text-sm font-medium truncate">{p.name}</p>
-                      <p className="text-sm text-gray-500">₦{p.price.toLocaleString()}</p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              <div className="pb-8 md:pb-12" />
-            </>
+            /* Grid with type filter tabs */
+            <FilterableGrid products={rawProducts} />
           ) : (
-            /* Scroll carousel — padded container */
-            <div className="px-6 pb-10 md:pb-16 md:px-10 max-w-7xl mx-auto">
+            /* Scroll carousel — 24px gutter, full viewport width */
+            <div className="px-6 pb-10">
               <ProductCarousel products={carouselProducts} />
             </div>
           )}

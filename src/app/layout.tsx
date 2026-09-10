@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, DM_Sans } from "next/font/google";
 import "./globals.css";
 import PostHogProvider from "@/components/PostHogProvider";
 import MetaPixel from "@/components/MetaPixel";
@@ -16,6 +16,12 @@ const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -62,7 +68,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${dmSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
           <PostHogProvider>

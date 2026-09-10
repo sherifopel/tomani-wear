@@ -130,44 +130,43 @@ export default async function Footer() {
 
   return (
     <footer className="bg-white border-t border-gray-200 pt-6 pb-6 px-6" data-testid="footer">
-      <div className="max-w-7xl mx-auto">
+      <div>
 
         {/* Nav sections — accordion on mobile, columns on desktop */}
         <FooterAccordion sections={FOOTER_SECTIONS} />
+
+        {/* Social icons */}
+        {visibleSocialLinks.length > 0 && (
+          <div className="flex items-center gap-4 mt-6 mb-4" data-testid="footer-social">
+            {visibleSocialLinks.map((link) => (
+              <a
+                key={`${link.platform}-${link.url}`}
+                href={link.url}
+                aria-label={getPlatformLabel(link.platform)}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid={`footer-social-${link.platform}`}
+                className="flex h-7 w-7 items-center justify-center text-black hover:opacity-50 transition-opacity duration-200"
+              >
+                <SocialIcon platform={link.platform} />
+              </a>
+            ))}
+          </div>
+        )}
 
         {/* Wordmark */}
         <Link
           href="/"
           data-testid="footer-logo"
-          className="block text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase leading-none mt-6 mb-3"
+          className="block text-2xl md:text-3xl font-bold tracking-[0.35em] uppercase leading-none mb-3"
         >
           Tomanni
         </Link>
 
-        {/* Bottom bar — social icons above copyright on mobile; side by side on desktop */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 pt-1">
-          {visibleSocialLinks.length > 0 && (
-            <div className="flex items-center gap-4" data-testid="footer-social">
-              {visibleSocialLinks.map((link) => (
-                <a
-                  key={`${link.platform}-${link.url}`}
-                  href={link.url}
-                  aria-label={getPlatformLabel(link.platform)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-testid={`footer-social-${link.platform}`}
-                  className="flex h-7 w-7 items-center justify-center text-black hover:opacity-50 transition-opacity duration-200"
-                >
-                  <SocialIcon platform={link.platform} />
-                </a>
-              ))}
-            </div>
-          )}
-
-          <p className="text-[10px]  text-gray-500" data-testid="footer-copyright">
-            © {new Date().getFullYear()} Tomanni Official. All rights reserved.
-          </p>
-        </div>
+        {/* Copyright */}
+        <p className="text-[10px] text-gray-500" data-testid="footer-copyright">
+          © {new Date().getFullYear()} Tomanni Official. All rights reserved.
+        </p>
 
       </div>
     </footer>

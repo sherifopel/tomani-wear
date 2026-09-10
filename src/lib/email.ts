@@ -168,6 +168,71 @@ export async function sendOrderAcknowledgement({
   })
 }
 
+export async function sendReviewNotification({
+  productSlug,
+  reviewerName,
+  reviewerEmail,
+  rating,
+  comment,
+}: {
+  productSlug: string
+  reviewerName: string
+  reviewerEmail: string
+  rating: number
+  comment: string | null
+}) {
+  if (!resend) return  // silently skip if no key — don't break the review submission
+
+  const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating)
+  const notifyEmails = process.env.REVIEW_NOTIFY_EMAILS
+    ? process.env.REVIEW_NOTIFY_EMAILS.split(',').map(e => e.trim()).filter(Boolean)
+    : ['sherifopeloyeru@gmail.com']
+
+  const body = `
+    <p style="margin:0 0 16px;font-size:15px;color:#000">New review submitted</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #ebebeb;margin-bottom:8px">
+      <tr>
+        <td style="padding:12px 20px;background:#f8f8f8;border-bottom:1px solid #f0f0f0">
+          <span style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em">Product</span>
+          <span style="font-size:14px;font-weight:700;color:#000;margin-left:10px">${productSlug}</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 20px;border-bottom:1px solid #f0f0f0">
+          <span style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em">From</span>
+          <span style="font-size:13px;color:#000;margin-left:10px">${reviewerName}</span>
+          <span style="font-size:12px;color:#999;margin-left:6px">&lt;${reviewerEmail}&gt;</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 20px;border-bottom:1px solid #f0f0f0">
+          <span style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em">Rating</span>
+          <span style="font-size:16px;color:#f59e0b;margin-left:10px;letter-spacing:2px">${stars}</span>
+          <span style="font-size:12px;color:#999;margin-left:6px">${rating}/5</span>
+        </td>
+      </tr>
+      ${comment ? `
+      <tr>
+        <td style="padding:12px 20px">
+          <span style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:0.08em">Comment</span>
+          <p style="margin:8px 0 0;font-size:13px;color:#444;line-height:1.6">${comment}</p>
+        </td>
+      </tr>` : ''}
+    </table>
+
+    <p style="margin:16px 0 0;font-size:12px;color:#999">
+      Status: <strong style="color:#d97706">Pending approval</strong> — log in to approve or reject.
+    </p>`
+
+  await resend.emails.send({
+    from:    'Tomanni <onboarding@resend.dev>',
+    to:      notifyEmails,
+    subject: `New ${rating}★ review on ${productSlug} from ${reviewerName}`,
+    html:    emailShell(body),
+  })
+}
+
 const STATUS_MESSAGES: Record<string, { headline: string; body: string; color: string }> = {
   dispatched: {
     headline: 'Your order is on its way!',

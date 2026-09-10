@@ -36,7 +36,7 @@ export default async function Navbar() {
   const mainRow = (
     <div
       data-testid="nav-main-row"
-      className="border-b border-gray-100 px-6 py-4 grid grid-cols-[1fr_auto_1fr] items-center"
+      className="border-b border-gray-100 px-6 h-10 grid grid-cols-[1fr_auto_1fr] items-center"
     >
       <div className="flex items-center">
         <MobileMenu links={navLinks} />
