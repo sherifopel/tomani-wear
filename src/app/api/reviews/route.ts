@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { limiters, checkRateLimit } from '@/lib/rate-limit'
+import { notifyNewReview } from '@/lib/whatsapp'
 
 // ── GET /api/reviews?slug=xxx ─────────────────────────────────────────────────
 
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
   if (comment && typeof comment === 'string' && comment.length > 1000)
     return NextResponse.json({ error: 'Review must be under 1000 characters' }, { status: 400 })
 
-  await prisma.review.create({
+  const review = await prisma.review.create({
     data: {
       productSlug: slug.trim(),
       name:        name.trim().slice(0, 100),
@@ -55,6 +56,14 @@ export async function POST(req: NextRequest) {
       status:      'pending',
     },
   })
+
+  // Fire-and-forget — don't let notification failure break the review submission
+  notifyNewReview({
+    productSlug:   review.productSlug,
+    reviewerName:  review.name,
+    rating:        review.rating,
+    comment:       review.comment,
+  }).catch(() => {})
 
   return NextResponse.json({ success: true }, { status: 201 })
 }

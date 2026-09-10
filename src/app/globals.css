@@ -88,6 +88,25 @@ body {
   width: 100%;
 }
 
+/* ── Transparent header — hero sections ──────────────────────────────────── */
+/* When a hero sentinel is in the viewport, StickyHeader sets data-transparent.
+   These rules flip all icon/text colours to white so they read on dark images. */
+header[data-transparent="true"] {
+  color: white;
+}
+header[data-transparent="true"] nav,
+header[data-transparent="true"] [data-testid="nav-main-row"] {
+  background-color: transparent;
+  border-color: transparent;
+}
+header[data-transparent="true"] a,
+header[data-transparent="true"] button:not([class*="bg-"]) {
+  color: white;
+}
+header[data-transparent="true"] svg {
+  color: white;
+}
+
 @keyframes searchSlideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -201,7 +220,7 @@ body {
      Applies to every section type — image, video, or mixed.
      svh = small viewport height (stable; excludes browser chrome like Safari's address bar). */
   div.home-section-banner {
-    height: calc(100svh - var(--header-height, 84px));
+    height: 100svh;
   }
 }
 

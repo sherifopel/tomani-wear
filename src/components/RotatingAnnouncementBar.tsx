@@ -35,7 +35,7 @@ export default function RotatingAnnouncementBar({ banners }: { banners: Banner[]
     </span>
   )
 
-  const sharedClass = "flex items-center justify-center text-center text-xs px-5 overflow-hidden transition-colors duration-500 min-h-[3.5rem]"
+  const sharedClass = "flex items-center justify-center text-center text-xs px-5 overflow-hidden transition-colors duration-500 h-[30px]"
 
   if (active.href) {
     return (

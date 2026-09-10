@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { limiters, checkRateLimit } from '@/lib/rate-limit'
+import { notifyNewOrder } from '@/lib/whatsapp'
 
 async function verifyPaystackPayment(reference: string, expectedAmountKobo: number) {
   const res = await fetch(`https://api.paystack.co/transaction/verify/${reference}`, {
@@ -101,6 +102,14 @@ export async function POST(req: NextRequest) {
     } else {
       order = await prisma.order.create({ data: orderData })
     }
+
+    // Fire-and-forget — never block the order response on a notification
+    notifyNewOrder({
+      orderRef:     order.paystackRef ?? String(order.id),
+      customerName: customerName ?? null,
+      totalNgn:     Math.round(totalAmount),
+      itemCount:    items.length,
+    }).catch(() => {})
 
     return NextResponse.json({ success: true, orderNumber: order.paystackRef ?? order.id, orderId: order.id })
 

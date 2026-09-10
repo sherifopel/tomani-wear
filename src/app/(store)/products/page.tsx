@@ -1,11 +1,11 @@
-import Image from 'next/image'
-import Link from 'next/link'
 import { connection } from 'next/server'
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { client } from '@/sanity/client'
 import { PRODUCTS_QUERY, PRODUCTS_BY_CATEGORY_QUERY, NEW_IN_PRODUCTS_QUERY } from '@/sanity/queries'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import SortDropdown from '@/components/SortDropdown'
+import PLPCard from '@/components/PLPCard'
 
 type Product = {
   _id: string
@@ -15,8 +15,11 @@ type Product = {
   compareAtPrice?: number
   inStock: boolean
   image?: string
+  hoverImage?: string
   category?: string
   _createdAt: string
+  sizes?: string[] | null
+  shoeSizes?: string | null
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -124,31 +127,25 @@ export default async function ProductsPage({
     : [{ label: 'Home', href: '/' }, { label: 'Products' }]
 
   return (
-    <div className="bg-[#f9f9f9] min-h-screen" data-testid="plp-page">
-    <div className="max-w-7xl mx-auto px-6 pb-16">
+    <div className="bg-white min-h-screen" data-testid="plp-page">
 
-      <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
+      {/* Header — padded */}
+      <div className="px-6">
+        <Breadcrumbs crumbs={crumbs} testId="plp-breadcrumb" />
 
-      {/* Header — hidden when showing coming soon (empty category, no search) */}
-      {(products.length > 0 || searchQuery) && (
-        <div className="pt-6 mb-4">
-          <div className="flex flex-col gap-2" data-testid="plp-header">
-            <h1 className="text-[28px] font-medium text-center" data-testid="plp-title">
+        {(products.length > 0 || searchQuery) && (
+          <div className="pt-4 pb-3 flex items-center justify-between" data-testid="plp-header">
+            <h1 className="text-[13px] font-medium text-black" data-testid="plp-title">
               {pageTitle}
             </h1>
-            <div className="flex justify-end">
-              <SortDropdown current={sort} category={category} type={type} query={searchQuery} />
-            </div>
+            <SortDropdown current={sort} category={category} type={type} query={searchQuery} />
           </div>
-          <p className="text-xs text-gray-500 mt-3 text-center" data-testid="plp-count">
-            Showing {products.length} {products.length === 1 ? 'product' : 'products'}
-          </p>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Empty state */}
       {products.length === 0 && (
-        <div className="min-h-[50vh] flex flex-col items-center justify-center gap-4" data-testid="plp-empty">
+        <div className="px-6 min-h-[50vh] flex flex-col items-center justify-center gap-4" data-testid="plp-empty">
           {searchQuery ? (
             <>
               <p className="text-sm text-gray-500">No products found</p>
@@ -184,69 +181,20 @@ export default async function ProductsPage({
         </div>
       )}
 
-      {/* Product grid */}
+      {/* Product grid — full bleed, 1px hairline gap (bg-gray-100 bleeds through as the separator) */}
       {products.length > 0 && (
         <ul
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-px bg-gray-100 pb-16"
           data-testid="plp-grid"
         >
           {products.map((product) => (
-            <li key={product._id} data-testid="plp-product-card">
-              <Link href={`/products/${product.slug}`} className="group block bg-white" data-testid={`plp-product-link-${product.slug}`}>
-
-                {/* Image */}
-                <div className="relative aspect-[3/4] bg-white overflow-hidden mb-3" data-testid="plp-product-image-wrapper">
-                  {product.image ? (
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      data-testid="plp-product-image"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-100" data-testid="plp-product-image-placeholder" />
-                  )}
-
-                  {/* Badges */}
-                  <div className="absolute top-2 left-2 flex flex-col gap-1">
-                    {!product.inStock && (
-                      <span className="text-[10px]  bg-gray-800 text-white px-2 py-0.5 rounded" data-testid="plp-badge-sold-out">
-                        Sold Out
-                      </span>
-                    )}
-                    {product.compareAtPrice && product.compareAtPrice > product.price && (
-                      <span className="text-[10px]  bg-[var(--brand-red)] text-white px-2 py-0.5 rounded" data-testid="plp-badge-sale">
-                        Sale
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Info */}
-                <div className="flex flex-col px-3 pb-3" data-testid="plp-product-info">
-                  {/* Fixed 2-line height — keeps price aligned across all cards */}
-                  <p className="text-sm font-light leading-snug mb-2 line-clamp-2 min-h-[2.5rem]" data-testid="plp-product-name">
-                    {product.name}
-                  </p>
-                  {product.compareAtPrice && product.compareAtPrice > product.price ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500 line-through" data-testid="plp-product-compare-price">₦{product.compareAtPrice.toLocaleString()}</span>
-                      <span className="text-sm font-medium text-[var(--brand-red)]" data-testid="plp-product-price">₦{product.price.toLocaleString()}</span>
-                    </div>
-                  ) : (
-                    <span className="text-sm font-medium" data-testid="plp-product-price">₦{product.price.toLocaleString()}</span>
-                  )}
-                </div>
-
-              </Link>
+            <li key={product._id} className="bg-white border border-gray-100" data-testid="plp-product-card">
+              <PLPCard product={product} />
             </li>
           ))}
         </ul>
       )}
 
-    </div>
     </div>
   )
 }

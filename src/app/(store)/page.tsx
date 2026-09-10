@@ -32,7 +32,7 @@ export default async function Home({
   const sections = homePageData?.sections ?? []
 
   return (
-    <main className="flex-1">
+    <div style={{ marginTop: 'calc(-1 * var(--header-height, 84px))' }}>
       {sections.map((section, index) => (
         <HomeSection
           key={section._key}
@@ -40,6 +40,6 @@ export default async function Home({
           priority={index === 0}
         />
       ))}
-    </main>
+    </div>
   )
 }

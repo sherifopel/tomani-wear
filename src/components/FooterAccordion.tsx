@@ -59,7 +59,7 @@ export default function FooterAccordion({ sections }: { sections: Section[] }) {
       {/* Desktop: columns */}
       <div
         className="hidden md:grid gap-12 pb-16 border-b border-gray-100"
-        style={{ gridTemplateColumns: `repeat(${sections.length}, 1fr)` }}
+        style={{ gridTemplateColumns: `repeat(${sections.length}, auto)` }}
         data-testid="footer-columns-desktop"
       >
         {sections.map(section => (
