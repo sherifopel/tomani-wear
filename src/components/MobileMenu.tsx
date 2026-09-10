@@ -69,7 +69,7 @@ export default function MobileMenu({ links }: { links: NavLink[] }) {
         <div
           data-testid="mobile-menu"
           className="fixed left-0 right-0 bottom-0 z-[100] bg-white border-t border-gray-100 md:hidden"
-          style={{ top: panelTop }}
+          style={{ top: panelTop, color: 'black' }}
         >
           <nav className="flex h-full flex-col px-6 overflow-y-auto pb-8">
             {links.map((link) => {
