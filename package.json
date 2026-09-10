@@ -11,6 +11,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
+    "test:smoke": "playwright test --grep @tomanni-smoke",
+    "test:nav": "playwright test --grep @header",
     "publish-drafts": "tsx --env-file=.env.local scripts/publish-all-products.ts",
     "set-new-in": "tsx --env-file=.env.local scripts/set-new-in.ts",
     "migrate-images": "tsx --env-file=.env.local scripts/migrate-images-to-cloudinary.ts"

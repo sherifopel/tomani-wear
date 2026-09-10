@@ -31,7 +31,7 @@ export default function FloatingAudioPlayer({ audioUrl }: { audioUrl: string }) 
       <button
         onClick={toggle}
         aria-label={muted ? 'Play background music' : 'Mute background music'}
-        className="fixed bottom-6 right-5 z-50 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-colors duration-200"
+        className="fixed bottom-24 md:bottom-6 right-5 z-[110] w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-black/60 transition-colors duration-200"
       >
         {muted ? (
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

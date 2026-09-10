@@ -124,18 +124,28 @@ export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
 export const assertMobileNavLinksVisible = async (page: Page) => {
   Log.section('Mobile nav links')
   const { mobileLinks } = headerSelectors(page)
-  await expect(mobileLinks.newIn).toBeVisible()
-  Log.ok('New In')
-  await expect(mobileLinks.men).toBeVisible()
-  Log.ok('Men')
-  await expect(mobileLinks.women).toBeVisible()
-  Log.ok('Women')
-  await expect(mobileLinks.accessories).toBeVisible()
-  Log.ok('Accessories')
-  await expect(mobileLinks.collections).toBeVisible()
-  Log.ok('Collections')
-  await expect(mobileLinks.sale).toBeVisible()
-  Log.ok('Sale')
+
+  const links = [
+    { locator: mobileLinks.newIn,        label: 'New In' },
+    { locator: mobileLinks.men,          label: 'Men' },
+    { locator: mobileLinks.women,        label: 'Women' },
+    { locator: mobileLinks.accessories,  label: 'Accessories' },
+    { locator: mobileLinks.collections,  label: 'Collections' },
+    { locator: mobileLinks.sale,         label: 'Sale' },
+  ]
+
+  for (const { locator, label } of links) {
+    await expect(locator).toBeVisible()
+
+    // Verify link text is not white — catches the transparent-header CSS
+    // cascade bug where color:white on the header leaks into the menu panel.
+    const color = await locator.evaluate(el =>
+      window.getComputedStyle(el).color
+    )
+    expect(color, `${label} link must not be white`).not.toBe('rgb(255, 255, 255)')
+
+    Log.ok(label)
+  }
 }
 
 export const assertMenuClosesOnMenClick = async (page: Page) => {
