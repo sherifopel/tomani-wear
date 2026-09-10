@@ -107,6 +107,13 @@ header[data-transparent="true"] [data-testid="nav-main-row"] svg,
 header[data-transparent="true"] [data-testid="nav-links"] svg {
   color: white;
 }
+/* Mobile menu panel always has a white background — force black text.
+   !important is intentional: the transparent-header rule above must not
+   leak white text into the panel no matter what the cascade resolves to. */
+[data-testid="mobile-menu"] a,
+[data-testid="mobile-menu"] button {
+  color: black !important;
+}
 
 @keyframes searchSlideDown {
   from { opacity: 0; transform: translateY(-6px); }
