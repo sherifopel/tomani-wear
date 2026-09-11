@@ -15,7 +15,8 @@
     "test:nav": "playwright test --grep @header",
     "publish-drafts": "tsx --env-file=.env.local scripts/publish-all-products.ts",
     "set-new-in": "tsx --env-file=.env.local scripts/set-new-in.ts",
-    "migrate-images": "tsx --env-file=.env.local scripts/migrate-images-to-cloudinary.ts"
+    "migrate-images": "tsx --env-file=.env.local scripts/migrate-images-to-cloudinary.ts",
+    "migrate:sanity": "tsx --env-file=.env.local scripts/migrate-cloudinary-to-sanity.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
