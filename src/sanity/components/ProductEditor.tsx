@@ -72,11 +72,10 @@ const inputStyle: React.CSSProperties = {
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type SanityImageAsset = { _ref?: string }
+type SanityImageAsset = { _type?: string; _ref?: string }
 type ProductImage = {
-  _key: string
-  cloudinaryUrl?: string
-  image?: { asset?: SanityImageAsset; hotspot?: unknown }
+  _key:   string
+  image?: { _type?: string; asset?: SanityImageAsset; hotspot?: unknown }
   isMain?: boolean
 }
 type ColorItem = { _key: string; colorName?: string; colorHex?: string }
@@ -233,31 +232,24 @@ export function ProductEditor(props: ObjectInputProps) {
     if (!imageFiles.length) return
     setUploadProgress({ done: 0, total: imageFiles.length })
 
-    // Hardcoded because Sanity Studio's Vite bundler doesn't inject NEXT_PUBLIC_*
-    // env vars — these are intentionally public (unsigned upload, no secret exposed).
-    const cloudName    = 'o9wmvrnu'
-    const uploadPreset = 'tomanni-products'
-
     let done = 0
-    const assets = await Promise.all(
-      imageFiles.map(async (file) => {
-        const body = new FormData()
-        body.append('file', file)
-        body.append('upload_preset', uploadPreset)
-        const res  = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, { method: 'POST', body })
-        const data = await res.json() as { secure_url?: string; error?: { message: string } }
-        if (data.error) throw new Error(`Cloudinary error: ${data.error.message}`)
-        done++
-        setUploadProgress({ done, total: imageFiles.length })
-        return data as { secure_url: string }
+    // Upload sequentially — Sanity free tier has a per-minute upload limit
+    const assets = []
+    for (const file of imageFiles) {
+      const asset = await client.assets.upload('image', file, {
+        filename:    file.name,
+        contentType: file.type || 'image/jpeg',
       })
-    )
+      done++
+      setUploadProgress({ done, total: imageFiles.length })
+      assets.push(asset)
+    }
 
     const isFirstUpload = currentProductImages.length === 0
     const newImages: ProductImage[] = assets.map((asset, i) => ({
-      _key:         `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}${i}`,
-      cloudinaryUrl: asset.secure_url.replace('/upload/', '/upload/w_1400,f_auto,q_85/'),
-      isMain:       isFirstUpload && i === 0,
+      _key:   `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}${i}`,
+      image:  { _type: 'image', asset: { _type: 'reference', _ref: asset._id } },
+      isMain: isFirstUpload && i === 0,
     }))
 
     onChange(set([...currentProductImages, ...newImages], ['productImages']))
@@ -534,8 +526,7 @@ export function ProductEditor(props: ObjectInputProps) {
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {currentProductImages.map((img, idx) => {
-                const url    = img.cloudinaryUrl
-                  ?? (img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null)
+                const url    = img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null
                 const isMain = !!img.isMain
                 const isFirst = idx === 0
                 const isLast  = idx === currentProductImages.length - 1

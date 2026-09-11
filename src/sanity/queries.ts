@@ -17,16 +17,12 @@ export const NEW_IN_PRODUCTS_QUERY = groq`*[_type == "product" && ("new-in" in c
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].cloudinaryUrl,
-    productImages[0].cloudinaryUrl,
     productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
     productImages[0].image.asset->url + ${IMG_CARD},
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
   "hoverImage": coalesce(
-    productImages[isMain != true][0].cloudinaryUrl,
-    productImages[1].cloudinaryUrl,
     productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
     productImages[1].image.asset->url + ${IMG_CARD}
   ),
@@ -46,16 +42,12 @@ export const PRODUCTS_QUERY = groq`*[_type == "product"] | order(orderRank asc) 
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].cloudinaryUrl,
-    productImages[0].cloudinaryUrl,
     productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
     productImages[0].image.asset->url + ${IMG_CARD},
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
   "hoverImage": coalesce(
-    productImages[isMain != true][0].cloudinaryUrl,
-    productImages[1].cloudinaryUrl,
     productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
     productImages[1].image.asset->url + ${IMG_CARD}
   ),
@@ -79,16 +71,12 @@ export const PRODUCTS_BY_CATEGORY_QUERY = groq`*[_type == "product"
   compareAtPrice,
   inStock,
   "image": coalesce(
-    productImages[isMain == true][0].cloudinaryUrl,
-    productImages[0].cloudinaryUrl,
     productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
     productImages[0].image.asset->url + ${IMG_CARD},
     image.asset->url + ${IMG_CARD},
     gallery[0].asset->url + ${IMG_CARD}
   ),
   "hoverImage": coalesce(
-    productImages[isMain != true][0].cloudinaryUrl,
-    productImages[1].cloudinaryUrl,
     productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
     productImages[1].image.asset->url + ${IMG_CARD}
   ),
@@ -105,12 +93,12 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
   sections[enabled != false] {
     _key,
     title,
-    "imageMobile":  coalesce(focalPoints.imageMobileCloudinaryUrl,  focalPoints.imageMobile.asset->url  + "?w=800&auto=format&fit=max&q=85"),
-    "imageTablet":  coalesce(focalPoints.imageTabletCloudinaryUrl,  coalesce(focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1200&auto=format&fit=max&q=85"),
-    "imageDesktop": coalesce(focalPoints.imageDesktopCloudinaryUrl, coalesce(focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1600&auto=format&fit=max&q=85"),
-    "imageXl":      coalesce(focalPoints.imageXlCloudinaryUrl,      coalesce(focalPoints.imageXl.asset->url,      focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url, focalPoints.imageMobile.asset->url) + "?w=1920&auto=format&fit=max&q=85"),
-    "videoUrl":        coalesce(focalPoints.videoCloudinaryUrl,        focalPoints.video.asset->url),
-    "videoDesktopUrl": coalesce(focalPoints.videoDesktopCloudinaryUrl, focalPoints.videoDesktop.asset->url),
+    "imageMobile":  focalPoints.imageMobile.asset->url  + "?w=800&auto=format&fit=max&q=75",
+    "imageTablet":  coalesce(focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1200&auto=format&fit=max&q=75",
+    "imageDesktop": coalesce(focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url,  focalPoints.imageMobile.asset->url) + "?w=1440&auto=format&fit=max&q=75",
+    "imageXl":      coalesce(focalPoints.imageXl.asset->url,      focalPoints.imageDesktop.asset->url, focalPoints.imageTablet.asset->url, focalPoints.imageMobile.asset->url) + "?w=1440&auto=format&fit=max&q=75",
+    "videoUrl":        focalPoints.video.asset->url,
+    "videoDesktopUrl": focalPoints.videoDesktop.asset->url,
     "audioUrl":        audio.asset->url,
     audioStart,
     audioSnippetLength,
@@ -158,16 +146,12 @@ export const HOME_SECTIONS_QUERY = groq`*[_type == "homePage"][0] {
         sizes,
         shoeSizes,
         "image": coalesce(
-          productImages[isMain == true][0].cloudinaryUrl,
-          productImages[0].cloudinaryUrl,
           productImages[isMain == true][0].image.asset->url + ${IMG_CARD},
           productImages[0].image.asset->url + ${IMG_CARD},
           image.asset->url + ${IMG_CARD},
           gallery[0].asset->url + ${IMG_CARD}
         ),
         "hoverImage": coalesce(
-          productImages[isMain != true][0].cloudinaryUrl,
-          productImages[1].cloudinaryUrl,
           productImages[isMain != true][0].image.asset->url + ${IMG_CARD},
           productImages[1].image.asset->url + ${IMG_CARD}
         )
@@ -183,8 +167,6 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   price,
   compareAtPrice,
   "image": coalesce(
-    productImages[isMain == true][0].cloudinaryUrl,
-    productImages[0].cloudinaryUrl,
     productImages[isMain == true][0].image.asset->url + ${IMG_PDP},
     productImages[0].image.asset->url + ${IMG_PDP},
     image.asset->url + ${IMG_PDP},
@@ -198,7 +180,7 @@ export const PRODUCT_BY_SLUG_QUERY = groq`*[_type == "product" && slug.current =
   ),
   "gallery": select(
     defined(productImages[0]) => productImages[isMain != true][]{
-      "url": coalesce(cloudinaryUrl, image.asset->url + ${IMG_PDP}),
+      "url": image.asset->url + ${IMG_PDP},
       "hotspot": image.hotspot
     },
     defined(gallery[0]) => gallery[]{
