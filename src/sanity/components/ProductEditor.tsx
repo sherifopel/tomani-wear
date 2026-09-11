@@ -74,8 +74,7 @@ const inputStyle: React.CSSProperties = {
 
 type SanityImageAsset = { _type?: string; _ref?: string }
 type ProductImage = {
-  _key: string
-  cloudinaryUrl?: string
+  _key:   string
   image?: { _type?: string; asset?: SanityImageAsset; hotspot?: unknown }
   isMain?: boolean
 }
@@ -527,8 +526,7 @@ export function ProductEditor(props: ObjectInputProps) {
             </span>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 8 }}>
               {currentProductImages.map((img, idx) => {
-                const url    = img.cloudinaryUrl
-                  ?? (img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null)
+                const url    = img.image?.asset?._ref ? assetRefToUrl(img.image.asset._ref) : null
                 const isMain = !!img.isMain
                 const isFirst = idx === 0
                 const isLast  = idx === currentProductImages.length - 1
