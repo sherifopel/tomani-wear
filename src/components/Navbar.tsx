@@ -89,7 +89,7 @@ export default async function Navbar() {
               href={link.href}
               data-testid={`nav-${link.label.toLowerCase().replace(/\s+/g, '-')}-link`}
               style={{ '--link-underline-color': link.underlineColor } as React.CSSProperties}
-              className={`nav-link-underline text-[14px] font-light transition-colors whitespace-nowrap ${
+              className={`nav-link-underline text-[14px] font-normal transition-colors whitespace-nowrap ${
                 link.accent
                   ? 'text-[var(--brand-red)] hover:opacity-70'
                   : 'hover:text-gray-500'
