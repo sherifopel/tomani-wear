@@ -7,6 +7,7 @@
 
 ## Backlog — Store Features
 
+- [ ] Multi-currency switcher (NGN / USD / GBP) — WIP on branch `feat/currency-switcher` (#60)
 - [ ] Fix PostHog authorized URLs — Installation Health warning: no authorized URLs configured
 - [ ] Abandoned cart emails — recover lost sales
 - [ ] Email capture at checkout — build a mailing list
