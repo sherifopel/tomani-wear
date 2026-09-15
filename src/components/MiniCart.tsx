@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { X, Trash2, Plus, Minus } from 'lucide-react'
 import { useCart } from '@/hooks/useCart'
 
@@ -63,7 +62,8 @@ export default function MiniCart() {
         >
           <div className="relative aspect-square w-16 shrink-0 overflow-hidden bg-gray-50 rounded-md">
             {item.image ? (
-              <Image src={item.image} alt={item.name} fill className="object-cover" sizes="64px" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={item.image} alt={item.name} className="absolute inset-0 w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-gray-100" />
             )}
