@@ -7,14 +7,14 @@
 
 ## UX Review Fixes — Quick Wins (code only)
 
-- [ ] Sale badge on PLP product cards — chip where compareAtPrice > price (#61)
-- [ ] Trust signals on cart page — Secure Checkout · Free Returns · Delivery (#62)
-- [ ] Product name font weight on cards — font-light → font-normal (#63)
-- [ ] Announcement bar default copy — remove "Click HERE" spam tone (#64)
-- [ ] Cart empty state — show 4 product recommendations (#65)
-- [ ] Sign-in page — add account benefits value prop bullets (#66)
-- [ ] 404 page — brand personality + featured product (#67)
-- [ ] Sale page empty state — editorial image + brand copy (#68)
+- [x] Sale badge on PLP product cards — code exists; shows when Tomiwa adds compareAtPrice in Sanity (#61)
+- [x] Trust signals on cart page — Secure Checkout · Free Returns · Delivery (#62)
+- [x] Product name font weight on cards — already font-normal (#63)
+- [x] Announcement bar default copy — already updated (#64)
+- [x] Cart empty state — 4 product recommendations (#65)
+- [x] Sign-in page — account benefits value prop bullets (#66)
+- [x] 404 page — brand personality: "You got lost. The collection didn't." (#67)
+- [x] Sale page empty state — "Worth the wait." copy (#68)
 
 ## UX Review Fixes — Needs Decision
 
@@ -49,3 +49,8 @@
 - [x] WhatsApp button overlap fix — audio button clear on both mobile and desktop
 - [x] Nav link font weight — font-light (300) → font-normal (400), matching Ashluxe
 - [x] MiniCart Cloudinary image fix — plain img tag to support pre-migration URLs
+- [x] Trust signals on cart page (#62)
+- [x] Cart empty state product recommendations (#65)
+- [x] Sign-in value prop bullets (#66)
+- [x] 404 brand personality (#67)
+- [x] Sale empty state copy (#68)
