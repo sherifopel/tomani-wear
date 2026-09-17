@@ -165,9 +165,9 @@ export default async function ProductsPage({
               <p className="text-[11px] tracking-[0.2em] uppercase text-gray-500">
                 {pageTitle}
               </p>
-              <h2 className="text-3xl font-light tracking-wide text-black">Coming Soon</h2>
+              <h2 className="text-3xl font-light tracking-wide text-black">Worth the wait.</h2>
               <p className="text-sm text-gray-500 max-w-xs text-center leading-relaxed">
-                We&apos;re working on something for this collection. Check back soon.
+                New pieces are on the way. Explore the full collection in the meantime.
               </p>
               <Link
                 href="/products"

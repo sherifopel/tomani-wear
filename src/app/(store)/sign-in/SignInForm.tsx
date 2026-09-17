@@ -126,6 +126,17 @@ export default function SignInForm({ callbackUrl }: { callbackUrl: string }) {
             Privacy Policy
           </a>
         </p>
+
+        <div className="mt-8 pt-8 border-t border-neutral-100">
+          <p className="text-[10px] text-neutral-400 text-center mb-4 uppercase tracking-wider">Members get</p>
+          <ul className="space-y-2.5">
+            {['Free delivery on every order', 'Track and manage your orders', 'Early access to new drops'].map((benefit) => (
+              <li key={benefit} className="flex items-center gap-2.5 text-xs text-neutral-500">
+                <span className="text-black text-[10px]">✦</span> {benefit}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )
