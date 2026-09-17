@@ -12,18 +12,24 @@ export default function StoreNotFound() {
       <Breadcrumbs crumbs={CRUMBS} testId="not-found-breadcrumb" />
 
       <div className="flex flex-col items-center text-center py-20 md:py-28">
+        <p className="text-[10px] tracking-[0.25em] uppercase text-gray-400 mb-4">
+          404 — Page Not Found
+        </p>
+
         <h1
-          className="text-2xl md:text-3xl font-bold tracking-[0.2em]"
+          className="text-3xl md:text-4xl font-light tracking-wide"
           data-testid="not-found-heading"
         >
-          404 Error — Page Not Found
+          You got lost.
+          <br />
+          <span className="font-medium">The collection didn&apos;t.</span>
         </h1>
 
         <p
-          className="mt-5 text-sm text-gray-500 max-w-sm leading-relaxed"
+          className="mt-5 text-sm text-gray-500 max-w-xs leading-relaxed"
           data-testid="not-found-message"
         >
-          Uh oh, looks like the page you are looking for has moved or no longer exists.
+          This page doesn&apos;t exist — but everything else is right where you left it.
         </p>
 
         <div className="mt-10 flex flex-col sm:flex-row gap-4" data-testid="not-found-ctas">

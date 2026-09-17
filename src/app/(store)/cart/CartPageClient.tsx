@@ -1,0 +1,243 @@
+'use client'
+
+import Link from 'next/link'
+import { Trash2, Minus, Plus, Lock, Package, Truck } from 'lucide-react'
+import { useCart } from '@/hooks/useCart'
+import Breadcrumbs from '@/components/Breadcrumbs'
+
+type FeaturedProduct = {
+  _id: string
+  name: string
+  slug: string
+  price: number
+  image: string | null
+}
+
+type Props = {
+  featuredProducts: FeaturedProduct[]
+}
+
+const TrustSignals = () => (
+  <div className="flex items-center justify-center gap-3 mt-4 flex-wrap">
+    <span className="flex items-center gap-1 text-[10px] text-gray-400 tracking-wide uppercase">
+      <Lock size={10} strokeWidth={1.5} /> Secure Checkout
+    </span>
+    <span className="text-gray-200 text-xs">·</span>
+    <span className="flex items-center gap-1 text-[10px] text-gray-400 tracking-wide uppercase">
+      <Package size={10} strokeWidth={1.5} /> Free Returns
+    </span>
+    <span className="text-gray-200 text-xs">·</span>
+    <span className="flex items-center gap-1 text-[10px] text-gray-400 tracking-wide uppercase">
+      <Truck size={10} strokeWidth={1.5} /> 3–5 Days
+    </span>
+  </div>
+)
+
+export default function CartPageClient({ featuredProducts }: Props) {
+  const { items, totalItems, totalPrice, removeItem, increment, decrement, clearCart } = useCart()
+
+  const isPreview = process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview'
+
+  // ── Empty state ──────────────────────────────────────────────────────────────
+  if (items.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto px-6 py-10" data-testid="cart-empty">
+        <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
+
+        <div className="min-h-[40vh] flex flex-col items-center justify-center gap-6">
+          <p className="text-sm text-gray-500">Your cart is empty</p>
+          <Link
+            href="/products"
+            className="px-8 py-3 bg-black text-white border border-black text-xs btn-wipe"
+            data-testid="cart-start-shopping"
+          >
+            Start Shopping
+          </Link>
+        </div>
+
+        {featuredProducts.length > 0 && (
+          <div className="border-t border-gray-100 pt-10 mt-2">
+            <p className="text-[11px] tracking-[0.15em] uppercase text-gray-400 text-center mb-6">
+              You might like
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {featuredProducts.map((p) => (
+                <Link key={p._id} href={`/products/${p.slug}`} className="group block">
+                  <div className="aspect-[3/4] bg-gray-50 overflow-hidden mb-2">
+                    {p.image && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    )}
+                  </div>
+                  <p className="text-[12px] font-normal leading-tight">{p.name}</p>
+                  <p className="text-[12px] text-gray-500 mt-0.5">₦{p.price.toLocaleString()}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  // ── Filled cart ──────────────────────────────────────────────────────────────
+  return (
+    <div className="max-w-5xl mx-auto px-6 py-10 pb-28 md:pb-10" data-testid="cart-page">
+
+      <Breadcrumbs crumbs={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
+
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-medium text-center">Shopping Cart</h1>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-xs text-gray-500">
+            {totalItems} {totalItems === 1 ? 'item' : 'items'}
+          </p>
+          {isPreview && (
+            <>
+              <span className="text-gray-300">·</span>
+              <button
+                onClick={clearCart}
+                className="text-xs text-gray-500 hover:text-black transition-colors duration-200 underline underline-offset-2"
+                data-testid="cart-clear-all"
+              >
+                Clear cart
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      <div className="md:grid md:grid-cols-[1fr_300px] md:gap-16 md:items-start">
+
+        {/* ── Items list ── */}
+        <ul data-testid="cart-items">
+          {items.map((item) => (
+            <li
+              key={`${item.productId}-${item.size}`}
+              className="py-6 flex gap-4 border-b border-gray-100"
+              data-testid="cart-item"
+            >
+              {/* Square thumbnail */}
+              <div className="relative aspect-square w-24 md:w-28 shrink-0 bg-gray-50 overflow-hidden border border-gray-100 rounded-md">
+                {item.image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-100" />
+                )}
+              </div>
+
+              {/* Right column: name top, controls + price bottom */}
+              <div className="flex flex-col flex-1 min-w-0 justify-between gap-3">
+
+                {/* Name + size */}
+                <div>
+                  <p className="text-sm font-light leading-snug" data-testid="cart-item-name">
+                    {item.name}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1" data-testid="cart-item-size">
+                    Size: {item.size}
+                    {item.colorName && ` · ${item.colorName}`}
+                  </p>
+                </div>
+
+                {/* Stepper + price */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center" data-testid="cart-item-qty">
+                    <button
+                      onClick={() => item.quantity === 1
+                        ? removeItem(item.productId, item.size)
+                        : decrement(item.productId, item.size)
+                      }
+                      data-testid="cart-quantity-decrement"
+                      aria-label={item.quantity === 1 ? 'Remove item' : 'Decrease quantity'}
+                      className="h-8 w-8 flex items-center justify-center hover:opacity-50 transition-opacity duration-200"
+                    >
+                      {item.quantity === 1
+                        ? <Trash2 size={14} strokeWidth={1.5} />
+                        : <Minus size={14} strokeWidth={1.5} />
+                      }
+                    </button>
+                    <span className="min-w-[28px] text-center text-sm select-none">{item.quantity}</span>
+                    <button
+                      onClick={() => increment(item.productId, item.size)}
+                      data-testid="cart-quantity-increment"
+                      aria-label="Increase quantity"
+                      className="h-8 w-8 flex items-center justify-center hover:opacity-50 transition-opacity duration-200"
+                    >
+                      <Plus size={14} strokeWidth={1.5} />
+                    </button>
+                  </div>
+
+                  <p className="text-sm font-medium whitespace-nowrap" data-testid="cart-item-price">
+                    ₦{(item.price * item.quantity).toLocaleString()}
+                  </p>
+                </div>
+
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        {/* ── Order summary — hidden on mobile (shown in sticky bar instead) ── */}
+        <div className="hidden md:block mt-10 md:mt-0 bg-gray-50 p-6 space-y-4" data-testid="cart-order-summary">
+          <p className="text-xs font-medium" data-testid="cart-summary-heading">Order Summary</p>
+
+          <div className="flex justify-between text-xs text-gray-500" data-testid="cart-summary-shipping-row">
+            <span>Shipping</span>
+            <span data-testid="cart-shipping">Calculated at checkout</span>
+          </div>
+
+          <div className="border-t border-gray-200 pt-4 space-y-3">
+            <div className="flex justify-between text-sm" data-testid="cart-summary-subtotal-row">
+              <span className="text-gray-500">Subtotal</span>
+              <span data-testid="cart-subtotal">₦{totalPrice.toLocaleString()}</span>
+            </div>
+
+            <div className="flex justify-between text-sm font-medium" data-testid="cart-summary-total-row">
+              <span>Total</span>
+              <span data-testid="cart-total">₦{totalPrice.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <Link
+            href="/checkout"
+            className="block w-full py-4 bg-black text-white border border-black text-xs font-medium text-center btn-wipe"
+            data-testid="cart-checkout-button"
+          >
+            Checkout
+          </Link>
+
+          <TrustSignals />
+        </div>
+
+      </div>
+
+      {/* ── Sticky checkout bar — mobile only ── */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 px-6 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm font-medium">Total</span>
+          <span className="text-sm font-medium">₦{totalPrice.toLocaleString()}</span>
+        </div>
+        <Link
+          href="/checkout"
+          className="block w-full py-4 bg-black text-white border border-black text-xs font-medium text-center btn-wipe"
+          data-testid="cart-checkout-button-mobile"
+        >
+          Checkout
+        </Link>
+        <TrustSignals />
+      </div>
+
+    </div>
+  )
+}
