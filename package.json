@@ -16,7 +16,8 @@
     "publish-drafts": "tsx --env-file=.env.local scripts/publish-all-products.ts",
     "set-new-in": "tsx --env-file=.env.local scripts/set-new-in.ts",
     "migrate-images": "tsx --env-file=.env.local scripts/migrate-images-to-cloudinary.ts",
-    "migrate:sanity": "tsx --env-file=.env.local scripts/migrate-cloudinary-to-sanity.ts"
+    "migrate:sanity": "tsx --env-file=.env.local scripts/migrate-cloudinary-to-sanity.ts",
+    "prepare": "husky"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.2",
@@ -52,12 +53,14 @@
     "@axe-core/playwright": "^4.12.1",
     "@playwright/test": "^1.61.0",
     "@sanity/client": "^8.4.0",
+    "@tailwindcss/oxide-darwin-arm64": "4.3.1",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "husky": "^9.1.7",
     "lightningcss-darwin-arm64": "^1.32.0",
     "lightningcss-darwin-x64": "1.32.0",
     "playwright-final-summary-reporter": "github:sherifopel/playwright-final-summary-reporter",

@@ -1,0 +1,7 @@
+# 1. Branch name must match feat|fix|task/TW-<issue>-description (dev and main exempt).
+node scripts/check-branch-name.mjs
+
+# 2. Production build must pass. Ported from the old native .git/hooks/pre-push,
+#    which stopped running when husky took over core.hooksPath.
+echo "🔨 Running production build before push..."
+pnpm build
