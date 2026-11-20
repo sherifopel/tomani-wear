@@ -85,7 +85,7 @@ test.describe('Checkout — mobile', { tag: ['@tomanni', '@checkout', '@mobile']
   })
 })
 
-test.describe('Checkout smoke', { tag: ['@tomanni-smoke', '@checkout', '@desktop'] }, () => {
+test.describe('Checkout smoke', { tag: ['@smoke', '@checkout', '@desktop'] }, () => {
   test('Should render the checkout form with all fields and summary', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await checkoutPage.seedCart(page)

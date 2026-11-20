@@ -51,7 +51,7 @@ test.describe('PLP — mobile', { tag: ['@tomanni', '@plp', '@mobile'] }, () => 
   test('Should show price in Naira on mobile',     async ({ page }) => { await plpPage.assertCardPriceInNaira(page) })
 })
 
-test.describe('PLP smoke — Desktop', { tag: ['@tomanni-smoke', '@plp', '@desktop'] }, () => {
+test.describe('PLP smoke — Desktop', { tag: ['@smoke', '@plp', '@desktop'] }, () => {
   test('Should render PLP with product grid on desktop', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await plpPage.navigate(page, baseURL!)
@@ -59,7 +59,7 @@ test.describe('PLP smoke — Desktop', { tag: ['@tomanni-smoke', '@plp', '@deskt
   })
 })
 
-test.describe('PLP smoke — Mobile', { tag: ['@tomanni-smoke', '@plp', '@mobile'] }, () => {
+test.describe('PLP smoke — Mobile', { tag: ['@smoke', '@plp', '@mobile'] }, () => {
   test('Should render PLP with product grid on mobile', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await plpPage.navigate(page, baseURL!)

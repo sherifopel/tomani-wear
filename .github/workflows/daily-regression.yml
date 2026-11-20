@@ -42,9 +42,12 @@ jobs:
         run: pnpm exec playwright install-deps chromium
 
       - name: Run regression tests against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Chrome"
+        # TEST_ENV=dev resolves baseURL from the environment registry
+        # (e2e/utils/environment.ts) instead of a hardcoded URL here —
+        # --project=chromium also runs its "setup" dependency first.
+        run: pnpm exec playwright test --grep "@tomanni" --project=chromium
         env:
-          BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
+          TEST_ENV: dev
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           LOG_LEVEL: silent
 
@@ -92,9 +95,9 @@ jobs:
         run: pnpm exec playwright install-deps webkit
 
       - name: Run regression tests against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project="Desktop Safari"
+        run: pnpm exec playwright test --grep "@tomanni" --project=webkit
         env:
-          BASE_URL: https://tomani-wear-git-dev-tomanni-wear.vercel.app
+          TEST_ENV: dev
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           LOG_LEVEL: silent
 

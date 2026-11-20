@@ -39,11 +39,14 @@ test.describe('Cart — guest cart merge on sign-in', { tag: ['@tomanni', '@cart
   })
 
   test('Saved DB items are added to local cart after merge', async ({ page, baseURL }) => {
-    // On Desktop Safari WebKit + Playwright, localStorage writes inside Promise .then()
+    // On WebKit + Playwright, localStorage writes inside Promise .then()
     // callbacks don't update what page.evaluate() reads back — a known Playwright/WebKit
     // context quirk. The merge logic is correct: test 5 (badge) confirms React state updates,
-    // and this test passes on Chrome + Mobile Safari where localStorage reads are reliable.
-    test.skip(test.info().project.name === 'Desktop Safari', 'localStorage reads unreliable in Playwright Desktop Safari WebKit — covered by Chrome + Mobile Safari')
+    // and this test passes on Chrome. KNOWN GAP since the terraform step-7 project rename
+    // (2026-11-20): this used to also be covered by the Mobile Safari project, which didn't
+    // hit the quirk — that project is gone (browsers only now, no devices[...]), so this
+    // assertion currently has zero WebKit coverage. Flagged in the terraform plan.
+    test.skip(test.info().project.name === 'webkit', 'localStorage reads unreliable in Playwright WebKit — no coverage until this quirk is worked around, see comment above')
 
     const guest = mergePage.guestCartItem()
     const saved = mergePage.savedCartItem()
@@ -60,8 +63,8 @@ test.describe('Cart — guest cart merge on sign-in', { tag: ['@tomanni', '@cart
   })
 
   test('Duplicate items have quantities combined not duplicated', async ({ page, baseURL }) => {
-    // Same Desktop Safari localStorage quirk as above — skip on that project only.
-    test.skip(test.info().project.name === 'Desktop Safari', 'localStorage reads unreliable in Playwright Desktop Safari WebKit — covered by Chrome + Mobile Safari')
+    // Same WebKit localStorage quirk as above, same known gap — skip on that project only.
+    test.skip(test.info().project.name === 'webkit', 'localStorage reads unreliable in Playwright WebKit — no coverage until this quirk is worked around, see comment above')
 
     const guest = mergePage.guestCartItem()
     const serverCopy = { ...guest, quantity: 3 }

@@ -51,7 +51,7 @@ test.describe('PDP — 404 for unknown slug', { tag: ['@tomanni', '@pdp'] }, () 
 })
 
 // prettier-ignore
-test.describe('PDP smoke — Desktop', { tag: ['@tomanni-smoke', '@pdp', '@desktop'] }, () => {
+test.describe('PDP smoke — Desktop', { tag: ['@smoke', '@pdp', '@desktop'] }, () => {
   test('Should render PDP with name, price, image and description', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')
@@ -60,7 +60,7 @@ test.describe('PDP smoke — Desktop', { tag: ['@tomanni-smoke', '@pdp', '@deskt
 })
 
 // prettier-ignore
-test.describe('PDP smoke — Mobile', { tag: ['@tomanni-smoke', '@pdp', '@mobile'] }, () => {
+test.describe('PDP smoke — Mobile', { tag: ['@smoke', '@pdp', '@mobile'] }, () => {
   test('Should render PDP with name, price and image on mobile', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await pdpPage.navigate(page, baseURL!, 'tmn-royal-crest-hoodie')

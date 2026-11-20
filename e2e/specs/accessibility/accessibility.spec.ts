@@ -53,7 +53,7 @@ for (const pg of PAGES) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('A11y Smoke — Desktop', { tag: ['@tomanni-smoke', '@a11y', '@desktop'] }, () => {
+test.describe('A11y Smoke — Desktop', { tag: ['@smoke', '@a11y', '@desktop'] }, () => {
   test('Should have no WCAG 2.1 AA violations on the homepage', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await a11y.navigate(page, baseURL!, '/')

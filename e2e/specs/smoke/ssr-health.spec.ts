@@ -29,7 +29,7 @@ test.describe('SSR health — key routes render without JS crashes', { tag: ['@t
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('SSR health Smoke', { tag: ['@tomanni-smoke', '@smoke'] }, () => {
+test.describe('SSR health Smoke', { tag: ['@smoke'] }, () => {
   test('Should render Homepage without a blank page or JS error', async ({ page, baseURL }) => {
     smokePage.listenForJSErrors(page)
     await smokePage.navigateTo(page, baseURL!, '/')

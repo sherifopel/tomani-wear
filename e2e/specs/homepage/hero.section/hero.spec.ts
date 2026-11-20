@@ -78,7 +78,7 @@ test.describe('Homepage hero responsive images — Mobile', { tag: ['@tomanni', 
 // ─────────────────────────────────────────────────────────────────────────────
 
 // prettier-ignore
-test.describe('Homepage smoke — Desktop', { tag: ['@tomanni-smoke', '@homepage', '@hero', '@desktop'] }, () => {
+test.describe('Homepage smoke — Desktop', { tag: ['@smoke', '@homepage', '@hero', '@desktop'] }, () => {
   test('Should render homepage with hero, CTA and featured products', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await homePage.navigate(page, baseURL!)
@@ -89,7 +89,7 @@ test.describe('Homepage smoke — Desktop', { tag: ['@tomanni-smoke', '@homepage
 })
 
 // prettier-ignore
-test.describe('Homepage smoke — Mobile', { tag: ['@tomanni-smoke', '@homepage', '@hero', '@mobile'] }, () => {
+test.describe('Homepage smoke — Mobile', { tag: ['@smoke', '@homepage', '@hero', '@mobile'] }, () => {
   test('Should render homepage with hero, CTA and featured products', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')
     await homePage.navigate(page, baseURL!)

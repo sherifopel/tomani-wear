@@ -16,6 +16,35 @@ test.describe('Homepage header — Desktop', { tag: ['@tomanni', '@homepage', '@
 })
 
 // prettier-ignore
+test.describe('Homepage desktop dropdown', { tag: ['@tomanni', '@homepage', '@header', '@desktop', '@nav'] }, () => {
+  test.beforeEach(async ({ page, baseURL }) => {
+    // Hover-triggered dropdown is a desktop-only interaction (the nav itself
+    // is CSS-hidden below the md breakpoint). No project emulates touch since
+    // the terraform step-7 config change (browsers only, no devices[...]), so
+    // the touch-device skip this used to need no longer applies — removed
+    // 2026-11-20.
+    await util.setDeviceMode(page, 'desktop')
+    await homePage.navigate(page, baseURL!)
+  })
+
+  // Regression test for the transparent-header CSS leak: the header starts
+  // transparent (white text) over the hero, and that white-text rule was
+  // bleeding into the "Men"/"Women" dropdown flyouts, which sit on their own
+  // white background — making the category labels invisible (white-on-white).
+  test('Men dropdown categories should be legible over the transparent hero header', async ({ page }) => {
+    const { desktopNav } = headerPage.headerSelectors(page)
+    await headerPage.openDesktopDropdown(page, desktopNav.men)
+    await headerPage.assertDesktopDropdownLinksVisible(desktopNav.men, 'Men')
+  })
+
+  test('Women dropdown categories should be legible over the transparent hero header', async ({ page }) => {
+    const { desktopNav } = headerPage.headerSelectors(page)
+    await headerPage.openDesktopDropdown(page, desktopNav.women)
+    await headerPage.assertDesktopDropdownLinksVisible(desktopNav.women, 'Women')
+  })
+})
+
+// prettier-ignore
 test.describe('Homepage header — Mobile', { tag: ['@tomanni', '@homepage', '@header', '@mobile'] }, () => {
   test.beforeEach(async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'mobile')

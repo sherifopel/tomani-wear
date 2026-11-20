@@ -49,7 +49,7 @@ test.describe('404 page — mobile', { tag: ['@tomanni', '@not-found', '@mobile'
   })
 })
 
-test.describe('404 smoke', { tag: ['@tomanni-smoke', '@not-found'] }, () => {
+test.describe('404 smoke', { tag: ['@smoke', '@not-found'] }, () => {
   test('Should show navbar, 404 content and footer on an unknown URL', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await notFoundPage.navigate(page, baseURL!)

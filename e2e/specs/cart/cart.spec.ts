@@ -52,7 +52,7 @@ test.describe('Cart — empty state — Mobile', { tag: ['@tomanni', '@cart', '@
 })
 
 // prettier-ignore
-test.describe('Cart smoke', { tag: ['@tomanni-smoke', '@cart'] }, () => {
+test.describe('Cart smoke', { tag: ['@smoke', '@cart'] }, () => {
   test('Should render the cart page and show empty state', async ({ page, baseURL }) => {
     await util.setDeviceMode(page, 'desktop')
     await page.goto(baseURL!, { waitUntil: 'domcontentloaded' })
