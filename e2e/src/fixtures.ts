@@ -11,8 +11,7 @@ type CustomFixtures = {
   cartPage: typeof Barrel.cartPage
   cartMergePage: typeof Barrel.cartMergePage
   checkoutPage: typeof Barrel.checkoutPage
-  headerPage: typeof Barrel.headerPage
-  homePage: typeof Barrel.homePage
+  home: typeof Barrel.home
   notFoundPage: typeof Barrel.notFoundPage
   pdpPage: typeof Barrel.pdpPage
   plpPage: typeof Barrel.plpPage
@@ -41,14 +40,13 @@ export const test = base.extend<CustomFixtures>({
 
   // ─── Page object fixtures — raw module passthrough ───────────────────────────
   // One per barrel export, same name. Specs pass `page` (and any other
-  // context) explicitly at the call site, e.g. headerPage.openMobileMenu(page).
+  // context) explicitly at the call site, e.g. home.openMobileMenu(page).
   accessibilityPage: async ({}, use) => { await use(Barrel.accessibilityPage) },
   accountPage: async ({}, use) => { await use(Barrel.accountPage) },
   cartPage: async ({}, use) => { await use(Barrel.cartPage) },
   cartMergePage: async ({}, use) => { await use(Barrel.cartMergePage) },
   checkoutPage: async ({}, use) => { await use(Barrel.checkoutPage) },
-  headerPage: async ({}, use) => { await use(Barrel.headerPage) },
-  homePage: async ({}, use) => { await use(Barrel.homePage) },
+  home: async ({}, use) => { await use(Barrel.home) },
   notFoundPage: async ({}, use) => { await use(Barrel.notFoundPage) },
   pdpPage: async ({}, use) => { await use(Barrel.pdpPage) },
   plpPage: async ({}, use) => { await use(Barrel.plpPage) },
