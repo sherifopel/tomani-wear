@@ -61,7 +61,12 @@ module.exports = { buildRun }
 if (require.main === module) {
   try {
     const run = buildRun(process.argv.slice(2))
-    const cli = resolve(dirname(require.resolve('playwright/package.json')), 'cli.js')
+    // Substitution: this repo depends on @playwright/test, not the bare
+    // `playwright` package the reference resolves. Under pnpm's strict
+    // linking, `playwright` (a nested dependency of @playwright/test, not a
+    // direct one) isn't hoisted to the root, so `playwright/package.json`
+    // doesn't resolve here even though the CLI itself is present either way.
+    const cli = resolve(dirname(require.resolve('@playwright/test/package.json')), 'cli.js')
     const result = spawnSync(process.execPath, [cli, ...run.args], {
       env: run.env,
       stdio: 'inherit',
