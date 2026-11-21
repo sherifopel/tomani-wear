@@ -21,6 +21,7 @@ export const pdpSelectors = (page: Page) => ({
   sizeSelector: page.locator('[data-testid="pdp-size-selector"]'),
   addToCart:    page.locator('[data-testid="pdp-add-to-cart"]'),
   sizeError:    page.locator('[data-testid="pdp-size-error"]'),
+  sizeButtons:  page.locator('[data-testid^="pdp-size-"]'),
   sizeButton:   (size: string) => page.locator(`[data-testid="pdp-size-${size}"]`),
 
 })
@@ -56,6 +57,16 @@ export const clickAddToCart = async (page: Page) => {
   await expect(addToCart).toBeVisible()
   await addToCart.click()
   Log.ok('Add to Cart clicked')
+}
+
+// Picks whichever size comes first rather than a named one — used by journeys
+// that just need any in-stock size, not a specific size's own behaviour.
+export const selectFirstAvailableSize = async (page: Page) => {
+  const { sizeButtons } = pdpSelectors(page)
+  Log.info('selecting the first available size')
+  await expect(sizeButtons.first()).toBeVisible()
+  await sizeButtons.first().click()
+  Log.ok('first available size selected')
 }
 
 // =============================================================================
@@ -137,6 +148,12 @@ export const assertSoldOut = async (page: Page) => {
 export const assertNotFoundStatus = (response: Response | null) => {
   expect(response?.status()).toBe(404)
   Log.ok('404 status confirmed for unknown slug')
+}
+
+export const assertAddedToCartConfirmation = async (page: Page) => {
+  const { addToCart } = pdpSelectors(page)
+  await expect(addToCart).toContainText(/added/i, { timeout: 3000 })
+  Log.ok('Add to Cart shows the "added" confirmation')
 }
 
 export const assertMobileSmoke = async (page: Page) => {
