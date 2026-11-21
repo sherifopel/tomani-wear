@@ -185,11 +185,12 @@ export const assertHeroHeightForViewport = async (
     document.body.removeChild(testDiv)
 
     if (cw < 768) {
-      // Mobile: height = calc(100svh - --header-height)
-      const headerH = parseFloat(
-        getComputedStyle(document.documentElement).getPropertyValue('--header-height') || '84'
-      )
-      return Math.round(svh - headerH)
+      // Mobile: always fills the visible screen (globals.css "div.home-section-banner"
+      // under the max-width:767px rule) — no header-height subtraction. This used to
+      // subtract --header-height; the CSS was deliberately changed to always fill the
+      // screen on mobile (see its comment) and this test was never updated to match,
+      // undetected because it had never actually run against a live server before.
+      return Math.round(svh)
     } else {
       // Tablet+: height = var(--h, 80vh) — read the actual vh% from the element's inline style
       const banner = document.querySelector('[data-testid="home-hero-section"]') as HTMLElement | null
