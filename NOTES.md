@@ -915,3 +915,23 @@ Each of these came from a written standard (the "Terraform Vault") that says exa
 **Playwright fixtures are dependency injection, like Express middleware** — a fixture is a function that hands a test whatever it asks for by name (`async ({ page, headerPage }) => {...}`), the same way Express middleware attaches things to `req` before your route handler runs. The difference: Playwright fixtures are declared once centrally (`test.extend({...})`) and every test file just asks for the names it needs — nothing has to import or wire them up itself.
 
 **Git can't track an empty folder** — git tracks files, not folders; a folder with nothing in it simply doesn't exist as far as git is concerned. The common workaround is a `.gitkeep` — a conventionally-empty file whose only job is to give git something to track, so the folder actually shows up after a clone or checkout.
+
+## Session 13 — Playwright Terraform: Every Journey Folder Migrated (steps 13-17)
+
+### What we built
+
+Moved all 9 spec folders into the numbered structure (`e2e/tests/01-home/` etc.), rewrote all 11 page objects into the three-layer shape (selectors, then actions, then assertions, each under its own banner), reshaped every spec to four standard describes (Desktop, Mobile, Smoke Desktop, Smoke Mobile), and built `e2e/pages/JourneyFlows.ts` for the one flow that genuinely spans two pages (adding a product to cart from its PDP). One commit per folder.
+
+### Why we built it that way
+
+This was the big one: turning "tests exist and pass" into "tests are organised the way the convention describes, so the next person (or me in six months) can find anything in ten seconds." Doing it folder by folder, verifying each one for real before moving to the next, meant mistakes got caught one at a time instead of multiplying across all nine.
+
+### Key concepts learned
+
+**A test nobody ever runs will drift from reality and nobody will know** — three different, real bugs surfaced simply by running tests against the actual site for the first time: a mobile hero-height formula that stopped matching the CSS months ago, a "product count" test checking for UI that doesn't exist anymore, and two genuine accessibility violations (text too light to read) that a disabled CI job had already flagged back in July but nobody had seen fail with their own eyes since. None of these were caused by this session's changes — they were just waiting to be found. **The lesson: a passing test suite that never actually runs isn't proof of anything. Run it for real, regularly, against a real server.**
+
+**`git rm`/`git add` with multiple files fails ALL of them if even one is bad** — most commands process arguments independently (if one file has a typo'd name, the others still work). Git's staging commands aren't like that: pass five files and one is invalid (already deleted, or a folder that no longer exists), and *none* of the five get staged, with only a one-line error naming the bad one. This bit us three times in this session — a commit message would describe new files that, it turned out, were silently never added. The fix each time: check `git log`/`git status` actually match what you think happened, don't just trust that the command returning without a scary error means it did everything you asked.
+
+**Splitting a function that both acts and asserts** — several helper functions did a click *and* a check in one go (e.g. "click pay, then confirm the error shows"). Splitting these into one function that only interacts and one that only checks isn't pedantry: it means the action can be reused in a different check later, and a failure message says clearly "the click didn't work" vs "the result was wrong" instead of both being lumped into one.
+
+**A green test suite can still be running against the wrong thing** — partway through, every test started failing with "element not found," but the actual bug was that something unrelated was already using the one port our dev server wanted, so Playwright was quietly testing a completely different app that happened to also be a valid, working website. The fix was starting our real server properly — but the deeper habit is: when *everything* breaks at once in a weird way, check the obvious boring thing (is the right server even running?) before assuming the code is wrong.
