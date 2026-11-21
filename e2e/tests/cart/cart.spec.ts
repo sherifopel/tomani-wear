@@ -1,6 +1,6 @@
 import { test }      from '../../src/fixtures'
 import * as cartPage  from '../../page-objects/cart.page'
-import * as pdpPage   from '../../page-objects/pdp.page'
+import * as pdpPage   from '../../pages/03-PdpPage'
 import * as util      from '../../helpers/utils'
 
 // prettier-ignore
