@@ -1,4 +1,4 @@
-import { test }     from '../../fixtures/fixtures'
+import { test }     from '../../src/fixtures'
 import * as plpPage  from '../../page-objects/plp.page'
 import * as util     from '../../helpers/utils'
 

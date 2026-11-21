@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test'
-import * as Barrel from '../index'
+import * as Barrel from './index'
 
 // =============================================================================
 // TYPES

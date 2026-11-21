@@ -1,4 +1,4 @@
-import { test }           from '../../fixtures/fixtures'
+import { test }           from '../../src/fixtures'
 import * as notFoundPage  from '../../page-objects/not-found.page'
 import * as util          from '../../helpers/utils'
 

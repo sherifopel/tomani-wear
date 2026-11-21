@@ -1,4 +1,4 @@
-import { test }      from '../../fixtures/fixtures'
+import { test }      from '../../src/fixtures'
 import * as cartPage  from '../../page-objects/cart.page'
 import * as pdpPage   from '../../page-objects/pdp.page'
 import * as util      from '../../helpers/utils'

@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/fixtures'
+import { test, expect } from '../../src/fixtures'
 import * as accountPage  from '../../page-objects/account.page'
 import * as util         from '../../helpers/utils'
 

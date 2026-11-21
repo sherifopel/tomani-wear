@@ -61,7 +61,7 @@ const localReporters: ReporterDescription[] = [
 // — so CI and local share the same two custom reporters for now.
 
 export default defineConfig({
-  testDir: './e2e/specs',
+  testDir: './e2e/tests',
   tsconfig: './e2e/tsconfig.json',
   // TEST_SUITE=axe narrows to the accessibility folder, same as the
   // reference's `12-accessibility`. This repo's folder isn't numbered yet

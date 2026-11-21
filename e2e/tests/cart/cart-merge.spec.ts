@@ -1,4 +1,4 @@
-import { test }          from '../../fixtures/fixtures'
+import { test }          from '../../src/fixtures'
 import * as mergePage    from '../../page-objects/cart-merge.page'
 import * as util         from '../../helpers/utils'
 

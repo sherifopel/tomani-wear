@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/fixtures'
+import { test, expect } from '../../src/fixtures'
 import { Log }           from 'logr-kit'
 
 // =============================================================================

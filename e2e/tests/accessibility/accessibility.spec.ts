@@ -1,4 +1,4 @@
-import { test } from '../../fixtures/fixtures'
+import { test } from '../../src/fixtures'
 import * as a11y from '../../page-objects/accessibility.page'
 import * as util from '../../helpers/utils'
 

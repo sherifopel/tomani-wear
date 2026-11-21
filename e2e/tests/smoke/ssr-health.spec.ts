@@ -1,4 +1,4 @@
-import { test }      from '../../fixtures/fixtures'
+import { test }      from '../../src/fixtures'
 import * as smokePage from '../../page-objects/smoke.page'
 
 // ─── Routes to guard against SSR crashes ─────────────────────────────────────

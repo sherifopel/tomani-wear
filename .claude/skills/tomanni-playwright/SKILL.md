@@ -273,8 +273,8 @@ test('Should show the hero section', async ({ page, home }) => {
 import * as homePage from '../../page-objects/home.page'
 ```
 
-Every page object gets an export in `e2e/index.ts` and a fixture of the same name in
-`src/fixtures.ts`.
+Every page object gets an export in `e2e/src/index.ts` and a fixture of the same name in
+`e2e/src/fixtures.ts`.
 
 > Migration note: specs import page object modules directly today. Converting them is
 > plan steps 11 and 14.
@@ -321,15 +321,21 @@ await util.setDeviceMode(page, 'tablet')   // 768 x 1024
 
 ## File locations
 
-Current:
+Current (2026-11-21, after plan step 12):
 
 ```
 e2e/
-  fixtures/fixtures.ts      re-exports src/fixtures.ts
-  helpers/utils.ts          setDeviceMode, navigateTo
-  index.ts                  page object barrel
+  src/
+    fixtures.ts              every spec imports `test` from here
+    index.ts                 page object barrel
+  helpers/utils.ts            setDeviceMode, navigateTo
   page-objects/*.page.ts
-  specs/<feature>/
+  tests/
+    00-global/                real: environment-health.spec.ts
+    01-home/ .. 08-accessibility/   empty, .gitkeep only — see tests/NUMBERING.md
+    <feature>/                 the old, still-live flat folders (homepage/, plp/, pdp/,
+                                cart/, checkout/, account/, not-found/, accessibility/,
+                                smoke/) — not yet moved into the numbered folders above
 ```
 
 Target, plan steps 12 to 18:
