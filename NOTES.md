@@ -879,3 +879,39 @@ Tool: WebAIM Contrast Checker. Check every muted/placeholder text colour before 
 **Why `validate()` should return the errors map** — if `validate()` only returns `boolean`, the caller can't know *which* fields failed without re-checking. Returning the errors object means one source of truth: the caller gets the errors, sets them in state, AND uses them for scroll targeting — all from one function call.
 
 **Database columns vs localStorage** — localStorage is per-browser. The database is per-user. When you're logged in, your cart comes from the DB. If the DB doesn't store a field (like `imageUrl`), it's gone the moment the cart is loaded from the server — even if it was in localStorage before. Always check: "if this data comes from the DB, does the DB schema have a column for it?"
+
+## Session 12 — Playwright Terraform: Scripts, Fixtures & Journey Folders (steps 9-12)
+
+### What we built
+
+**45 npm test scripts, one per environment/browser/suite combo**
+- `test:local`, `test:dev`, `test:prod` as the base, then `:webkit`/`:firefox`/`:all`, `:desktop:<browser>`/`:mobile:<browser>`, `:smoke[:browser]`, `:axe` — all wired through `e2e/scripts/run-playwright.cjs`, which turns `--environment`/`--suite`/`--viewport`/`--browser` flags into the `TEST_ENV`/`TEST_SUITE`/`TEST_VIEWPORT` env vars the config reads
+- Removed `test:e2e`, `test:smoke`, `test:nav` — all superseded by the new `test:<env>:*` names
+
+**Fixed the test runner for pnpm**
+- Every new script failed with "Cannot find module 'playwright/package.json'" — the runner was looking for a package (`playwright`) this repo doesn't directly depend on. We only have `@playwright/test`, and pnpm's strict linking doesn't expose a dependency's own nested dependencies at the top level
+- Fix: resolve `@playwright/test/package.json` instead — same CLI file sits right next to it
+
+**Completed the page-object barrel and gave each one a fixture**
+- `e2e/index.ts` (one export line per page object) was missing 2 of 11 files, and — bigger problem — nothing imported it at all
+- The real fixtures file was `src/fixtures.ts`, sitting inside the Next.js app's own production `src/` folder, and it only cleared the cart after each test — zero page-object fixtures
+- Merged everything into `e2e/fixtures/fixtures.ts` (the file every spec already imports `test` from), deleted the stray `src/fixtures.ts`
+- Specs still import page objects directly for now rather than destructuring them as fixtures — that's a bigger, separate rewrite saved for later
+
+**Numbered journey folders — skeleton only**
+- Created `e2e/specs/00-global` through `08-accessibility`, each empty except a placeholder file, with the full old-folder → new-number mapping written down in `e2e/specs/NUMBERING.md`
+- Nothing has moved yet — that's the next piece of work
+
+### Why we built it that way
+
+Each of these came from a written standard (the "Terraform Vault") that says exactly what a well-organised Playwright suite should look like, built from experience on larger client projects. Rather than guessing at a sensible structure, we're matching that standard piece by piece and writing down every place Tomani Wear's actual setup has to differ (no Slack workspace, no wishlist feature, etc.) and why.
+
+### Key concepts learned
+
+**pnpm's strict `node_modules` vs npm's flatter one** — with npm, installing package A (which itself depends on package B) often leaves B sitting at the top level of `node_modules` too, so code can `require('B')` even without declaring it. pnpm deliberately doesn't do this — it only lets your code resolve packages you actually listed in `package.json`. This is safer (stops you accidentally relying on a dependency's dependency, which could vanish in an update) but it means a script written for an npm project can fail under pnpm for exactly this reason.
+
+**A barrel file nobody imports is dead code, even if it's correct** — `e2e/index.ts` had the right shape (one export per page object) but zero effect on the running test suite, because no other file ever imported from it. Correct code that nothing calls is the same as no code at all — always check "does anything actually use this?" before trusting a file's existence as proof it's doing something.
+
+**Playwright fixtures are dependency injection, like Express middleware** — a fixture is a function that hands a test whatever it asks for by name (`async ({ page, headerPage }) => {...}`), the same way Express middleware attaches things to `req` before your route handler runs. The difference: Playwright fixtures are declared once centrally (`test.extend({...})`) and every test file just asks for the names it needs — nothing has to import or wire them up itself.
+
+**Git can't track an empty folder** — git tracks files, not folders; a folder with nothing in it simply doesn't exist as far as git is concerned. The common workaround is a `.gitkeep` — a conventionally-empty file whose only job is to give git something to track, so the folder actually shows up after a clone or checkout.
