@@ -7,7 +7,7 @@ import * as Barrel from './index'
 
 type CustomFixtures = {
   accessibilityPage: typeof Barrel.accessibilityPage
-  accountPage: typeof Barrel.accountPage
+  account: typeof Barrel.account
   cart: typeof Barrel.cart
   checkout: typeof Barrel.checkout
   home: typeof Barrel.home
@@ -42,7 +42,7 @@ export const test = base.extend<CustomFixtures>({
   // One per barrel export, same name. Specs pass `page` (and any other
   // context) explicitly at the call site, e.g. home.openMobileMenu(page).
   accessibilityPage: async ({}, use) => { await use(Barrel.accessibilityPage) },
-  accountPage: async ({}, use) => { await use(Barrel.accountPage) },
+  account: async ({}, use) => { await use(Barrel.account) },
   cart: async ({}, use) => { await use(Barrel.cart) },
   checkout: async ({}, use) => { await use(Barrel.checkout) },
   home: async ({}, use) => { await use(Barrel.home) },

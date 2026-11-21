@@ -3,7 +3,7 @@
 // not-yet-converted ones keep their old xPage name and ../page-objects/*.page
 // path until their own terraform folder lands (steps 13-15, one at a time).
 export * as accessibilityPage from '../page-objects/accessibility.page'
-export * as accountPage       from '../page-objects/account.page'
+export * as account           from '../pages/06-AccountPage'
 export * as cart              from '../pages/04-CartPage'
 export * as checkout          from '../pages/05-CheckoutPage'
 export * as home              from '../pages/01-HomePage'
