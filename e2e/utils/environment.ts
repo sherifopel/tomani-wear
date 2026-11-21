@@ -79,15 +79,21 @@ export function getRunSettings(env: NodeJS.ProcessEnv = process.env): RunSetting
   const suite = env.TEST_SUITE ?? 'regression'
   const viewport = env.TEST_VIEWPORT ?? 'all'
 
-  if (!['regression', 'smoke'].includes(suite)) {
-    throw new Error(`Unknown TEST_SUITE "${suite}". Choose regression or smoke.`)
+  // 'stencil-smoke' dropped: BigCommerce Stencil-specific, no equivalent here.
+  if (!['regression', 'smoke', 'axe'].includes(suite)) {
+    throw new Error(`Unknown TEST_SUITE "${suite}". Choose regression, smoke, or axe.`)
   }
   if (!['all', 'desktop', 'mobile'].includes(viewport)) {
     throw new Error(`Unknown TEST_VIEWPORT "${viewport}". Choose all, desktop, or mobile.`)
   }
 
   const tags: string[] = []
-  if (suite !== 'regression') tags.push(`@${suite}`)
+  // Substitution: the reference pushes `@${suite}` (i.e. `@axe`) unconditionally.
+  // This repo's accessibility specs already carry `@a11y`, predating this step —
+  // mapped here rather than renaming every accessibility.spec.ts tag plus the
+  // reporter's matcher, which is outside this step's scope.
+  if (suite === 'axe') tags.push('@a11y')
+  else if (suite !== 'regression') tags.push(`@${suite}`)
   if (viewport !== 'all') tags.push(`@${viewport}`)
 
   const grep = tags.length

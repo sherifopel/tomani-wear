@@ -8,7 +8,16 @@ import { getRunSettings } from './e2e/utils/environment'
 // Resolve the run before importing specs. Unknown environments fail closed.
 const { environment, suite, viewport, grep } = getRunSettings()
 process.env.TEST_ENV = environment.name
-const isCI = process.env.CI === 'true' || process.env.CI === '1'
+const isCI = !!process.env.CI
+
+// Deviation: the reference loads `dotenv.config({ path: environment.envFile })`
+// here. Skipped — no spec or page object reads `process.env` directly (checked
+// by grep), so nothing in this repo needs it loaded into the test process yet,
+// and `dev`/`prod` have no `envFile` of their own. Calling dotenv.config with an
+// undefined path falls back to loading the repo-root `.env` (Prisma's
+// DATABASE_URL and friends) into every run, which is not what we want. Revisit
+// once a spec genuinely needs a per-environment credential and give dev/prod
+// their own env file at that point.
 
 // Vercel preview/dev base URL wins when CI supplies one (the dynamic per-PR
 // preview in particular can't live in the static registry below); otherwise
@@ -54,6 +63,18 @@ const localReporters: ReporterDescription[] = [
 export default defineConfig({
   testDir: './e2e/specs',
   tsconfig: './e2e/tsconfig.json',
+  // TEST_SUITE=axe narrows to the accessibility folder, same as the
+  // reference's `12-accessibility`. This repo's folder isn't numbered yet
+  // (steps 12/13 renumber it), so it's substituted with the current name.
+  // Deviation: the reference pairs this with a `testIgnore` that excludes
+  // accessibility from every *other* suite — ITS treats axe as fully separate
+  // from regression. Dropped that half: daily-regression.yml currently runs
+  // accessibility as part of its one regression job with no replacement axe
+  // job yet, so excluding it here would silently drop 13 tests × 3 projects
+  // from the default run (confirmed: 355 → 316 when tried). testMatch alone
+  // is additive — it only narrows when TEST_SUITE=axe is explicitly set —
+  // and is enough to make an isolated axe run possible for step 9.
+  testMatch: suite === 'axe' ? '**/accessibility/**/*.spec.ts' : '**/*.spec.ts',
   // grep is suite + viewport only here, not environment — see the deviation
   // note at the top of e2e/utils/environment.ts.
   grep,
