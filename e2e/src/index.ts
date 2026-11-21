@@ -5,7 +5,7 @@
 export * as accessibilityPage from '../page-objects/accessibility.page'
 export * as accountPage       from '../page-objects/account.page'
 export * as cart              from '../pages/04-CartPage'
-export * as checkoutPage      from '../page-objects/checkout.page'
+export * as checkout          from '../pages/05-CheckoutPage'
 export * as home              from '../pages/01-HomePage'
 export * as journey           from '../pages/JourneyFlows'
 export * as notFoundPage      from '../page-objects/not-found.page'

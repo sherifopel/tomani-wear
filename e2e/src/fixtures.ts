@@ -9,7 +9,7 @@ type CustomFixtures = {
   accessibilityPage: typeof Barrel.accessibilityPage
   accountPage: typeof Barrel.accountPage
   cart: typeof Barrel.cart
-  checkoutPage: typeof Barrel.checkoutPage
+  checkout: typeof Barrel.checkout
   home: typeof Barrel.home
   journey: typeof Barrel.journey
   notFoundPage: typeof Barrel.notFoundPage
@@ -44,7 +44,7 @@ export const test = base.extend<CustomFixtures>({
   accessibilityPage: async ({}, use) => { await use(Barrel.accessibilityPage) },
   accountPage: async ({}, use) => { await use(Barrel.accountPage) },
   cart: async ({}, use) => { await use(Barrel.cart) },
-  checkoutPage: async ({}, use) => { await use(Barrel.checkoutPage) },
+  checkout: async ({}, use) => { await use(Barrel.checkout) },
   home: async ({}, use) => { await use(Barrel.home) },
   journey: async ({}, use) => { await use(Barrel.journey) },
   notFoundPage: async ({}, use) => { await use(Barrel.notFoundPage) },
