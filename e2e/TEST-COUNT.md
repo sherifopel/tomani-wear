@@ -66,6 +66,40 @@ Chrome and Mobile Safari instead (`cart-merge.spec.ts`).
 
 So the honest reading is **107 unique tests actually execute**, not 118.
 
+## Recount — Terraform step 8 (2026-11-21)
+
+**Command:** `npx playwright test --list --reporter=line`
+**Branch:** `task/TW-74-terraform-stage-0-1`, after step 7 (commit `1b6b2c5`)
+
+```
+Total: 355 tests in 14 files
+```
+
+**+1 test, +1 file versus the step-5 baseline (354 in 13 files). Fully explained:**
+
+The three browser projects (`chromium`/`webkit`/`firefox`, renamed from `Desktop
+Chrome`/`Desktop Safari`/`Mobile Safari`) still declare the same **118 unique tests
+across the same 13 spec files**, with an identical per-file breakdown to the table
+above — confirmed by re-running `--list --project=chromium` and diffing against this
+file's "Per spec file" table, which matched exactly. 118 × 3 = 354, unchanged.
+
+The +1 is `e2e/specs/00-global/environment-health.spec.ts`, added in step 7 as the new
+`setup` project's preflight check. It runs once — the `setup` project is a dependency
+gate for the other three (`dependencies: ['setup']`), not a fourth parallel browser
+lane, so it is not multiplied by 3. 354 + 1 = 355.
+
+**Skip audit, re-checked:** the 11 permanently-skipped tests (account × 9, cart.spec × 1,
+pdp/product-detail × 1) are untouched — same specs, same `test.skip()` calls, not
+touched by step 7. The **conditional** skip count changed from 3 to 2: the touch-skip in
+`header.spec.ts` (`project.name === 'Mobile Safari'`) was deleted outright in step 7
+since no project emulates touch anymore, so that test now actually runs on all three
+projects instead of being skipped on one. The two localStorage conditional skips in
+`cart-merge.spec.ts` survive, renamed from `'Desktop Safari'` to `'webkit'` — same
+behaviour, new project name. Net effect: one more test now executes than before
+(header's touch-skip gone), partially offset by the pre-existing, now-undocumented-no-more
+WebKit coverage gap on the two cart-merge tests (see step-7 notes in the Terraform Vault
+plan) — neither changes the **declared** count above, only what actually runs.
+
 ## Rules for this file
 - `--list` only lists. It proves nothing passes.
 - Re-run the exact command above and compare before and after any structural change.
