@@ -14,7 +14,7 @@ type CustomFixtures = {
   home: typeof Barrel.home
   notFoundPage: typeof Barrel.notFoundPage
   pdpPage: typeof Barrel.pdpPage
-  plpPage: typeof Barrel.plpPage
+  plp: typeof Barrel.plp
   smokePage: typeof Barrel.smokePage
 }
 
@@ -49,7 +49,7 @@ export const test = base.extend<CustomFixtures>({
   home: async ({}, use) => { await use(Barrel.home) },
   notFoundPage: async ({}, use) => { await use(Barrel.notFoundPage) },
   pdpPage: async ({}, use) => { await use(Barrel.pdpPage) },
-  plpPage: async ({}, use) => { await use(Barrel.plpPage) },
+  plp: async ({}, use) => { await use(Barrel.plp) },
   smokePage: async ({}, use) => { await use(Barrel.smokePage) },
 })
 
