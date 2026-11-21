@@ -64,8 +64,8 @@ export default defineConfig({
   testDir: './e2e/tests',
   tsconfig: './e2e/tsconfig.json',
   // TEST_SUITE=axe narrows to the accessibility folder, same as the
-  // reference's `12-accessibility`. This repo's folder isn't numbered yet
-  // (steps 12/13 renumber it), so it's substituted with the current name.
+  // reference's `12-accessibility`. This repo numbers it `08-accessibility`
+  // (step 12's consecutive numbering, not the reference's fixed slot).
   // Deviation: the reference pairs this with a `testIgnore` that excludes
   // accessibility from every *other* suite — ITS treats axe as fully separate
   // from regression. Dropped that half: daily-regression.yml currently runs
@@ -74,7 +74,7 @@ export default defineConfig({
   // from the default run (confirmed: 355 → 316 when tried). testMatch alone
   // is additive — it only narrows when TEST_SUITE=axe is explicitly set —
   // and is enough to make an isolated axe run possible for step 9.
-  testMatch: suite === 'axe' ? '**/accessibility/**/*.spec.ts' : '**/*.spec.ts',
+  testMatch: suite === 'axe' ? '**/08-accessibility/**/*.spec.ts' : '**/*.spec.ts',
   // grep is suite + viewport only here, not environment — see the deviation
   // note at the top of e2e/utils/environment.ts.
   grep,

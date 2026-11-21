@@ -1,14 +1,14 @@
 // Page object barrel — KEEP IN ALPHABETICAL ORDER
-// Converted journeys use their short fixture name and live in ../pages/NN-*;
-// not-yet-converted ones keep their old xPage name and ../page-objects/*.page
-// path until their own terraform folder lands (steps 13-15, one at a time).
-export * as accessibilityPage from '../page-objects/accessibility.page'
-export * as account           from '../pages/06-AccountPage'
-export * as cart              from '../pages/04-CartPage'
-export * as checkout          from '../pages/05-CheckoutPage'
-export * as home              from '../pages/01-HomePage'
-export * as journey           from '../pages/JourneyFlows'
-export * as notFound          from '../pages/07-NotFoundPage'
-export * as pdp               from '../pages/03-PdpPage'
-export * as plp               from '../pages/02-PlpPage'
-export * as smokePage         from '../page-objects/smoke.page'
+// smokePage is the one journey not yet converted — it still keeps its old
+// xPage name and ../page-objects/*.page path until smoke/ssr-health.spec.ts's
+// own home (00-global, per e2e/tests/NUMBERING.md) is settled.
+export * as a11y      from '../pages/08-AccessibilityPage'
+export * as account   from '../pages/06-AccountPage'
+export * as cart      from '../pages/04-CartPage'
+export * as checkout  from '../pages/05-CheckoutPage'
+export * as home      from '../pages/01-HomePage'
+export * as journey   from '../pages/JourneyFlows'
+export * as notFound  from '../pages/07-NotFoundPage'
+export * as pdp       from '../pages/03-PdpPage'
+export * as plp       from '../pages/02-PlpPage'
+export * as smokePage from '../page-objects/smoke.page'
