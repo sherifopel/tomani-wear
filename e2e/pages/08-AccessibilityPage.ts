@@ -14,7 +14,7 @@ const AXE_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']
 // ACTIONS
 // =============================================================================
 
-export const navigate = async (page: Page, baseURL: string, path: string) => {
+export async function navigate(page: Page, baseURL: string, path: string) {
   Log.navigate(`${baseURL}${path}`)
   await page.goto(`${baseURL}${path}`, { waitUntil: 'domcontentloaded' })
   Log.ok('navigated')
@@ -24,7 +24,7 @@ export const navigate = async (page: Page, baseURL: string, path: string) => {
 // ASSERTIONS
 // =============================================================================
 
-export const assertNoA11yViolations = async (page: Page) => {
+export async function assertNoA11yViolations(page: Page) {
   Log.info('running axe-core WCAG 2.1 AA scan')
   const results = await new AxeBuilder({ page })
     .withTags(AXE_TAGS)

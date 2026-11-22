@@ -6,66 +6,70 @@ import { CART_ITEM }    from '../fixtures/cart.fixtures'
 // TEST DATA
 // =============================================================================
 
-export const testUser = () => ({
-  fullName: `Test User ${Date.now()}`,
-  email:    `test.${Date.now()}@tw-test.com`,
-  phone:    '+234 800 000 0000',
-  address:  '12 Ibadun Way',
-  city:     'Lagos',
-  state:    'Lagos State',
-})
+export function testUser() {
+  return {
+    fullName: `Test User ${Date.now()}`,
+    email:    `test.${Date.now()}@tw-test.com`,
+    phone:    '+234 800 000 0000',
+    address:  '12 Ibadun Way',
+    city:     'Lagos',
+    state:    'Lagos State',
+  }
+}
 
 // =============================================================================
 // SELECTOR FACTORY
 // =============================================================================
 
-export const checkoutSelectors = (page: Page) => ({
+export function checkoutSelectors(page: Page) {
+  return {
 
-  page:       page.locator('[data-testid="checkout-page"]'),
-  breadcrumb: page.locator('[data-testid="checkout-breadcrumb"]'),
+    page:       page.locator('[data-testid="checkout-page"]'),
+    breadcrumb: page.locator('[data-testid="checkout-breadcrumb"]'),
 
-  form: {
-    fullName: page.locator('[data-testid="checkout-full-name"]'),
-    email:    page.locator('[data-testid="checkout-email"]'),
-    phone:    page.locator('[data-testid="checkout-phone"]'),
-    address:  page.locator('[data-testid="checkout-address"]'),
-    city:     page.locator('[data-testid="checkout-city"]'),
-    state:    page.locator('[data-testid="checkout-state"]'),
-    country:  page.locator('[data-testid="checkout-country"]'),
-  },
+    form: {
+      fullName: page.locator('[data-testid="checkout-full-name"]'),
+      email:    page.locator('[data-testid="checkout-email"]'),
+      phone:    page.locator('[data-testid="checkout-phone"]'),
+      address:  page.locator('[data-testid="checkout-address"]'),
+      city:     page.locator('[data-testid="checkout-city"]'),
+      state:    page.locator('[data-testid="checkout-state"]'),
+      country:  page.locator('[data-testid="checkout-country"]'),
+    },
 
-  errors: {
-    fullName: page.locator('[data-testid="checkout-error-fullName"]'),
-    email:    page.locator('[data-testid="checkout-error-email"]'),
-    phone:    page.locator('[data-testid="checkout-error-phone"]'),
-    address:  page.locator('[data-testid="checkout-error-address"]'),
-    city:     page.locator('[data-testid="checkout-error-city"]'),
-    state:    page.locator('[data-testid="checkout-error-state"]'),
-  },
+    errors: {
+      fullName: page.locator('[data-testid="checkout-error-fullName"]'),
+      email:    page.locator('[data-testid="checkout-error-email"]'),
+      phone:    page.locator('[data-testid="checkout-error-phone"]'),
+      address:  page.locator('[data-testid="checkout-error-address"]'),
+      city:     page.locator('[data-testid="checkout-error-city"]'),
+      state:    page.locator('[data-testid="checkout-error-state"]'),
+    },
 
-  summary: {
-    section:  page.locator('[data-testid="checkout-section-summary"]'),
-    items:    page.locator('[data-testid="checkout-item"]'),
-    subtotal: page.locator('[data-testid="checkout-subtotal"]'),
-    delivery: page.locator('[data-testid="checkout-delivery"]'),
-    total:    page.locator('[data-testid="checkout-total"]'),
-  },
+    summary: {
+      section:  page.locator('[data-testid="checkout-section-summary"]'),
+      items:    page.locator('[data-testid="checkout-item"]'),
+      subtotal: page.locator('[data-testid="checkout-subtotal"]'),
+      delivery: page.locator('[data-testid="checkout-delivery"]'),
+      total:    page.locator('[data-testid="checkout-total"]'),
+    },
 
-  payButton:       page.locator('[data-testid="checkout-pay-button"]'),
-  payButtonMobile: page.locator('[data-testid="checkout-pay-button-mobile"]'),
-  mobileBar:       page.locator('[data-testid="checkout-mobile-bar"]'),
+    payButton:       page.locator('[data-testid="checkout-pay-button"]'),
+    payButtonMobile: page.locator('[data-testid="checkout-pay-button-mobile"]'),
+    mobileBar:       page.locator('[data-testid="checkout-mobile-bar"]'),
 
-  confirmation: {
-    heading: page.locator('[data-testid="order-confirmation-heading"]'),
-  },
+    confirmation: {
+      heading: page.locator('[data-testid="order-confirmation-heading"]'),
+    },
 
-})
+  }
+}
 
 // =============================================================================
 // ACTIONS
 // =============================================================================
 
-export const seedCart = async (page: Page) => {
+export async function seedCart(page: Page) {
   Log.info('seeding the cart before checkout')
   await page.addInitScript((item) => {
     localStorage.setItem('tomani-cart', JSON.stringify([item]))
@@ -73,27 +77,27 @@ export const seedCart = async (page: Page) => {
   Log.ok('cart seeded')
 }
 
-export const navigate = async (page: Page, baseURL: string) => {
+export async function navigate(page: Page, baseURL: string) {
   Log.navigate(`${baseURL}/checkout`)
   await page.goto(`${baseURL}/checkout`, { waitUntil: 'domcontentloaded' })
 }
 
-export const waitForForm = async (page: Page) => {
+export async function waitForForm(page: Page) {
   await page.waitForSelector('[data-testid="checkout-full-name"]')
 }
 
-export const waitForMobileForm = async (page: Page) => {
+export async function waitForMobileForm(page: Page) {
   await page.waitForSelector('[data-testid="checkout-pay-button-mobile"]')
 }
 
-export const fillForm = async (page: Page, overrides: Partial<{
+export async function fillForm(page: Page, overrides: Partial<{
   fullName: string
   email:    string
   phone:    string
   address:  string
   city:     string
   state:    string
-}> = {}) => {
+}> = {}) {
   const defaults = {
     fullName: 'Tomiwa Adeyemi',
     email:    'tomiwa@test.com',
@@ -114,14 +118,14 @@ export const fillForm = async (page: Page, overrides: Partial<{
   await form.state.fill(data.state);       Log.ok('state')
 }
 
-export const submitForm = async (page: Page) => {
+export async function submitForm(page: Page) {
   const { payButton } = checkoutSelectors(page)
   Log.info('submitting the checkout form (desktop pay button)')
   await payButton.click()
   Log.ok('checkout form submitted')
 }
 
-export const submitMobileForm = async (page: Page) => {
+export async function submitMobileForm(page: Page) {
   const { payButtonMobile } = checkoutSelectors(page)
   Log.info('submitting the checkout form (mobile pay bar)')
   await payButtonMobile.click()
@@ -132,11 +136,11 @@ export const submitMobileForm = async (page: Page) => {
 // PAYSTACK MOCK (bypasses cross-origin iframe via window hook)
 // =============================================================================
 
-export const mockOrdersApi = async (
+export async function mockOrdersApi(
   page: Page,
   orderNumber = 'TW-TEST-001',
   onRequest?: (body: unknown) => void,
-) => {
+) {
   Log.info('mocking /api/orders')
   await page.route('**/api/orders', async (route) => {
     if (onRequest) {
@@ -152,7 +156,7 @@ export const mockOrdersApi = async (
   Log.ok(`/api/orders mocked → orderNumber: ${orderNumber}`)
 }
 
-export const triggerPaystackSuccess = async (page: Page, ref = `TW-TEST-${Date.now()}`) => {
+export async function triggerPaystackSuccess(page: Page, ref = `TW-TEST-${Date.now()}`) {
   Log.info(`triggering Paystack success with ref: ${ref}`)
   // CheckoutForm exposes window.__paystackSuccess for non-production testing.
   // We wait for the hook to be registered (it mounts after React hydration).
@@ -171,18 +175,18 @@ export const triggerPaystackSuccess = async (page: Page, ref = `TW-TEST-${Date.n
 // ASSERTIONS
 // =============================================================================
 
-export const assertRedirectToCart = async (page: Page) => {
+export async function assertRedirectToCart(page: Page) {
   await expect(page).toHaveURL(/\/cart$/)
   Log.ok('redirected to /cart')
 }
 
-export const assertCheckoutPageVisible = async (page: Page) => {
+export async function assertCheckoutPageVisible(page: Page) {
   const { page: checkoutPageEl } = checkoutSelectors(page)
   await expect(checkoutPageEl).toBeVisible()
   Log.ok('checkout page visible')
 }
 
-export const assertFormVisible = async (page: Page) => {
+export async function assertFormVisible(page: Page) {
   Log.section('Checkout — form fields visible')
   const { form } = checkoutSelectors(page)
   await expect(form.fullName).toBeVisible(); Log.ok('full name field')
@@ -193,7 +197,7 @@ export const assertFormVisible = async (page: Page) => {
   await expect(form.state).toBeVisible();    Log.ok('state field')
 }
 
-export const assertSummaryVisible = async (page: Page) => {
+export async function assertSummaryVisible(page: Page) {
   const { summary } = checkoutSelectors(page)
   await expect(summary.section).toBeVisible()
   await expect(summary.subtotal).toBeVisible()
@@ -201,32 +205,32 @@ export const assertSummaryVisible = async (page: Page) => {
   Log.ok('order summary visible')
 }
 
-export const assertCartItemVisible = async (page: Page) => {
+export async function assertCartItemVisible(page: Page) {
   const { summary } = checkoutSelectors(page)
   await expect(summary.items.first()).toBeVisible()
   Log.ok('cart item in summary visible')
 }
 
-export const assertPayButtonVisible = async (page: Page) => {
+export async function assertPayButtonVisible(page: Page) {
   const { payButton } = checkoutSelectors(page)
   await expect(payButton).toBeVisible()
   await expect(payButton).toContainText('Pay')
   Log.ok('pay button visible')
 }
 
-export const assertGuestDeliveryFee = async (page: Page) => {
+export async function assertGuestDeliveryFee(page: Page) {
   const { summary } = checkoutSelectors(page)
   await expect(summary.delivery).toContainText('₦7,500')
   Log.ok('guest delivery fee shown as ₦7,500')
 }
 
-export const assertTotalAmount = async (page: Page, expected: string) => {
+export async function assertTotalAmount(page: Page, expected: string) {
   const { summary } = checkoutSelectors(page)
   await expect(summary.total).toContainText(expected)
   Log.ok(`total shows ${expected}`)
 }
 
-export const assertAllFieldErrorsVisible = async (page: Page) => {
+export async function assertAllFieldErrorsVisible(page: Page) {
   const { errors } = checkoutSelectors(page)
   await expect(errors.fullName).toBeVisible()
   await expect(errors.email).toBeVisible()
@@ -237,25 +241,25 @@ export const assertAllFieldErrorsVisible = async (page: Page) => {
   Log.ok('all required field errors shown')
 }
 
-export const assertEmailErrorVisible = async (page: Page) => {
+export async function assertEmailErrorVisible(page: Page) {
   const { errors } = checkoutSelectors(page)
   await expect(errors.email).toBeVisible()
   Log.ok('email validation error shown')
 }
 
-export const assertFullNameErrorVisible = async (page: Page) => {
+export async function assertFullNameErrorVisible(page: Page) {
   const { errors } = checkoutSelectors(page)
   await expect(errors.fullName).toBeVisible()
   Log.ok('full name error shown')
 }
 
-export const assertFullNameErrorCleared = async (page: Page) => {
+export async function assertFullNameErrorCleared(page: Page) {
   const { errors } = checkoutSelectors(page)
   await expect(errors.fullName).not.toBeVisible()
   Log.ok('full name error cleared')
 }
 
-export const assertMobileStickyBar = async (page: Page) => {
+export async function assertMobileStickyBar(page: Page) {
   const { mobileBar, payButtonMobile } = checkoutSelectors(page)
   await expect(mobileBar).toBeVisible()
   await expect(payButtonMobile).toBeVisible()
@@ -263,14 +267,14 @@ export const assertMobileStickyBar = async (page: Page) => {
   Log.ok('mobile sticky bar visible')
 }
 
-export const assertMobileEmailAndNameErrorsVisible = async (page: Page) => {
+export async function assertMobileEmailAndNameErrorsVisible(page: Page) {
   const { errors } = checkoutSelectors(page)
   await expect(errors.fullName).toBeVisible()
   await expect(errors.email).toBeVisible()
   Log.ok('mobile validation errors shown')
 }
 
-export const assertCheckoutSmoke = async (page: Page) => {
+export async function assertCheckoutSmoke(page: Page) {
   await assertFormVisible(page)
   await assertGuestDeliveryFee(page)
   await assertTotalAmount(page, '₦62,500')
@@ -278,17 +282,17 @@ export const assertCheckoutSmoke = async (page: Page) => {
   Log.ok('checkout smoke passed')
 }
 
-export const assertOrderConfirmed = async (page: Page) => {
+export async function assertOrderConfirmed(page: Page) {
   Log.section('Order confirmation — assert landing')
   await expect(page).toHaveURL(/\/order-confirmation/, { timeout: 60_000 })
   const { confirmation } = checkoutSelectors(page)
   await expect(confirmation.heading).toBeVisible(); Log.ok('order confirmation heading visible')
 }
 
-export const assertOrderCustomerDetails = (
+export function assertOrderCustomerDetails(
   capturedBody: Record<string, unknown> | null,
   user: { fullName: string; email: string },
-) => {
+) {
   expect(capturedBody).not.toBeNull()
   expect((capturedBody as unknown as { customerName: string }).customerName).toBe(user.fullName)
   expect((capturedBody as unknown as { customerEmail: string }).customerEmail).toBe(user.email)

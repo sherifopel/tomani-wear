@@ -9,9 +9,11 @@ import { Log } from 'logr-kit'
 // SELECTOR FACTORY
 // =============================================================================
 
-export const globalSelectors = (page: Page) => ({
-  bodyChildren: page.locator('body > *'),
-})
+export function globalSelectors(page: Page) {
+  return {
+    bodyChildren: page.locator('body > *'),
+  }
+}
 
 // Module-level WeakMap so each page instance tracks its own uncaught errors.
 // WeakMap means the entry is garbage-collected when the page is closed —
@@ -24,7 +26,7 @@ const pageErrors = new WeakMap<Page, string[]>()
 
 // Call this BEFORE navigating — registers the pageerror listener so no errors
 // that fire during page load are missed.
-export const listenForJSErrors = (page: Page): void => {
+export function listenForJSErrors(page: Page): void {
   Log.info('listening for uncaught JS errors')
   const errors: string[] = []
   pageErrors.set(page, errors)
@@ -32,7 +34,7 @@ export const listenForJSErrors = (page: Page): void => {
   Log.ok('listening')
 }
 
-export const navigateTo = async (page: Page, baseURL: string, path: string): Promise<void> => {
+export async function navigateTo(page: Page, baseURL: string, path: string) {
   Log.navigate(`${baseURL}${path}`)
   await page.goto(`${baseURL}${path}`, { waitUntil: 'domcontentloaded' })
 }
@@ -41,7 +43,7 @@ export const navigateTo = async (page: Page, baseURL: string, path: string): Pro
 // ASSERTIONS
 // =============================================================================
 
-export const assertPageNotBlank = async (page: Page, routeName: string): Promise<void> => {
+export async function assertPageNotBlank(page: Page, routeName: string) {
   const { bodyChildren } = globalSelectors(page)
   await expect(
     bodyChildren,
@@ -61,7 +63,7 @@ const BENIGN_ERRORS = [
   "navigator.storage.persisted",
 ]
 
-export const assertNoJSErrors = (page: Page, routeName: string): void => {
+export function assertNoJSErrors(page: Page, routeName: string): void {
   const errors = pageErrors.get(page) ?? []
   const real = errors.filter(msg => !BENIGN_ERRORS.some(b => msg.includes(b)))
   expect(

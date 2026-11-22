@@ -5,66 +5,68 @@ import { Log } from 'logr-kit'
 // SELECTOR FACTORY
 // =============================================================================
 
-export const homeSelectors = (page: Page) => ({
+export function homeSelectors(page: Page) {
+  return {
 
-  hero: {
-    section:     page.locator('[data-testid="home-hero-section"]').first(),
-    subtitle:    page.locator('[data-testid="home-hero-subtitle"]').first(),
-    heading:     page.locator('[data-testid="home-hero-heading"]').first(),
-    description: page.locator('[data-testid="home-hero-description"]').first(),
-    ctaButton:   page.locator('[data-testid="home-hero-cta-button"]').first(),
-    prevButton:  page.locator('[data-testid="home-carousel-prev-button"]'),
-    nextButton:  page.locator('[data-testid="home-carousel-next-button"]'),
-  },
+    hero: {
+      section:     page.locator('[data-testid="home-hero-section"]').first(),
+      subtitle:    page.locator('[data-testid="home-hero-subtitle"]').first(),
+      heading:     page.locator('[data-testid="home-hero-heading"]').first(),
+      description: page.locator('[data-testid="home-hero-description"]').first(),
+      ctaButton:   page.locator('[data-testid="home-hero-cta-button"]').first(),
+      prevButton:  page.locator('[data-testid="home-carousel-prev-button"]'),
+      nextButton:  page.locator('[data-testid="home-carousel-next-button"]'),
+    },
 
-  featured: {
-    section:           page.locator('[data-testid="home-featured-products"]').first(),
-    firstProductName:  page.locator('[data-testid="home-product-name-1"]').first(),
-    firstProductPrice: page.locator('[data-testid="home-product-price-1"]').first(),
-  },
+    featured: {
+      section:           page.locator('[data-testid="home-featured-products"]').first(),
+      firstProductName:  page.locator('[data-testid="home-product-name-1"]').first(),
+      firstProductPrice: page.locator('[data-testid="home-product-price-1"]').first(),
+    },
 
-  navBar: {
-    mainRow:         page.locator('[data-testid="nav-main-row"]'),
-    logo:            page.locator('[data-testid="nav-logo-link"]'),
-    searchButton:    page.locator('[data-testid="nav-search-button"]'),
-    accountButton:   page.locator('[data-testid="nav-account-button"]'),
-    cartButton:      page.locator('[data-testid="nav-cart-button"]'),   // desktop drawer button
-    cartLink:        page.locator('[data-testid="nav-cart-link"]'),     // mobile link to /cart
-    announcementBar: page.locator('[data-testid="nav-announcement-bar"]'),
-  },
+    navBar: {
+      mainRow:         page.locator('[data-testid="nav-main-row"]'),
+      logo:            page.locator('[data-testid="nav-logo-link"]'),
+      searchButton:    page.locator('[data-testid="nav-search-button"]'),
+      accountButton:   page.locator('[data-testid="nav-account-button"]'),
+      cartButton:      page.locator('[data-testid="nav-cart-button"]'),   // desktop drawer button
+      cartLink:        page.locator('[data-testid="nav-cart-link"]'),     // mobile link to /cart
+      announcementBar: page.locator('[data-testid="nav-announcement-bar"]'),
+    },
 
-  mobileMenu: {
-    openButton:  page.locator('[data-testid="mobile-menu-open-button"]'),
-    overlay:     page.locator('[data-testid="mobile-menu"]'),
-    closeButton: page.locator('[data-testid="mobile-menu-close-button"]'),
-  },
+    mobileMenu: {
+      openButton:  page.locator('[data-testid="mobile-menu-open-button"]'),
+      overlay:     page.locator('[data-testid="mobile-menu"]'),
+      closeButton: page.locator('[data-testid="mobile-menu-close-button"]'),
+    },
 
-  mobileLinks: {
-    newIn:       page.locator('[data-testid="mobile-menu-link-new-in"]'),
-    men:         page.locator('[data-testid="mobile-menu-link-men"]'),
-    women:       page.locator('[data-testid="mobile-menu-link-women"]'),
-    accessories: page.locator('[data-testid="mobile-menu-link-accessories"]'),
-    collections: page.locator('[data-testid="mobile-menu-link-collections"]'),
-    sale:        page.locator('[data-testid="mobile-menu-link-sale"]'),
-  },
+    mobileLinks: {
+      newIn:       page.locator('[data-testid="mobile-menu-link-new-in"]'),
+      men:         page.locator('[data-testid="mobile-menu-link-men"]'),
+      women:       page.locator('[data-testid="mobile-menu-link-women"]'),
+      accessories: page.locator('[data-testid="mobile-menu-link-accessories"]'),
+      collections: page.locator('[data-testid="mobile-menu-link-collections"]'),
+      sale:        page.locator('[data-testid="mobile-menu-link-sale"]'),
+    },
 
-  desktopNav: {
-    men:   page.locator('[data-testid="nav-men-link"]'),
-    women: page.locator('[data-testid="nav-women-link"]'),
-  },
+    desktopNav: {
+      men:   page.locator('[data-testid="nav-men-link"]'),
+      women: page.locator('[data-testid="nav-women-link"]'),
+    },
 
-})
+  }
+}
 
 // =============================================================================
 // ACTIONS
 // =============================================================================
 
-export const navigate = async (page: Page, baseURL: string) => {
+export async function navigate(page: Page, baseURL: string) {
   Log.navigate(baseURL + '/')
   await page.goto(baseURL + '/', { waitUntil: 'domcontentloaded' })
 }
 
-export const clickHeroCTA = async (page: Page) => {
+export async function clickHeroCTA(page: Page) {
   const { hero } = homeSelectors(page)
   Log.info('clicking the hero CTA')
   await expect(hero.ctaButton).toBeVisible()
@@ -72,7 +74,7 @@ export const clickHeroCTA = async (page: Page) => {
   Log.ok('hero CTA clicked')
 }
 
-export const clickNextSlide = async (page: Page) => {
+export async function clickNextSlide(page: Page) {
   const { hero } = homeSelectors(page)
   Log.info('clicking next carousel slide')
   await expect(hero.nextButton).toBeVisible()
@@ -80,7 +82,7 @@ export const clickNextSlide = async (page: Page) => {
   Log.ok('advanced to next slide')
 }
 
-export const clickPrevSlide = async (page: Page) => {
+export async function clickPrevSlide(page: Page) {
   const { hero } = homeSelectors(page)
   Log.info('clicking previous carousel slide')
   await expect(hero.prevButton).toBeVisible()
@@ -88,7 +90,7 @@ export const clickPrevSlide = async (page: Page) => {
   Log.ok('went back to previous slide')
 }
 
-export const openMobileMenu = async (page: Page) => {
+export async function openMobileMenu(page: Page) {
   const { mobileMenu } = homeSelectors(page)
   Log.info('opening the mobile menu')
   await expect(mobileMenu.openButton).toBeVisible()
@@ -97,7 +99,7 @@ export const openMobileMenu = async (page: Page) => {
   Log.ok('mobile menu open')
 }
 
-export const closeMobileMenu = async (page: Page) => {
+export async function closeMobileMenu(page: Page) {
   const { mobileMenu } = homeSelectors(page)
   Log.info('closing the mobile menu')
   await expect(mobileMenu.closeButton).toBeVisible()
@@ -114,7 +116,7 @@ export const closeMobileMenu = async (page: Page) => {
 const dropdownSubLinks = (trigger: ReturnType<typeof homeSelectors>['desktopNav']['men']) =>
   trigger.locator('xpath=..').locator('[data-testid^="nav-sub-"]')
 
-export const openDesktopDropdown = async (page: Page, item: 'men' | 'women') => {
+export async function openDesktopDropdown(page: Page, item: 'men' | 'women') {
   const { desktopNav } = homeSelectors(page)
   const trigger = desktopNav[item]
   Log.info(`opening the ${item} nav dropdown`)
@@ -130,7 +132,7 @@ export const openDesktopDropdown = async (page: Page, item: 'men' | 'women') => 
 // ASSERTIONS
 // =============================================================================
 
-export const assertHeroVisible = async (page: Page) => {
+export async function assertHeroVisible(page: Page) {
   Log.section('Hero — visible')
   const { hero } = homeSelectors(page)
   await expect(hero.section).toBeVisible()
@@ -141,7 +143,7 @@ export const assertHeroVisible = async (page: Page) => {
   Log.ok('subtitle')
 }
 
-export const assertHeroCTAVisible = async (page: Page) => {
+export async function assertHeroCTAVisible(page: Page) {
   Log.section('Hero — CTA')
   const { hero } = homeSelectors(page)
   await expect(hero.ctaButton).toBeVisible()
@@ -149,14 +151,14 @@ export const assertHeroCTAVisible = async (page: Page) => {
   Log.ok('Shop Now CTA')
 }
 
-export const assertHeroDescriptionVisible = async (page: Page) => {
+export async function assertHeroDescriptionVisible(page: Page) {
   Log.section('Hero — description')
   const { hero } = homeSelectors(page)
   await expect(hero.description).toBeVisible()
   Log.ok('description')
 }
 
-export const assertFeaturedProductsVisible = async (page: Page) => {
+export async function assertFeaturedProductsVisible(page: Page) {
   Log.section('Featured products')
   const { featured } = homeSelectors(page)
   await expect(featured.section).toBeVisible()
@@ -167,10 +169,10 @@ export const assertFeaturedProductsVisible = async (page: Page) => {
   Log.ok('first product price')
 }
 
-export const assertHeroHeightForViewport = async (
+export async function assertHeroHeightForViewport(
   page: Page,
   viewport: { width: number; height: number },
-) => {
+) {
   await page.setViewportSize(viewport)
   await page.reload()
   await page.waitForLoadState('domcontentloaded')
@@ -207,7 +209,7 @@ export const assertHeroHeightForViewport = async (
   Log.ok(`hero height ${box?.height}px ≈ ${expected}px`)
 }
 
-export const assertNavActionsVisible = async (page: Page) => {
+export async function assertNavActionsVisible(page: Page) {
   Log.section('Nav bar actions')
   const { navBar } = homeSelectors(page)
   await expect(navBar.searchButton).toBeVisible()
@@ -220,11 +222,11 @@ export const assertNavActionsVisible = async (page: Page) => {
   Log.ok('cart button/link')
 }
 
-export const assertMobileHeaderActionsVisible = async (page: Page) => {
+export async function assertMobileHeaderActionsVisible(page: Page) {
   await assertNavActionsVisible(page)
 }
 
-export const assertMobileMenuContents = async (page: Page) => {
+export async function assertMobileMenuContents(page: Page) {
   Log.section('Mobile header remains visible with menu open')
   const { mobileMenu, navBar } = homeSelectors(page)
   await expect(mobileMenu.closeButton).toBeVisible()
@@ -239,7 +241,7 @@ export const assertMobileMenuContents = async (page: Page) => {
   Log.ok('cart link (mobile)')
 }
 
-export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
+export async function assertMobileMenuDoesNotCoverHeader(page: Page) {
   Log.section('Mobile menu does not cover header')
   const { mobileMenu, navBar } = homeSelectors(page)
   await expect(mobileMenu.overlay).toBeVisible()
@@ -273,7 +275,7 @@ export const assertMobileMenuDoesNotCoverHeader = async (page: Page) => {
   expect(menuBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1)
 }
 
-export const assertMobileNavLinksVisible = async (page: Page) => {
+export async function assertMobileNavLinksVisible(page: Page) {
   Log.section('Mobile nav links')
   const { mobileLinks } = homeSelectors(page)
 
@@ -300,7 +302,7 @@ export const assertMobileNavLinksVisible = async (page: Page) => {
   }
 }
 
-export const assertDesktopDropdownLinksVisible = async (page: Page, item: 'men' | 'women') => {
+export async function assertDesktopDropdownLinksVisible(page: Page, item: 'men' | 'women') {
   const { desktopNav } = homeSelectors(page)
   const trigger = desktopNav[item]
   const label = item === 'men' ? 'Men' : 'Women'
@@ -326,14 +328,14 @@ export const assertDesktopDropdownLinksVisible = async (page: Page, item: 'men' 
   }
 }
 
-export const assertMenuClosesOnMenClick = async (page: Page) => {
+export async function assertMenuClosesOnMenClick(page: Page) {
   const { mobileLinks, mobileMenu } = homeSelectors(page)
   await mobileLinks.men.click()
   await expect(mobileMenu.overlay).not.toBeVisible()
   Log.ok('menu closed after men link click')
 }
 
-export const assertMenLinkNavigates = async (page: Page) => {
+export async function assertMenLinkNavigates(page: Page) {
   const { mobileLinks } = homeSelectors(page)
   await mobileLinks.men.click()
   await expect(page).toHaveURL(/\/products\?category=men$/)
@@ -341,7 +343,7 @@ export const assertMenLinkNavigates = async (page: Page) => {
   Log.ok('men link navigates to /products?category=men')
 }
 
-export const assertWomenLinkNavigates = async (page: Page) => {
+export async function assertWomenLinkNavigates(page: Page) {
   const { mobileLinks } = homeSelectors(page)
   await mobileLinks.women.click()
   await expect(page).toHaveURL(/\/products\?category=women$/)

@@ -42,7 +42,7 @@ Specs orchestrate. Page objects hold every piece of Playwright knowledge.
 Navigate like this:
 
 ```ts
-export const navigate = async (page: Page, baseURL: string) => {
+export async function navigate(page: Page, baseURL: string) {
   Log.navigate(baseURL)
   await page.goto(baseURL + '/', { waitUntil: 'domcontentloaded' })
 }
@@ -84,6 +84,13 @@ if a section needs explaining, rename the section.
 One file per journey area. **Never split into `.selectors.ts`, `.actions.ts` and
 `.assertions.ts`.** Three sections, in this order.
 
+Every exported page-object member is a **function declaration**
+(`export function x(...) {}` / `export async function x(...) {}`), never an
+`export const x = (...) => {}` arrow assigned to a const. Async functions never
+annotate `Promise<void>`; let TypeScript infer it (vault pattern: [[Async QA return
+annotations]]). Keep a return type that carries real information, like `Promise<boolean>`
+or a sync `: void` where nothing is awaited.
+
 1. **`SELECTOR FACTORY`**: one exported `<feature>Selectors(page)` returning nested groups
    by page area. Do not annotate its return type. Define each locator directly in its
    property on one line: no intermediate variables, no per-index helper properties, and
@@ -104,25 +111,27 @@ import { Log } from 'logr-kit'
 // SELECTOR FACTORY
 // =============================================================================
 
-export const homeSelectors = (page: Page) => ({
+export function homeSelectors(page: Page) {
+  return {
 
-  hero: {
-    section:   page.locator('[data-testid="home-hero-section"]'),
-    heading:   page.locator('[data-testid="home-hero-heading"]'),
-    ctaButton: page.locator('[data-testid="home-hero-cta-button"]'),
-  },
+    hero: {
+      section:   page.locator('[data-testid="home-hero-section"]'),
+      heading:   page.locator('[data-testid="home-hero-heading"]'),
+      ctaButton: page.locator('[data-testid="home-hero-cta-button"]'),
+    },
 
-  featured: {
-    section: page.locator('[data-testid="home-featured-products"]'),
-  },
+    featured: {
+      section: page.locator('[data-testid="home-featured-products"]'),
+    },
 
-})
+  }
+}
 
 // =============================================================================
 // ACTIONS
 // =============================================================================
 
-export const clickHeroCTA = async (page: Page) => {
+export async function clickHeroCTA(page: Page) {
   const { hero } = homeSelectors(page)
   Log.info('clicking the hero CTA')
   await expect(hero.ctaButton).toBeVisible()
@@ -134,7 +143,7 @@ export const clickHeroCTA = async (page: Page) => {
 // ASSERTIONS
 // =============================================================================
 
-export const assertHeroVisible = async (page: Page) => {
+export async function assertHeroVisible(page: Page) {
   const { hero } = homeSelectors(page)
   await expect(hero.section).toBeVisible()
   await expect(hero.heading).toBeVisible()
@@ -195,7 +204,7 @@ neither is one that closes with `Log.info()` instead of `Log.ok()`.
 
 ```ts
 // correct: opens with info, closes with ok
-export const clickAddToCart = async (page: Page) => {
+export async function clickAddToCart(page: Page) {
   const { addToCart } = pdpSelectors(page)
   Log.info('clicking Add to Cart')
   await expect(addToCart).toBeVisible()
@@ -206,7 +215,7 @@ export const clickAddToCart = async (page: Page) => {
 
 ```ts
 // wrong: one log, at the end, at the opening level
-export const clickAddToCart = async (page: Page) => {
+export async function clickAddToCart(page: Page) {
   const { addToCart } = pdpSelectors(page)
   await addToCart.click()
   Log.info('clicked Add to Cart')

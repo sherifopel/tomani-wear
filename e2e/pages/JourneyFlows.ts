@@ -10,7 +10,7 @@ import * as pdp from './03-PdpPage'
 // ACTIONS
 // =============================================================================
 
-export const addProductToCart = async (page: Page, baseURL: string, slug: string) => {
+export async function addProductToCart(page: Page, baseURL: string, slug: string) {
   Log.info(`adding ${slug} to cart from its PDP`)
   await pdp.navigate(page, baseURL, slug)
   await pdp.selectFirstAvailableSize(page)
