@@ -6,11 +6,17 @@ on:
   workflow_dispatch:       # allow manual trigger from the Actions UI
 
 jobs:
-  # ─── Job 1: Regression on Chrome ────────────────────────────────────────────
-  regression-chrome:
-    name: Regression — Chrome (@tomanni)
+  # ─── Regression, one matrix lane per browser (runs in parallel) ────────────
+  regression:
+    name: Regression — ${{ matrix.browser }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      # fail-fast: false so one browser's failure doesn't cancel the other two —
+      # we want every browser's result, not just the first one to fail.
+      fail-fast: false
+      matrix:
+        browser: [chromium, webkit, firefox]
 
     steps:
       - uses: actions/checkout@v4
@@ -31,21 +37,26 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-chromium-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: playwright-${{ matrix.browser }}-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install chromium --with-deps
+        run: pnpm exec playwright install ${{ matrix.browser }} --with-deps
 
       - name: Install Playwright system deps (cached browsers)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
+        run: pnpm exec playwright install-deps ${{ matrix.browser }}
 
       - name: Run regression tests against Vercel
         # TEST_ENV=dev resolves baseURL from the environment registry
         # (e2e/utils/environment.ts) instead of a hardcoded URL here —
-        # --project=chromium also runs its "setup" dependency first.
-        run: pnpm exec playwright test --grep "@tomanni" --project=chromium
+        # --project=<browser> also runs its "setup" dependency first.
+        # No --grep: the old @tomanni tag was dropped in the steps 13-17
+        # terraform migration (confirmed: it now matches 0 tests), so this
+        # runs the full default suite instead — everything except
+        # 00-global/environment-health, which the "setup" project
+        # dependency already covers.
+        run: pnpm exec playwright test --project=${{ matrix.browser }}
         env:
           TEST_ENV: dev
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
@@ -55,56 +66,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: regression-chrome-${{ github.run_number }}
-          path: playwright-report/
-          retention-days: 14
-
-  # ─── Job 2: Regression on Desktop Safari (cross-browser) ───────────────────
-  regression-safari:
-    name: Regression — Safari (@tomanni)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-webkit-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: pnpm exec playwright install webkit --with-deps
-
-      - name: Install Playwright system deps (cached browsers)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps webkit
-
-      - name: Run regression tests against Vercel
-        run: pnpm exec playwright test --grep "@tomanni" --project=webkit
-        env:
-          TEST_ENV: dev
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          LOG_LEVEL: silent
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: regression-safari-${{ github.run_number }}
+          name: regression-${{ matrix.browser }}-${{ github.run_number }}
           path: playwright-report/
           retention-days: 14
