@@ -10,25 +10,11 @@ const { environment, suite, viewport, grep } = getRunSettings()
 process.env.TEST_ENV = environment.name
 const isCI = !!process.env.CI
 
-// Deviation: the reference loads `dotenv.config({ path: environment.envFile })`
-// here. Skipped — no spec or page object reads `process.env` directly (checked
-// by grep), so nothing in this repo needs it loaded into the test process yet,
-// and `dev`/`prod` have no `envFile` of their own. Calling dotenv.config with an
-// undefined path falls back to loading the repo-root `.env` (Prisma's
-// DATABASE_URL and friends) into every run, which is not what we want. Revisit
-// once a spec genuinely needs a per-environment credential and give dev/prod
-// their own env file at that point.
+// no dotenv.config() — nothing reads process.env directly yet
 
-// Vercel preview/dev base URL wins when CI supplies one (the dynamic per-PR
-// preview in particular can't live in the static registry below); otherwise
-// fall back to the environment's own baseURL. SITE_PATH kept as the reference
-// names it, even though nothing in this repo sets it yet.
 const baseURL = process.env.PLAYWRIGHT_TEST_BASE_URL || process.env.SITE_PATH || environment.baseURL
 
-// ─── Vercel deployment protection bypass ────────────────────────────────────
-// Project addition, not in the reference (ITS doesn't run on Vercel): when
-// running against a Vercel preview/dev URL, send the bypass secret as a
-// header so Deployment Protection doesn't block the requests.
+// bypasses Vercel deployment protection on preview/dev URLs
 const extraHTTPHeaders = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
   ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET }
   : undefined
@@ -53,40 +39,18 @@ const localReporters: ReporterDescription[] = [
   ['html', { open: 'never' }],
   ...ciReporters,
 ]
-// Deviation from the reference: CI is `blob` plus three custom reporters
-// (testReporter, axeReporter, a Slack reporter) there, because ITS shards and
-// merges blob reports across a bigger CI matrix. This repo's CI doesn't
-// shard, there's no merge-reports step to consume a blob file, and the
-// logger/reporters pass (Stage 1 step 10) hasn't landed a Slack reporter yet
-// — so CI and local share the same two custom reporters for now.
 
 export default defineConfig({
   testDir: './e2e/tests',
   tsconfig: './e2e/tsconfig.json',
-  // TEST_SUITE=axe narrows to the accessibility folder, same as the
-  // reference's `12-accessibility`. This repo numbers it `08-accessibility`
-  // (step 12's consecutive numbering, not the reference's fixed slot).
-  // Deviation: the reference pairs this with a `testIgnore` that excludes
-  // accessibility from every *other* suite — ITS treats axe as fully separate
-  // from regression. Dropped that half: daily-regression.yml currently runs
-  // accessibility as part of its one regression job with no replacement axe
-  // job yet, so excluding it here would silently drop 13 tests × 3 projects
-  // from the default run (confirmed: 355 → 316 when tried). testMatch alone
-  // is additive — it only narrows when TEST_SUITE=axe is explicitly set —
-  // and is enough to make an isolated axe run possible for step 9.
+  // TEST_SUITE=axe narrows to 08-accessibility only; no testIgnore elsewhere (keeps a11y in regression)
   testMatch: suite === 'axe' ? '**/08-accessibility/**/*.spec.ts' : '**/*.spec.ts',
-  // grep is suite + viewport only here, not environment — see the deviation
-  // note at the top of e2e/utils/environment.ts.
-  grep,
+  grep, // suite + viewport only, not environment
   timeout: 60_000,
   expect: { timeout: 12_000 },
   fullyParallel: true,
   forbidOnly: isCI,
-  // Reference expression, substituted: ITS gives its `qa` environment fewer
-  // retries than uat/prod after a specific flakiness incident there. Tomani
-  // Wear has no equivalent environment-specific history, so every CI run
-  // gets the same retry count. PULL_REQUEST is set by smoke.yml (the only
-  // PR-triggered workflow) so PR feedback fails fast instead of retrying.
+  // PULL_REQUEST (set by smoke.yml) → 0 retries, fail fast
   retries:
     process.env.PLAYWRIGHT_RETRIES !== undefined
       ? Number(process.env.PLAYWRIGHT_RETRIES)
@@ -100,12 +64,7 @@ export default defineConfig({
   metadata: { environment: environment.label, suite, viewport },
   use: {
     baseURL,
-    // Desktop is the default; mobile describes set their viewport with
-    // setDeviceMode() (see e2e/helpers/utils.ts) — no per-project viewport.
-    viewport: { width: 1440, height: 1080 },
-    // No storageState yet (reference: undefined for the axe suite, a saved
-    // session otherwise). Logged-in sessions are Stage 2 step 24, not started
-    // — account.spec.ts and order-history.spec.ts stay skipped until then.
+    viewport: { width: 1440, height: 1080 }, // mobile specs set their own via setDeviceMode()
     actionTimeout: 12_000,
     trace: 'on-first-retry',
     video: 'on-first-retry',
@@ -117,12 +76,7 @@ export default defineConfig({
   // ===========================================================================
   // PROJECTS
   // ===========================================================================
-  // Browser projects are independent of environment and viewport — specs own
-  // viewport overrides via setDeviceMode(). "setup" runs the environment
-  // health check first; chromium/webkit/firefox won't start until it passes.
-  // It's a single non-viewport-specific test, so its grep only requires the
-  // environment tag, not the suite/viewport tags the root `grep` above adds,
-  // so it's never accidentally filtered out of a scoped run.
+  // browsers only; setup runs the environment-health check first
   projects: [
     {
       name: 'setup',
@@ -156,10 +110,7 @@ export default defineConfig({
     },
   ],
 
-  // ─── Local dev server ────────────────────────────────────────────────────
-  // Project addition, not in the reference (ITS points at an already-running
-  // BigCommerce store). CI always supplies a baseURL (preview/dev/prod), so
-  // no local server is started there.
+  // local dev server only — CI always supplies a baseURL
   webServer: isCI
     ? undefined
     : {
