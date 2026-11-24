@@ -12,9 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
-      # fail-fast: false so one browser's failure doesn't cancel the other two —
-      # we want every browser's result, not just the first one to fail.
-      fail-fast: false
+      fail-fast: false # run all browsers even if one fails
       matrix:
         browser: [chromium, webkit, firefox]
 
@@ -48,14 +46,6 @@ jobs:
         run: pnpm exec playwright install-deps ${{ matrix.browser }}
 
       - name: Run regression tests against Vercel
-        # TEST_ENV=dev resolves baseURL from the environment registry
-        # (e2e/utils/environment.ts) instead of a hardcoded URL here —
-        # --project=<browser> also runs its "setup" dependency first.
-        # No --grep: the old @tomanni tag was dropped in the steps 13-17
-        # terraform migration (confirmed: it now matches 0 tests), so this
-        # runs the full default suite instead — everything except
-        # 00-global/environment-health, which the "setup" project
-        # dependency already covers.
         run: pnpm exec playwright test --project=${{ matrix.browser }}
         env:
           TEST_ENV: dev
