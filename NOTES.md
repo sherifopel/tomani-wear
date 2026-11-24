@@ -879,3 +879,95 @@ Tool: WebAIM Contrast Checker. Check every muted/placeholder text colour before 
 **Why `validate()` should return the errors map** — if `validate()` only returns `boolean`, the caller can't know *which* fields failed without re-checking. Returning the errors object means one source of truth: the caller gets the errors, sets them in state, AND uses them for scroll targeting — all from one function call.
 
 **Database columns vs localStorage** — localStorage is per-browser. The database is per-user. When you're logged in, your cart comes from the DB. If the DB doesn't store a field (like `imageUrl`), it's gone the moment the cart is loaded from the server — even if it was in localStorage before. Always check: "if this data comes from the DB, does the DB schema have a column for it?"
+
+## Session 12 — Playwright Terraform: Scripts, Fixtures & Journey Folders (steps 9-12)
+
+### What we built
+
+**45 npm test scripts, one per environment/browser/suite combo**
+- `test:local`, `test:dev`, `test:prod` as the base, then `:webkit`/`:firefox`/`:all`, `:desktop:<browser>`/`:mobile:<browser>`, `:smoke[:browser]`, `:axe` — all wired through `e2e/scripts/run-playwright.cjs`, which turns `--environment`/`--suite`/`--viewport`/`--browser` flags into the `TEST_ENV`/`TEST_SUITE`/`TEST_VIEWPORT` env vars the config reads
+- Removed `test:e2e`, `test:smoke`, `test:nav` — all superseded by the new `test:<env>:*` names
+
+**Fixed the test runner for pnpm**
+- Every new script failed with "Cannot find module 'playwright/package.json'" — the runner was looking for a package (`playwright`) this repo doesn't directly depend on. We only have `@playwright/test`, and pnpm's strict linking doesn't expose a dependency's own nested dependencies at the top level
+- Fix: resolve `@playwright/test/package.json` instead — same CLI file sits right next to it
+
+**Completed the page-object barrel and gave each one a fixture**
+- `e2e/index.ts` (one export line per page object) was missing 2 of 11 files, and — bigger problem — nothing imported it at all
+- The real fixtures file was `src/fixtures.ts`, sitting inside the Next.js app's own production `src/` folder, and it only cleared the cart after each test — zero page-object fixtures
+- Merged everything into `e2e/fixtures/fixtures.ts` (the file every spec already imports `test` from), deleted the stray `src/fixtures.ts`
+- Specs still import page objects directly for now rather than destructuring them as fixtures — that's a bigger, separate rewrite saved for later
+
+**Numbered journey folders — skeleton only**
+- Created `e2e/specs/00-global` through `08-accessibility`, each empty except a placeholder file, with the full old-folder → new-number mapping written down in `e2e/specs/NUMBERING.md`
+- Nothing has moved yet — that's the next piece of work
+
+### Why we built it that way
+
+Each of these came from a written standard (the "Terraform Vault") that says exactly what a well-organised Playwright suite should look like, built from experience on larger client projects. Rather than guessing at a sensible structure, we're matching that standard piece by piece and writing down every place Tomani Wear's actual setup has to differ (no Slack workspace, no wishlist feature, etc.) and why.
+
+### Key concepts learned
+
+**pnpm's strict `node_modules` vs npm's flatter one** — with npm, installing package A (which itself depends on package B) often leaves B sitting at the top level of `node_modules` too, so code can `require('B')` even without declaring it. pnpm deliberately doesn't do this — it only lets your code resolve packages you actually listed in `package.json`. This is safer (stops you accidentally relying on a dependency's dependency, which could vanish in an update) but it means a script written for an npm project can fail under pnpm for exactly this reason.
+
+**A barrel file nobody imports is dead code, even if it's correct** — `e2e/index.ts` had the right shape (one export per page object) but zero effect on the running test suite, because no other file ever imported from it. Correct code that nothing calls is the same as no code at all — always check "does anything actually use this?" before trusting a file's existence as proof it's doing something.
+
+**Playwright fixtures are dependency injection, like Express middleware** — a fixture is a function that hands a test whatever it asks for by name (`async ({ page, headerPage }) => {...}`), the same way Express middleware attaches things to `req` before your route handler runs. The difference: Playwright fixtures are declared once centrally (`test.extend({...})`) and every test file just asks for the names it needs — nothing has to import or wire them up itself.
+
+**Git can't track an empty folder** — git tracks files, not folders; a folder with nothing in it simply doesn't exist as far as git is concerned. The common workaround is a `.gitkeep` — a conventionally-empty file whose only job is to give git something to track, so the folder actually shows up after a clone or checkout.
+
+## Session 13 — Playwright Terraform: Every Journey Folder Migrated (steps 13-17)
+
+### What we built
+
+Moved all 9 spec folders into the numbered structure (`e2e/tests/01-home/` etc.), rewrote all 11 page objects into the three-layer shape (selectors, then actions, then assertions, each under its own banner), reshaped every spec to four standard describes (Desktop, Mobile, Smoke Desktop, Smoke Mobile), and built `e2e/pages/JourneyFlows.ts` for the one flow that genuinely spans two pages (adding a product to cart from its PDP). One commit per folder.
+
+### Why we built it that way
+
+This was the big one: turning "tests exist and pass" into "tests are organised the way the convention describes, so the next person (or me in six months) can find anything in ten seconds." Doing it folder by folder, verifying each one for real before moving to the next, meant mistakes got caught one at a time instead of multiplying across all nine.
+
+### Key concepts learned
+
+**A test nobody ever runs will drift from reality and nobody will know** — three different, real bugs surfaced simply by running tests against the actual site for the first time: a mobile hero-height formula that stopped matching the CSS months ago, a "product count" test checking for UI that doesn't exist anymore, and two genuine accessibility violations (text too light to read) that a disabled CI job had already flagged back in July but nobody had seen fail with their own eyes since. None of these were caused by this session's changes — they were just waiting to be found. **The lesson: a passing test suite that never actually runs isn't proof of anything. Run it for real, regularly, against a real server.**
+
+**`git rm`/`git add` with multiple files fails ALL of them if even one is bad** — most commands process arguments independently (if one file has a typo'd name, the others still work). Git's staging commands aren't like that: pass five files and one is invalid (already deleted, or a folder that no longer exists), and *none* of the five get staged, with only a one-line error naming the bad one. This bit us three times in this session — a commit message would describe new files that, it turned out, were silently never added. The fix each time: check `git log`/`git status` actually match what you think happened, don't just trust that the command returning without a scary error means it did everything you asked.
+
+**Splitting a function that both acts and asserts** — several helper functions did a click *and* a check in one go (e.g. "click pay, then confirm the error shows"). Splitting these into one function that only interacts and one that only checks isn't pedantry: it means the action can be reused in a different check later, and a failure message says clearly "the click didn't work" vs "the result was wrong" instead of both being lumped into one.
+
+**A green test suite can still be running against the wrong thing** — partway through, every test started failing with "element not found," but the actual bug was that something unrelated was already using the one port our dev server wanted, so Playwright was quietly testing a completely different app that happened to also be a valid, working website. The fix was starting our real server properly — but the deeper habit is: when *everything* breaks at once in a weird way, check the obvious boring thing (is the right server even running?) before assuming the code is wrong.
+
+## Session 14 — Page objects: `const` arrows → function declarations
+
+### What we built
+
+Converted every exported member across all 10 page objects (136 functions total — selector factories, actions, assertions, test-data factories) from `export const name = (params) => {...}` to `export function name(params) {...}` (and `export async function` for the async ones). Also dropped the explicit `: Promise<void>` annotation from the two async functions in `00-GlobalActions.ts` that had one, per a convention already recorded in the Terraform Vault that this project hadn't been following. Updated `SKILL.md`'s own examples and naming rule to match, so new page objects are written this way from the start.
+
+### Why we built it that way
+
+Sherif asked for function declarations instead of const arrows in the page objects — both compile to the same thing at runtime here (none of these rely on arrow functions' lexical `this`, and nothing needs the value hoisted as a first-class variable before its own definition), so this was a pure readability/convention call, not a bug fix. With 136 functions across 10 files, doing it by hand risked subtle mistakes (multi-line parameter lists, selector factories that return an object literal via an implicit arrow return rather than a block body), so this was done with a small one-off script using the TypeScript compiler's own parser to find the exact boundaries of each function and rewrite only the signature — the function bodies were copied verbatim, never regenerated, so none of the deliberate column-aligned selector formatting could get reflowed by accident. Verified with `tsc --noEmit` (clean), a full `--list` (418 tests, unchanged), and then actually running every converted folder against the live dev server — identical pass/fail results to before the conversion, including the same 4 known accessibility failures.
+
+### Key concepts learned
+
+**`export const x = (...) => {}` vs `export function x(...) {}`** — both define a callable thing attached to the name `x`, and for a simple exported helper there's no behavioural difference. The real differences only matter in cases this project doesn't hit: function declarations are hoisted (usable before their own line in the file) and get a real `name` for stack traces even when assigned anonymously; arrow functions don't get their own `this` (they inherit it from where they're defined), which matters for object methods and callbacks but not for standalone page-object functions that always take `page` as an explicit parameter. Given no behavioural difference here, this came down to Sherif's own readability preference — `function` reads, at a glance, as "this is a named, reusable operation" rather than "this is a value that happens to be callable."
+
+**Converting `(page: Page) => ({ ...obj... })` to a `function` needs an explicit `return`** — an arrow function can return an object literal in one expression as long as it's wrapped in parens (`=> ({...})`, the parens stop `{` from being parsed as the start of a block). A `function` body is always a block, so the same object has to come back via `return { ...obj... }` instead. Every selector factory in this codebase used the implicit-return arrow shorthand, so every conversion had to add that `return` and nest the object one level deeper.
+
+**Explicit `Promise<void>` is a type TypeScript already knows** — if an `async function` never returns a value, TypeScript infers `Promise<void>` on its own; writing it out adds nothing and is one more thing to keep in sync if the function's shape ever changes. The Terraform Vault already had this recorded as a convention ("Async QA return annotations") that predates this project — it just hadn't been applied here yet. It only applies to `Promise<void>` specifically: a meaningful return type like `Promise<boolean>`, and a *sync* function's bare `: void`, both stay exactly as they are.
+
+## Session 15 — Daily regression CI: dead tag, matrix, and two real bugs it had been hiding
+
+### What we built
+
+Fixed `daily-regression.yml`'s `--grep "@tomanni"`, which matched zero tests (the tag was dropped in the steps 13-17 migration) — the nightly regression run had been silently doing nothing since. Replaced the two hand-duplicated Chrome/Safari jobs with one `strategy: matrix` job and added Firefox as a third parallel lane.
+
+### Why we built it that way
+
+Asked the Terraform Vault what two past projects (ITS, Andertons/"AMC") did to make their regression suites run reliably in parallel. Their answer — a script that runs each test folder as its own isolated Playwright invocation, with a shared test-account pool partitioned by worker index so concurrent workers can never collide on the same account — doesn't apply to Tomani yet, because every current cart/checkout/auth test is `page.route()`-mocked or localStorage-only; there's no shared backend resource for workers to fight over. Copying that pattern now would've solved a problem we don't have. What did transfer was the actual CI mechanism: GitHub Actions `strategy: matrix` runs each browser as its own parallel job, same idea as ITS/Andertons running each piece independently and reporting each one, just at the scale Tomani is actually at.
+
+### Key concepts learned
+
+**Don't trust a browser-compatibility result until you've ruled out your own machine** — the first Firefox run showed 103 failures out of 140. The screenshot in the failure artifact turned out to be an unrelated tool ("Splunk Observability Studio") that's been squatting on port 3000's IPv4 listener all session. Chromium and WebKit happened to resolve `localhost` to IPv6 (reaching the real Next.js server); Firefox resolved it to IPv4 first (reaching the wrong thing entirely) — a real, documented difference in how browsers pick between IPv4 and IPv6 for `localhost`, but not a bug in the app. The fix wasn't to debug Firefox — it was to stop testing `localhost` altogether and point at the same real Vercel URL the actual CI workflow uses, which sidesteps the whole problem and is a truer test anyway.
+
+**A `NODE_ENV` check and a `VERCEL_ENV` check answer different questions** — `checkout-payment.spec.ts` failed identically on both Firefox *and* Chromium once pointed at the real `dev` deployment, which ruled out a browser bug and pointed at the app. `CheckoutForm.tsx`'s Paystack test hook was gated on `process.env.NODE_ENV === 'production'`, with a comment explaining it should never run in production. But `NODE_ENV` is Node's own dev-vs-build flag — Vercel's `next build` sets it to `'production'` for *every* deployment, preview or real production, because that's a build-mode setting, not an environment label. The flag that actually distinguishes "is this the live production site" is Vercel's own `VERCEL_ENV` (`NEXT_PUBLIC_VERCEL_ENV` on the client) — and the codebase already uses exactly that pattern correctly one file over, in `CartPageClient.tsx`. Net effect: this test hook has never been reachable on any deployed environment, preview or production, since it was written — only ever worked against a local `next dev` server. Not fixed here (an app bug, not a test bug) — flagged for Sherif to decide.
+
+**A test that's never been run against the real target isn't proven, no matter how clean it looks locally** — both of this session's real findings (the dropdown colour bug, the Paystack hook) were only ever exercised against `localhost`, where local uncommitted fixes or `next dev`'s different `NODE_ENV` quietly made them pass. The first time anything in this suite touched the actual deployed Vercel URL, two real gaps fell out immediately.

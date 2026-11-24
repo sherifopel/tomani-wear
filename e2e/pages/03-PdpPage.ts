@@ -1,0 +1,167 @@
+import { Page, Response, expect } from '@playwright/test'
+import { Log } from 'logr-kit'
+
+// =============================================================================
+// SELECTOR FACTORY
+// =============================================================================
+
+export function pdpSelectors(page: Page) {
+  return {
+
+    page:       page.locator('[data-testid="pdp-page"]'),
+    breadcrumb: page.locator('[data-testid="pdp-breadcrumb"]'),
+    image:      page.locator('[data-testid="pdp-main-image"]'),
+    // name and price each appear twice in the DOM (mobile above image + desktop right column).
+    // :visible narrows to whichever copy is shown for the current viewport.
+    name:         page.locator('[data-testid="pdp-name"]:visible'),
+    priceRow:     page.locator('[data-testid="pdp-price-row"]:visible'),
+    price:        page.locator('[data-testid="pdp-price"]:visible'),
+    comparePrice: page.locator('[data-testid="pdp-compare-price"]:visible'),
+    saleBadge:    page.locator('[data-testid="pdp-sale-badge"]'),
+    description:  page.locator('[data-testid="pdp-description"]'),
+    sizeSelector: page.locator('[data-testid="pdp-size-selector"]'),
+    addToCart:    page.locator('[data-testid="pdp-add-to-cart"]'),
+    sizeError:    page.locator('[data-testid="pdp-size-error"]'),
+    sizeButtons:  page.locator('[data-testid^="pdp-size-"]'),
+    sizeButton:   (size: string) => page.locator(`[data-testid="pdp-size-${size}"]`),
+
+  }
+}
+
+// =============================================================================
+// ACTIONS
+// =============================================================================
+
+export async function navigate(page: Page, baseURL: string, slug: string) {
+  Log.navigate(`${baseURL}/products/${slug}`)
+  await page.goto(`${baseURL}/products/${slug}`, { waitUntil: 'domcontentloaded' })
+}
+
+export async function navigateToUnknownSlug(page: Page, baseURL: string): Promise<Response | null> {
+  Log.info('navigating to an unknown product slug')
+  const response = await page.goto(`${baseURL}/products/this-product-does-not-exist`, { waitUntil: 'domcontentloaded' })
+  Log.ok('navigated to unknown slug')
+  return response
+}
+
+export async function selectSize(page: Page, size: string) {
+  const { sizeButton } = pdpSelectors(page)
+  Log.info(`selecting size: ${size}`)
+  await expect(sizeButton(size)).toBeVisible()
+  await sizeButton(size).click()
+  await expect(sizeButton(size)).toHaveClass(/bg-black/)
+  Log.ok(`size ${size} selected`)
+}
+
+export async function clickAddToCart(page: Page) {
+  const { addToCart } = pdpSelectors(page)
+  Log.info('clicking Add to Cart')
+  await expect(addToCart).toBeVisible()
+  await addToCart.click()
+  Log.ok('Add to Cart clicked')
+}
+
+// Picks whichever size comes first rather than a named one — used by journeys
+// that just need any in-stock size, not a specific size's own behaviour.
+export async function selectFirstAvailableSize(page: Page) {
+  const { sizeButtons } = pdpSelectors(page)
+  Log.info('selecting the first available size')
+  await expect(sizeButtons.first()).toBeVisible()
+  await sizeButtons.first().click()
+  Log.ok('first available size selected')
+}
+
+// =============================================================================
+// ASSERTIONS
+// =============================================================================
+
+export async function assertCoreDetailsVisible(page: Page) {
+  Log.section('PDP — core details')
+  const selectors = pdpSelectors(page)
+  await expect(selectors.name).toBeVisible()
+  Log.ok('name')
+  await expect(selectors.price).toBeVisible()
+  Log.ok('price')
+  await expect(selectors.image).toBeVisible()
+  Log.ok('image')
+}
+
+export async function assertSizesVisible(page: Page, sizes: string[]) {
+  Log.section('PDP — sizes')
+  const selectors = pdpSelectors(page)
+  await expect(selectors.sizeSelector).toBeVisible()
+  Log.ok('size selector')
+  for (const size of sizes) {
+    await expect(selectors.sizeButton(size)).toBeVisible()
+    Log.ok(`size ${size}`)
+  }
+}
+
+export async function assertNameVisible(page: Page) {
+  const { name } = pdpSelectors(page)
+  await expect(name).toBeVisible()
+  await expect(name).not.toBeEmpty()
+  Log.ok('product name visible')
+}
+
+export async function assertPriceInNaira(page: Page) {
+  const { price } = pdpSelectors(page)
+  await expect(price).toBeVisible()
+  await expect(price).toContainText('₦')
+  Log.ok('price in Naira visible')
+}
+
+export async function assertImageVisible(page: Page) {
+  const { image } = pdpSelectors(page)
+  await expect(image).toBeVisible()
+  Log.ok('product image visible')
+}
+
+export async function assertDescriptionVisible(page: Page) {
+  const { description } = pdpSelectors(page)
+  await expect(description).toBeVisible()
+  await expect(description).not.toBeEmpty()
+  Log.ok('description visible')
+}
+
+export async function assertBreadcrumbVisible(page: Page) {
+  const { breadcrumb } = pdpSelectors(page)
+  await expect(breadcrumb).toBeVisible()
+  await expect(breadcrumb).toContainText('Home')
+  await expect(breadcrumb).toContainText('Products')
+  Log.ok('breadcrumb visible')
+}
+
+export async function assertSizeError(page: Page) {
+  const { sizeError } = pdpSelectors(page)
+  await expect(sizeError).toBeVisible()
+  await expect(sizeError).toContainText('Please select a size first')
+  Log.ok('size error shown')
+}
+
+export async function assertSoldOut(page: Page) {
+  const { addToCart } = pdpSelectors(page)
+  await expect(addToCart).toBeVisible()
+  await expect(addToCart).toContainText(/sold out/i)
+  await expect(addToCart).toBeDisabled()
+  Log.ok('sold out state confirmed')
+}
+
+export function assertNotFoundStatus(response: Response | null) {
+  expect(response?.status()).toBe(404)
+  Log.ok('404 status confirmed for unknown slug')
+}
+
+export async function assertAddedToCartConfirmation(page: Page) {
+  const { addToCart } = pdpSelectors(page)
+  await expect(addToCart).toContainText(/added/i, { timeout: 3000 })
+  Log.ok('Add to Cart shows the "added" confirmation')
+}
+
+export async function assertMobileSmoke(page: Page) {
+  const { name, price, image } = pdpSelectors(page)
+  await expect(name).toBeVisible()
+  await expect(price).toContainText('₦')
+  await expect(image).toBeVisible()
+  Log.ok('mobile PDP smoke passed')
+}

@@ -1,0 +1,11 @@
+// Page object barrel — KEEP IN ALPHABETICAL ORDER
+export * as a11y      from '../pages/08-AccessibilityPage'
+export * as account   from '../pages/06-AccountPage'
+export * as cart      from '../pages/04-CartPage'
+export * as checkout  from '../pages/05-CheckoutPage'
+export * as global    from '../pages/00-GlobalActions'
+export * as home      from '../pages/01-HomePage'
+export * as journey   from '../pages/JourneyFlows'
+export * as notFound  from '../pages/07-NotFoundPage'
+export * as pdp       from '../pages/03-PdpPage'
+export * as plp       from '../pages/02-PlpPage'

@@ -5,6 +5,11 @@
 |---|---|---|
 | Feature | `feat/TW-XXX-short-description` | `feat/TW-3-product-detail-page` |
 | Bug fix | `fix/TW-XXX-short-description` | `fix/TW-12-cart-total-rounding` |
+| Task | `task/TW-XXX-short-description` | `task/TW-74-terraform-stage-0-1` |
+
+Use `task/` for dev and infra work that is neither a user-facing feature nor a bug
+fix: tooling, CI, test framework, dependencies, refactors. It pairs with the
+`type: task` label on the issue. Not `chore/`.
 
 ## PR Title
 Format: `[TW-XXX]: short description`

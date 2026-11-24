@@ -1,0 +1,3 @@
+# Refuse a commit that stages a real env file.
+# Lint, the type-check and the convention guard are added at terraform step 37.
+node scripts/check-staged-env.mjs

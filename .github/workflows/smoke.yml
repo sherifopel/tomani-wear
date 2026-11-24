@@ -6,7 +6,7 @@ on:
 
 jobs:
   smoke:
-    name: Playwright smoke (@tomanni-smoke)
+    name: Playwright smoke (@smoke)
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -80,10 +80,14 @@ jobs:
           exit 1
 
       - name: Run smoke tests against preview
-        run: pnpm exec playwright test --grep "smoke" --project="Desktop Chrome"
+        # Tag-exact grep, not the old substring "smoke" match (that matched
+        # any test whose title/tag happened to contain the word "smoke").
+        # --project=chromium: Playwright runs its "setup" dependency first.
+        run: pnpm exec playwright test --grep "@smoke" --project=chromium
         env:
-          BASE_URL: ${{ steps.vercel_preview.outputs.url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.vercel_preview.outputs.url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          PULL_REQUEST: 'true'
           LOG_LEVEL: silent
 
       - name: Upload Playwright report on failure

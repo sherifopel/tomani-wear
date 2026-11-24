@@ -105,6 +105,9 @@ importers:
       '@sanity/client':
         specifier: ^8.4.0
         version: 8.4.0
+      '@tailwindcss/oxide-darwin-arm64':
+        specifier: 4.3.1
+        version: 4.3.1
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.3.1
@@ -123,6 +126,9 @@ importers:
       eslint-config-next:
         specifier: 16.2.9
         version: 16.2.9(@typescript-eslint/parser@8.61.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       lightningcss-darwin-arm64:
         specifier: ^1.32.0
         version: 1.32.0
@@ -4524,6 +4530,11 @@ packages:
 
   humanize-list@1.0.1:
     resolution: {integrity: sha512-4+p3fCRF21oUqxhK0yZ6yaSP/H5/wZumc7q1fH99RkW7Q13aAxDeP78BKjoR+6y+kaHqKF/JWuQhsNuuI2NKtA==}
+
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   i18next@26.3.6:
     resolution: {integrity: sha512-Bu5Z2nAXgfVyM8xvW3jk9EKRIuX37PudsrBViThNFx7CR7aaYTpP01cxNB/E4c4UUzTDiAZRstEhsRfPOL/8xA==}
@@ -9996,8 +10007,7 @@ snapshots:
   '@tailwindcss/oxide-android-arm64@4.3.1':
     optional: true
 
-  '@tailwindcss/oxide-darwin-arm64@4.3.1':
-    optional: true
+  '@tailwindcss/oxide-darwin-arm64@4.3.1': {}
 
   '@tailwindcss/oxide-darwin-x64@4.3.1':
     optional: true
@@ -11847,6 +11857,8 @@ snapshots:
   human-signals@8.0.1: {}
 
   humanize-list@1.0.1: {}
+
+  husky@9.1.7: {}
 
   i18next@26.3.6(typescript@5.9.3):
     optionalDependencies:
